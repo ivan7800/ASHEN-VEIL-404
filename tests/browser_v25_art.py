@@ -11,11 +11,11 @@ with sync_playwright() as p:
     page.locator('#play').click()
     page.wait_for_timeout(500)
     d=page.evaluate('window.__ashenDiagnostics()')
-    assert d['version']=='2.8.0',d
+    assert d['version']=='2.9.0',d
     assert d['textureCount']==10,d
-    assert d['sceneryCount']==38 and d['themedProps']==15,d
+    assert d['sceneryCount']==42 and d['themedProps']==16,d
     assert d['region']=='crypt',d
-    assert d['enemiesAlive']==8,d
+    assert d['enemiesAlive']==9,d
     canvas=page.locator('#screen')
     assert canvas.evaluate('(el)=>el.width===480&&el.height===270')
     page.keyboard.press('KeyM')

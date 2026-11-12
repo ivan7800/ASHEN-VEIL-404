@@ -1,6 +1,18 @@
-# ASHEN VEIL 404 — REBIRTH v2.8.0
+# ASHEN VEIL 404 — REBIRTH v2.9.0
 
 Dungeon crawler original de fantasía oscura en primera persona. Motor retro raycasting 2.5D, sprites y texturas pixeladas hechos por código. **No es una copia de Lunacid ni contiene recursos de ese juego.**
+
+## v2.9 — La campana sumergida
+
+La mazmorra original se amplía con una nave inundada al este, un guardián que protege la campana, un atajo entre la capilla y la cripta y un altar antes del santuario. Puedes vencer al Vigía siguiendo la ruta principal o cambiar el desenlace al completar los ritos, reunir los ecos y tocar la campana.
+
+La dirección visual conserva el raycasting 2.5D. La Cripta del Despertar sirvió para prototipar relieves góticos, luz local y materiales nuevos. El mismo sistema se aplica a las cuatro regiones con paletas propias. También se renovó la espada y se añadieron avisos sonoros para ataques enemigos.
+
+La lógica del juego permanece en `src/game.js`. `src/lighting.js` genera materiales y prepara la iluminación del mapa. Ambos se empaquetan en un HTML autónomo. El formato del guardado v2 conserva su clave y añade los estados nuevos.
+
+**Guardar y continuar.** Usa **K** o el botón de pausa. El juego también guarda al registrar hitos de la partida. La versión web y el archivo local guardan en espacios separados del navegador.
+
+**Mando estándar.** Stick izquierdo para moverte y derecho para girar. A interactúa, B esquiva, X ejecuta el ataque fuerte, Y cura, RT ataca, LT bloquea y RB lanza magia. Start pausa, Select abre el diario, ↑ abre el mapa y ↓ sube de nivel junto al altar. La entrada estándar se ha simulado en las pruebas. Steam Deck físico queda pendiente.
 
 ## Jugar (sin instalar herramientas)
 - **Windows:** descomprime el ZIP completo y abre `INICIAR-WINDOWS.cmd`.
@@ -11,7 +23,9 @@ Dungeon crawler original de fantasía oscura en primera persona. Motor retro ray
 ## Controles
 WASD movimiento; ratón para mirar (clic para capturarlo); flechas izquierda/derecha como alternativa; clic izquierdo ataque ligero; J ataque fuerte (38 de aguante); clic derecho bloqueo; Shift correr; Espacio esquivar; Q conjuro; E interactuar; F curación; L subir nivel junto al altar; M mapa; Tab inventario; Esc pausa.
 
-## Contenido y mejoras de v2.2.0
+## Historial de v2.2 a v2.8
+
+### Contenido y mejoras de v2.2.0
 - Se conservan cuatro sectores, seis enemigos incluyendo jefe, llave, puerta, secreto, reliquia, inventario, progresión y final.
 - **60 fotogramas originales** (4 tipos de enemigo × 5 poses × 3 variantes). Poses: espera, desplazamiento, preparación de ataque, golpe y daño.
 - Señal de amenaza ante ataques enemigos, con preparación y recuperación diferenciadas entre espectros, caballeros y jefe.
