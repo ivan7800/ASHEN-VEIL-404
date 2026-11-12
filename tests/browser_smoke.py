@@ -19,7 +19,7 @@ with sync_playwright() as p:
     page.locator('#play').click()
     page.wait_for_timeout(900)
     before=page.evaluate('window.__ashenDiagnostics()')
-    assert before['playing'] and before['enemiesAlive']==8, before
+    assert before['playing'] and before['enemiesAlive']==9, before
     assert before['renderSize']==[480,270], before
     page.keyboard.down('KeyW')
     page.wait_for_timeout(650)

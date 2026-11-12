@@ -14,7 +14,7 @@ with sync_playwright() as p:
     page.set_content(html,wait_until='load')
     page.locator('#play').click()
     page.wait_for_timeout(200)
-    assert page.evaluate('window.__ashenDiagnostics().enemiesAlive')==8
+    assert page.evaluate('window.__ashenDiagnostics().enemiesAlive')==9
     result=page.evaluate('''() => {
       const t=window.__test27,p=t.player,e=t.enemies.find(x=>x.type==='knight');
       e.x=10;e.y=17;p.x=11;p.y=17;p.hp=p.maxhp;p.hurt=0;p.roll=0;p.block=false;

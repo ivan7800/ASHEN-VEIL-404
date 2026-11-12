@@ -3,3 +3,17 @@
 /* v2.4: clear objective without obscuring central sightlines */
 #objective{position:absolute;top:48px;left:50%;transform:translateX(-50%);width:max-content;max-width:82%;padding:5px 12px;border:1px solid rgba(203,183,162,.25);border-radius:2px;background:rgba(12,10,20,.62);color:#d9c1a8;font:600 clamp(9px,1.1vw,12px)/1.4 monospace;letter-spacing:.07em;text-align:center;pointer-events:none;text-shadow:0 1px 3px #000}
 @media(max-width:640px){#objective{top:56px;font-size:9px}}
+
+/* The title, pause and journal remain usable at 1280×800 and on shorter windows. */
+.overlay { overflow:auto; align-items:safe center; background:radial-gradient(ellipse at 50% 43%,rgba(45,30,51,.91),rgba(5,7,14,.98) 76%); }
+.menu-content h1 { font-size:clamp(2.6rem,8vw,6.5rem); text-shadow:0 0 42px #50334a; }
+.menu-content p { color:#cbc0c5; margin:1.1rem auto; }
+.menu-content .controls { color:#bab0bc; margin-top:1rem; line-height:1.55; }
+.menu-actions { display:flex; justify-content:center; flex-wrap:wrap; gap:.6rem; margin-top:.75rem; }
+.menu-actions button, #inventory-close { padding:.55rem .75rem; letter-spacing:.08em; }
+#save-status:empty { display:none; }
+#inventory .panel { max-height:95%; overflow:auto; padding:1.35rem; }
+#inventory #items { grid-template-columns:repeat(auto-fit,minmax(min(100%,14rem),1fr)); gap:.65rem; }
+#inventory .item { padding:.75rem; }
+#inventory-close { margin-top:1rem; }
+button:focus-visible { outline:2px solid #ead0a7; outline-offset:4px; }
