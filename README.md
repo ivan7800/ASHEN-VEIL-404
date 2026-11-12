@@ -1,0 +1,86 @@
+# ASHEN VEIL 404 — REBIRTH v2.8.0
+
+Dungeon crawler original de fantasía oscura en primera persona. Motor retro raycasting 2.5D, sprites y texturas pixeladas hechos por código. **No es una copia de Lunacid ni contiene recursos de ese juego.**
+
+## Jugar (sin instalar herramientas)
+- **Windows:** descomprime el ZIP completo y abre `INICIAR-WINDOWS.cmd`.
+- **Linux:** abre `JUGAR-SIN-INSTALAR.html` o ejecuta `bash INICIAR-LINUX.sh`.
+- **Ambos:** abrir `JUGAR-SIN-INSTALAR.html` en un navegador moderno compatible con Canvas 2D.
+- Funciona sin conexión y sin CDN; el HTML autónomo incluye CSS y JavaScript.
+
+## Controles
+WASD movimiento; ratón para mirar (clic para capturarlo); flechas izquierda/derecha como alternativa; clic izquierdo ataque ligero; J ataque fuerte (38 de aguante); clic derecho bloqueo; Shift correr; Espacio esquivar; Q conjuro; E interactuar; F curación; L subir nivel junto al altar; M mapa; Tab inventario; Esc pausa.
+
+## Contenido y mejoras de v2.2.0
+- Se conservan cuatro sectores, seis enemigos incluyendo jefe, llave, puerta, secreto, reliquia, inventario, progresión y final.
+- **60 fotogramas originales** (4 tipos de enemigo × 5 poses × 3 variantes). Poses: espera, desplazamiento, preparación de ataque, golpe y daño.
+- Señal de amenaza ante ataques enemigos, con preparación y recuperación diferenciadas entre espectros, caballeros y jefe.
+- Espectros intentan rodear al jugador en vez de avanzar siempre en línea recta.
+- Efectos pixelados de impacto y hechizo, usando partículas proyectadas según la cámara.
+- Ocho decoraciones nuevas: arcos, estandartes y cadenas; **20 decoraciones en total**.
+- Conserva el guardado anterior bajo la clave `ashen-veil-rebirth-v2`.
+
+## Modificación y pruebas
+- Fuentes: `index.html`, `style.css`, `src/game.js`.
+- Regenerar HTML autónomo: `python tools/build_singlefile.py` (solo para desarrollo; para jugar no hace falta Python).
+- Tests automatizados, si tienes Python + Playwright + Chromium: `python tests/browser_smoke.py`; `python tests/browser_visual_regression.py`; `python tests/browser_v22_regression.py`.
+- Captura: `tests/captura_rebirth_v22.png`.
+
+## Limitaciones verificadas
+- El motor es raycasting **2.5D**, no 3D geométrico completo; los personajes son sprites 2D.
+- No hay animaciones esqueléticas. Los fotogramas son transformaciones y detalles procedurales, no una librería de animación dibujada artesanalmente.
+- La prueba de persistencia del guardado está **bloqueada por el entorno Chromium** (navegación a `file://` y origen HTTPS simulado denegados). No se afirma que se haya verificado la restauración tras recargar.
+- Lanzadores Windows/Linux aún no ejecutados en sistemas físicos; se ha verificado sintaxis del script Linux.
+- La sesión completa de inicio a final, el balance de dificultad y la experiencia de 1–2 horas siguen pendientes de pruebas y contenido.
+
+
+## v2.3 — Las Catacumbas Vivas
+- Tres trampas temporizadas con aviso previo, daño y enfriamiento de impacto. La esquiva evita las espinas.
+- Una palanca en las catacumbas revela un osario oculto: recompensa única de 160 cenizas.
+- Dos tablillas narrativas con textos originales.
+- Iconos procedurales para palanca, osario y tablillas; marcadores de trampas en el mapa.
+- Estados persistentes `leverUsed`, `cacheOpened` y `tabletsRead`, sin cambiar la clave de guardado previa.
+- El juego sigue siendo un prototipo 2.5D, no un mundo 3D completo.
+
+
+## v2.4 — La Mazmorra Definitiva (estabilización)
+- Objetivos de progresión visibles: llave, puerta, Vigía, sello y victoria.
+- La muerte y el descanso vuelven a generar enemigos normales, pero **nunca resucitan al jefe ya derrotado**.
+- El progreso del jefe queda registrado en partidas guardadas (`bossDefeated`) y se lee también desde partidas anteriores con `dead`/`won`.
+- Restauración más segura: un guardado con coordenadas inválidas no altera las paredes, y el nivel se acota antes de calcular la vida máxima.
+- Incluye verificación de conectividad del mapa, puerta y muro secreto, simulación de recorrido completo hasta los créditos y regresión de guardado.
+- Nota: completar el circuito por automatización usa un *hook temporal en memoria*, no reproducimos una partida humana completa.
+
+
+## v2.5 — Identidad visual de las cuatro regiones
+- Cuatro familias nuevas de muros pixel art (cripta/osario, catacumbas húmedas, capilla enraizada y santuario del jefe), generadas offline por Canvas.
+- Seis nuevas siluetas dibujadas por código: sarcófago, pila de huesos, hongos fosforescentes, raíces, vidriera y brasero.
+- Doce nuevos elementos de escenario colocados para identificar habitaciones y caminos.
+- Niebla cromática y viñeteado por región, sin afectar las colisiones, enemigos ni el guardado.
+- Conserva el HTML autónomo y los lanzadores Windows/Linux.
+
+## v2.6 — Los Ecos del Velo (exploración y encuentros)
+- **Misión secundaria opcional:** tres Ecos del Velo repartidos entre cripta, catacumbas y capilla, representados mediante un nuevo sprite pixel art original.
+- Cada eco aporta 90 cenizas (270 en total). Reunir los tres aumenta de forma permanente la capacidad máxima de frascos en uno.
+- Dos encuentros adicionales (un caballero y un espectro) custodian las zonas opcionales: ocho enemigos en total contando el jefe.
+- Tres puntos de decoración adicionales, un registro de progreso en el inventario y nuevos textos de recompensa.
+- Corregida una incidencia heredada: la selección de objetos interactivos devolvía copias, por lo que algunos objetos seguían visibles tras recogerse. Ahora se opera sobre la referencia original.
+- Persistencia de `echoesCollected` y `echoReward` en el guardado v2 existente. La v2.6 lee partidas anteriores que no tengan estos campos.
+- Prueba principal de los tres ecos, recompensa única, minimapa e inventario: `python tests/browser_v26_quest.py`.
+
+**Aviso:** el recorrido completo de principio a fin con un jugador real, los lanzadores en los dos sistemas físicos y el guardado persistente en el navegador real no están validados en este entorno. No se afirma que el juego tenga ya 1–2 horas de campaña.
+
+
+## Novedades v2.7
+Ataques telegrafiados con dirección y arco real: esquivar fuera del cono evita el golpe. Caballeros con guardia y estocada; ánimas con embestida; Vigía con barrido y estocada en segunda fase. Ataque fuerte (J) con mayor daño y aturdimiento.
+
+## Pruebas de esta versión
+
+Consulta `VALIDACION.md`. Para ejecutar pruebas de navegador necesitas Python, Playwright y Chromium **solo en el equipo de desarrollo**, nunca para jugar. El archivo `JUGAR-SIN-INSTALAR.html` continúa funcionando sin instalación de dependencias.
+
+## Novedades v2.8 — Los Dos Ritos
+- Dos sellos opcionales de exploración: Sepultura (cripta) y Herejía (capilla). Cada activación concede 60 cenizas y reduce un 15 % el daño infligido por el jefe. No bloquean el final.
+- Diario de regiones visitadas en el inventario y mensajes de primer descubrimiento.
+- Indicador de sellos opcionales junto al objetivo cuando queda pendiente derrotar al Vigía.
+- Guardado compatible con v2.x, registrando sellos activados y zonas visitadas.
+- Pruebas adicionales de interacción, recompensa única, reducción de daño y restauración simulada.
