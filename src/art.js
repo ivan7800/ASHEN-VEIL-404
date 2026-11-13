@@ -1,6 +1,11 @@
 /* Original 64 px reliefs and 72 × 100 creature cels. */
 const VeilArt = (() => {
   const walls = {
+    salt: ['#1e1c22','#343034','#685d56','#917f6e','#b5a48c','#e0d3b9'],
+    archive: ['#130e17','#2c2328','#503a37','#765649','#ad8262','#dfc194'],
+    garden: ['#0c181b','#1e3030','#374740','#506854','#82a177','#c7c8a1'],
+    soundings: ['#08171c','#19303b','#2d4b54','#496871','#7b9da1','#c1d0c3'],
+    sky: ['#101323','#22283f','#353f5e','#556184','#828fb3','#c7c6df'],
     crypt:     ['#100e18','#2d2632','#483a46','#77605e','#ad8d78','#c5a789'],
     catacomb:  ['#091c22','#173039','#345256','#4e6e6b','#7ca49a','#a8c6ab'],
     chapel:    ['#180e20','#302039','#4d2b4f','#73506d','#a97791','#d2aab7'],
@@ -97,6 +102,33 @@ const VeilArt = (() => {
         path([[x,0],[x-8,19],[x+5,35],[x-4,48],[x+2,62]],mortar,5);
         path([[x,0],[x-8,19],[x+5,35],[x-4,48],[x+2,62]],rim,1);
       }
+    } else if (region==='salt') {
+      for(let i=0;i<26;i++){
+        const x=14+(i*19)%37,y=33+(i*7)%22;
+        rect(i%4?mid:light,x,y,1+i%3,1);
+      }
+      path([[14,43],[25,39],[35,45],[49,40]],rim,2);
+    } else if (region==='archive') {
+      for(const y of [23,35,47]){
+        rect(rim,16,y+7,32,2);
+        for(let i=0;i<7;i++)rect(i%3?gold:mid,17+i*4,y+(i%2),3,6);
+      }
+    } else if (region==='garden') {
+      for(const x of [21,31,42]){
+        path([[x,20],[x+3,32],[x-4,39],[x+1,56]],rim,2);
+        path([[x-4,39],[x-9,45],[x-11,49]],gold,1);
+      }
+    } else if (region==='soundings') {
+      for(const x of [20,29,38]){
+        rect(mid,x,20,4,35);rect(gold,x+1,23,1,30);
+      }
+      for(const y of [33,43,53])rect(rim,15,y,34,3);
+    } else if (region==='sky') {
+      for(let i=0;i<23;i++){
+        const x=16+(i*17)%32,y=19+(i*23)%35;
+        rect(i%5?gold:light,x,y,1+i%2,1);
+      }
+      path([[20,42],[26,34],[36,37],[43,25]],rim,1);
     } else {
       for (let i=0;i<4;i++) {
         path([[32,13+i*4],[45-i*3,33],[32,51-i*4],[19+i*3,33]],i%2?rim:gold,1);

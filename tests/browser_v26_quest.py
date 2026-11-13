@@ -1,13 +1,14 @@
 """Browser regression against release HTML with test-only in-memory inspection hook."""
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from browser_runtime import launch
 root=Path(__file__).resolve().parent.parent
 html=(root/'JUGAR-SIN-INSTALAR.html').read_text(encoding='utf-8')
 hook='window.__test26={player,objects,enemies,interact,save,load,resetEnemies,getEchoes:()=>echoesCollected.slice(),getReward:()=>echoReward};'
 assert 'window.__ashenDiagnostics=()=>(' in html
 html=html.replace('window.__ashenDiagnostics=()=>(',hook+'\nwindow.__ashenDiagnostics=()=>(')
 with sync_playwright() as p:
- browser=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox','--disable-gpu'])
+ browser=launch(p.chromium)
  page=browser.new_page(viewport={'width':1280,'height':720})
  errors=[]
  page.on('pageerror',lambda e: errors.append(str(e)))
@@ -15,7 +16,7 @@ with sync_playwright() as p:
  page.locator('#play').click()
  page.wait_for_timeout(250)
  d=page.evaluate('window.__ashenDiagnostics()')
- assert d['version']=='3.1.1' and d['enemiesAlive']==9 and d['echoLocations']==3,d
+ assert d['version']=='3.2.0' and d['enemiesAlive']==9 and d['echoLocations']==3,d
  assert d['sceneryCount']==42,d
  page.keyboard.press('KeyM');assert page.locator('#map').is_visible();page.keyboard.press('KeyM')
  page.keyboard.press('Tab');assert page.locator('#inventory').is_visible();assert 'ECOS DEL VELO (0/3)' in page.locator('#items').inner_text();page.keyboard.press('Tab')

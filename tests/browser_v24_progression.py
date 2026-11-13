@@ -2,6 +2,7 @@
 from pathlib import Path
 from collections import deque
 from playwright.sync_api import sync_playwright
+from browser_runtime import launch
 root=Path(__file__).resolve().parent.parent
 js=(root/'src/game.js').read_text()
 html=(root/'JUGAR-SIN-INSTALAR.html').read_text()
@@ -10,13 +11,13 @@ hook="window.__test24={player,objects,enemies,grid,interact,save,load,hit,resetE
 assert 'window.__ashenDiagnostics=()=>(' in html
 html=html.replace('window.__ashenDiagnostics=()=>(',hook+'\nwindow.__ashenDiagnostics=()=>(')
 with sync_playwright() as p:
- b=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox','--disable-gpu'])
+ b=launch(p.chromium)
  page=b.new_page(viewport={'width':1280,'height':720});errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
  # Stable fake storage, enough to test JSON save/load, not actual browser persistence.
  page.evaluate("""() => { window.__memoryStorage={};Object.defineProperty(window,'localStorage',{configurable:true,value:{setItem(k,v){window.__memoryStorage[k]=v},getItem(k){return window.__memoryStorage[k]??null},removeItem(k){delete window.__memoryStorage[k]}}}) }""")
  page.set_content(html,wait_until='load');page.locator('#play').click()
  state=page.evaluate('''() => {const t=window.__test24;return {grid:t.grid,positions:t.objects.map(o=>({id:o.id,x:o.x,y:o.y})),enemies:t.enemies.map(e=>({id:e.id,x:e.x,y:e.y})),p:[t.player.x,t.player.y]}}''')
- grid=state['grid'];H=len(grid);W=len(grid[0]);assert H==25 and W==30
+ grid=state['grid'];H=len(grid);W=len(grid[0]);assert H==66 and W==72
  def reachable(walls):
   start=(int(state['p'][0]),int(state['p'][1]));q=deque([start]);seen={start}
   while q:
@@ -24,7 +25,7 @@ with sync_playwright() as p:
    for xx,yy in ((x+1,y),(x-1,y),(x,y+1),(x,y-1)):
     if 0<=xx<W and 0<=yy<H and (xx,yy) not in seen and (grid[yy][xx] not in walls):seen.add((xx,yy));q.append((xx,yy))
   return seen
- closed=reachable({1,2,3,4});gate=reachable({1,2,4});both=reachable({1,2})
+ closed=reachable({1,2,3,4,5});gate=reachable({1,2,4,5});both=reachable({1,2,5})
  obj={o['id']:(int(o['x']),int(o['y'])) for o in state['positions']}
  assert obj['key'] in closed,('key inaccessible',obj['key'])
  assert obj['lever'] in closed and obj['tablet'] in closed
@@ -49,7 +50,8 @@ with sync_playwright() as p:
  # Corrupt saved coordinates should not change gate wall state at load.
  page3=b.new_page();page3.evaluate('''s=>{const d=JSON.parse(s);d.x=-99;d.y=-99;window.__memoryStorage={'ashen-veil-rebirth-v2':JSON.stringify(d)};Object.defineProperty(window,'localStorage',{configurable:true,value:{setItem(k,v){window.__memoryStorage[k]=v},getItem(k){return window.__memoryStorage[k]??null},removeItem(k){delete window.__memoryStorage[k]}}})}''',saved)
  page3.set_content(html,wait_until='load')
- assert page3.evaluate('window.__test24.grid[10][19]')==3
+ assert page3.evaluate('window.__test24.grid[10][19]')==0
+ assert page3.evaluate('window.__test24.player.x')==4.8
  assert not errors and not err2,(errors,err2)
  print('PASS: reachable key/lever; gate blocks exit; secret wall blocks relic; unlock/defeat/altar/ending; memory-storage save roundtrip; invalid coordinate rollback; no JS errors')
  print('route:',len(closed),len(gate),len(both),'cells')

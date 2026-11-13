@@ -1,6 +1,6 @@
-# ASHEN VEIL 404 — Cosmic Horror Remaster v3.1.1
+# ASHEN VEIL 404 — Cartografía de los Ausentes v3.2.0 · candidata
 
-Mazmorra de horror cósmico medieval en primera persona. Cinco zonas conectadas, nueve encuentros y dos finales. La campana sumergida, los Ecos del Velo y los sellos alteran el desenlace.
+Mazmorra de horror cósmico medieval en primera persona. Cinco zonas originales, cinco ramales de exploración, nueve encuentros y dos finales. La campana sumergida, los Ecos del Velo y los sellos alteran el desenlace.
 
 ## Jugar
 
@@ -26,6 +26,12 @@ Pulsa **K** para guardar o usa el botón de pausa. El navegador asigna almacenes
 | Guardar y silenciar | K / U | Menú de pausa |
 
 En **Ajustes** puedes regular el volumen, reducir destellos y sacudidas, y activar un modo ligero con un límite de 30 imágenes por segundo.
+
+## Cartografía de los Ausentes
+
+Busca los pasadizos en la cripta, las catacumbas, la capilla, la nave y el santuario. En cada ramal, el mapa muestra su propio plano. El diario conserva las pistas que ya has escuchado y los objetos que has investigado. Puedes regresar por el mismo umbral. En pantallas táctiles, usa las flechas para desplazarte y los botones curvos para girar.
+
+Consulta [CAMBIOS.md](CAMBIOS.md) y [QA-v3.2.md](QA-v3.2.md). La v3.2 es una candidata. La duración de cuatro horas y el ritmo de una primera partida siguen pendientes.
 
 ## Cambios de v3.1.1
 

@@ -1,13 +1,14 @@
 """Targeted browser mechanics checks with a test-only injection, not included in release script."""
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from browser_runtime import launch
 root=Path(__file__).resolve().parent.parent
 html=(root/'JUGAR-SIN-INSTALAR.html').read_text()
 # Browser set_content runs on a restricted opaque origin. Test-only hook is never written to the release.
 hook='window.__test23={player,objects,traps,interact,updateTraps,save,load,dist,enemies,grid,nearObject,damagePlayer,get lever(){return leverUsed},get cache(){return cacheOpened},setTick(v){tick=v},resetCooldown(){trapCooldown=0}};'
 html=html.replace('window.__ashenDiagnostics=()=>(',hook+'\nwindow.__ashenDiagnostics=()=>(')
 with sync_playwright() as p:
- b=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox','--disable-gpu'])
+ b=launch(p.chromium)
  page=b.new_page(viewport={'width':1280,'height':720}); errs=[]
  page.on('pageerror',lambda e:errs.append(str(e)))
  page.set_content(html,wait_until='load');page.locator('#play').click()
