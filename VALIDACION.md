@@ -1,39 +1,47 @@
-# ASHEN VEIL 404 — REBIRTH v2.9.0 · Validación de candidata
+# Validación de la candidata Cosmic Horror Remaster v3.1.0
 
-## Verificado en esta versión
+Base de GitHub `main` en `6d76e26df98be7dd1c587113147380aed9029933`. Rama `codex/cosmic-horror-remaster`. Se mantuvieron el trazado, los mecanismos y las condiciones de ambos finales de v2.9.
 
-- Seis archivos principales de partida coincidían byte a byte entre el ZIP v2.8 y `main`, commit `f45448b`.
-- `node tests/campaign.mjs` recorrió desde cero los dos desenlaces con eventos de teclado y ratón y el bucle real de simulación. Comprueba llave, puerta, atajo, campana, frascos, jefe, final y reapertura de la partida. El arnés lee la posición de los enemigos para orientar al jugador. No modifica la posición, vida o progresión del juego.
-- El mismo arnés comprueba la carga de un guardado v2, pausa, diario y entrada de mando con un Gamepad estándar simulado. La persistencia se comprueba entre dos instancias del juego con un almacén simulado.
-- El escenario de la Cripta se renderizó y revisó en Canvas nativo. Se regeneró la edición autónoma y se comprobaron la sintaxis de ambos JavaScript, el lanzador Bash y las pruebas Python.
+| Ámbito | Resultado |
+| --- | --- |
+| Campaña automatizada | Dos recorridos desde la cripta por teclado y ratón con el bucle normal. El arnés lee posiciones para apuntar. Los recorridos no cambian posición, vida ni progresión directamente. |
+| Exploración y finales | Llave, puerta, altar, capilla, reliquia, atajo, dos ritos, tres ecos, campana y jefe. Se reanuda antes del Vigía y se vuelven a abrir ambos finales desde el guardado. |
+| Pruebas aisladas | Paredes y esquinas, alcance, magia obstruida, aguante, bloqueo frontal y por detrás, esquiva, patrones del Penitente y el Campanero, onda de la fase 2 del Vigía, trampas, osario, diario, muerte y recuperación única de cenizas. Estas pruebas preparan estados concretos. |
+| Guardados simulados | Carga de v2 anterior, progreso parcial, posición inaccesible con copia, archivo corrupto conservado e importe inválido de cenizas descartado. Ajustes y partida en claves distintas. |
+| Controles y arranque | Arranque, pausa, mapa, diario y entrada Gamepad estándar simulada. Sintaxis JS, Bash y Python. Se verificaron los recursos y elementos DOM de ambas ediciones y la correspondencia de los bloques JS del HTML autónomo con el código fuente. |
+| Capturas | Seis imágenes del Canvas nativo durante el recorrido. Muestran las cinco zonas y el Penitente, el Campanero y el Vigía. La interfaz HTML del navegador queda fuera de estas capturas. |
+| Lanzador Linux | Sintaxis y ejecución con aplicaciones sustitutas. Ruta con espacios, alternativa si falla `xdg-open` y mensaje si falta el HTML. |
+| Chromium | Diez pruebas Playwright intentadas. El navegador no arrancó debido a la restricción de sockets Unix. El Chrome compartido tampoco conectó con el servidor local. Cero pruebas Playwright aprobadas. |
 
-## Pendiente para publicación estable
+## Rendimiento
 
-- Chromium terminó al arrancar por una restricción del entorno al crear sockets Unix. Chrome compartido bloqueó la apertura del archivo local.
-- Validar en navegador el guardado entre sesiones, el HTML autónomo, los menús y el sonido. Probar los lanzadores en Windows y Linux y el mando, la interfaz y el rendimiento en Steam Deck. Falta también una partida humana completa para ajustar el ritmo y la dificultad.
+120 imágenes por modo en la cripta, con 16 imágenes de calentamiento y cambios de orientación. Muestras en Node y Canvas nativo a 480 × 270. El coste varió entre ejecuciones. El modo ligero reduce rayos y muestras. Los suelos y paredes comparten búfer y los sprites se dibujan por tramos visibles.
 
----
+| Modo | Medianas observadas | P95 observado |
+| --- | ---: | ---: |
+| Normal | 31,48–63,56 ms | 47,06–150,71 ms |
+| Ligero | 11,13–22,15 ms | 14,06–34,26 ms |
 
-## Registro histórico v2.8.0
+La medición de CPU excluye DOM, GPU y temporización del navegador. Los objetivos de 60/30 FPS en el navegador siguen pendientes de validación.
 
-Fecha: 12/11/2026. Ejecutado con Python Playwright + Chromium, HTML único insertado mediante `set_content` porque el navegador de esta infraestructura restringe `file://`.
+## Guardado
 
-## Pruebas automatizadas realizadas (9/9 PASS)
-- `browser_smoke.py`: arranque, movimiento, magia, estamina, mapa e inventario.
-- `browser_v22_regression.py`: animaciones y efectos.
-- `browser_v23_mechanics.py`: palanca, osario, tablillas y trampas.
-- `browser_v24_progression.py`: accesibilidad por fases, llave, puerta, secreto, jefe y final; restauración con almacenamiento simulado.
-- `browser_v25_art.py`: texturas y decoraciones.
-- `browser_v26_quest.py`: misión de los tres Ecos, recompensas únicas.
-- `browser_v27_combat.py`: dirección de golpes, patrones, jefe y ataque fuerte.
-- `browser_v28_seals.py`: dos sellos opcionales, premio único de 60 cenizas cada uno, atenuación de daño del jefe de 40 a 28 y diario de descubrimientos.
-- `browser_visual_regression.py`: giro de cámara, pausa e inventario.
+- Clave `ashen-veil-rebirth-v2`. Campos requeridos `version: 2`, `x` e `y` finitos.
+- Estado opcional de ángulo, punto de control, vida, cenizas, nivel, frascos, éter, objetos, puertas, enemigos, rituales, campana y final. Se validan las listas por ID. Los campos ausentes toman el valor inicial o se infieren, como ocurría en v2 con los frascos.
+- Una posición dentro de un muro se recupera desde el altar y conserva el original en `ashen-veil-rebirth-v2-backup`. Un archivo ilegible, de otra versión o sin coordenadas finitas permanece intacto y suspende la escritura de esa sesión.
+- Preferencias en `ashen-veil-remaster-options`.
 
-## Nueva mecánica
-Los sellos están en la Cripta del Despertar y la Capilla Oculta. Pulsa E cerca de cada uno. Dan +60 cenizas y reducen cada uno un 15 % los golpes del Vigía (acumulación aditiva; 30 % con ambos). Son opcionales: no impiden terminar la campaña. Los estados `sealsBroken` y `zonesVisited` se guardan conservando la misma clave v2; partidas anteriores sin esos campos se leen con valores vacíos.
+## Incidencias corregidas
 
-## Limitaciones
-- La prueba de progreso es una simulación por estados y rutas, no una partida humana íntegra hasta los créditos.
-- La restauración se ha probado con almacenamiento simulado; falta validar guardados en un navegador físico entre sesiones.
-- Los scripts de arranque han sido inspeccionados; no se han probado en máquinas físicas Windows y Linux Mint.
-- No se han medido los FPS en hardware real ni equilibrado la duración de una campaña de 1–2 horas.
+1. Las espinas anunciaban su fase activa después del daño. El aviso ahora la precede y comparte reloj con el mapa.
+2. El bloqueo protegía desde atrás. Ahora requiere apuntar hacia la amenaza y disponer de aguante. Ataques y magia comparten el raycasting de paredes y esquinas.
+3. El Testigo podía quedarse empujando contra paredes. Invierte su paso lateral al atascarse y los enemigos alertados elegibles buscan rutas alrededor de recodos.
+4. Las cenizas podían recuperarse a través de paredes y un importe inválido podía propagarse al saldo. Se comprueban visibilidad, formato y rango.
+5. El autoguardado podía sobrescribir un archivo ilegible. La escritura queda suspendida y el menú indica el motivo.
+6. El lanzador Linux se detenía al fallar `xdg-open`. Ahora prueba otros navegadores y muestra la ruta del HTML si no puede abrirlo.
+
+## Pendiente antes de fusionar
+
+- Pasar Playwright y comprobar persistencia real, HTML mediante `file://`, volumen y reproducción efectiva de sonido y escalado de la interfaz.
+- Probar Windows, Linux Mint y el mando físico. Medir FPS y memoria sostenida en escritorio y Steam Deck.
+- Hacer una partida humana completa para valorar equilibrio, audio, ritmo y legibilidad. La candidata muestra mejoras comprobables de arte y simulación. La puntuación de la experiencia queda pendiente de esta prueba.

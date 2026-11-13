@@ -10,7 +10,7 @@ with sync_playwright() as p:
     page.locator('#play').click()
     page.wait_for_timeout(250)
     d=page.evaluate('window.__ashenDiagnostics()')
-    assert d['version']=='2.9.0' and d['sceneryCount']==42 and d['enemiesAlive']==9,d
+    assert d['version']=='3.1.0' and d['sceneryCount']==42 and d['enemiesAlive']==9,d
     # Verify that a 2D frame actually differs between different view headings.
     a=page.locator('#screen').evaluate('(el)=>el.toDataURL()')
     page.keyboard.down('ArrowRight')
