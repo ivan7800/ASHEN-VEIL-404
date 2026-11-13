@@ -96,3 +96,20 @@ summary { cursor:pointer; font:600 .8rem system-ui,sans-serif; }
   #bossbar { bottom:62px; left:25%; right:25% }
   #interact { bottom:76px; max-width:48% }
 }
+
+/* v3.3: relief of blackened iron and ash, with readable focus and motion controls. */
+#menu.overlay:not(.is-paused){background:radial-gradient(ellipse at 50% 36%,#332727e8 0%,#0e1014f5 57%,#030405 95%);}
+#menu.overlay:not(.is-paused)::before{content:"";position:absolute;inset:1.2rem;pointer-events:none;border:1px solid #7b604c88;box-shadow:inset 0 0 0 3px #080809, inset 0 0 0 4px #63504666, inset 0 0 6rem #000;opacity:.85;}
+#menu.overlay:not(.is-paused)::after{content:"✦     ◇     ✦";position:absolute;bottom:1.8rem;color:#ad8268;font-size:.9rem;letter-spacing:.85rem;pointer-events:none;opacity:.7;}
+#menu .menu-content{position:relative;z-index:1;padding:clamp(1rem,3vh,2rem);border:1px solid #8a715088;background:linear-gradient(155deg,#101014ed,#191517d9 52%,#080a0deb);box-shadow:0 2rem 6rem #000d,inset 0 0 3rem #0008;}
+#menu .crest{stroke:#c2a274;filter:drop-shadow(0 0 12px #a36a55);animation:omen 5s ease-in-out infinite alternate;}
+#menu h1{color:#f2dfb7;text-shadow:0 3px 1px #080606,0 0 24px #8f514d;line-height:1.05;}
+#menu h1 em{color:#b88171;}
+#menu .edition{color:#d2af79;letter-spacing:.18em;}
+#menu #play{background:linear-gradient(#684438,#2c1d20);border:1px solid #c29a6c;box-shadow:inset 0 1px #e3bb8866,0 5px 16px #0009;}
+#menu #play:hover{background:linear-gradient(#825342,#3c2426);}
+#reticle.hit{color:#f7bc89;transform:translate(-50%,-50%) scale(1.8);}
+#weapon-slot{max-width:64px;overflow:hidden;text-overflow:clip;}
+@keyframes omen{to{opacity:.68;filter:drop-shadow(0 0 24px #c58b66)}}
+@media(prefers-reduced-motion:reduce){#menu .crest{animation:none}}
+@media(max-height:660px){#menu .menu-content{padding:.6rem 1rem}#menu .crest{height:40px}#menu .menu-content p{margin:.4rem auto}#menu .settings,#menu .help{margin:.3rem auto 0}}

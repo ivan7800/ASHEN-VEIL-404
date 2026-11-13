@@ -1,4 +1,4 @@
-# ASHEN VEIL 404 — Cartografía de los Ausentes v3.2.0 · candidata
+# ASHEN VEIL 404 — El peso del hierro v3.3.0
 
 Mazmorra de horror cósmico medieval en primera persona. Cinco zonas originales, cinco ramales de exploración, nueve encuentros y dos finales. La campana sumergida, los Ecos del Velo y los sellos alteran el desenlace.
 
@@ -31,7 +31,7 @@ En **Ajustes** puedes regular el volumen, reducir destellos y sacudidas, y activ
 
 Busca los pasadizos en la cripta, las catacumbas, la capilla, la nave y el santuario. En cada ramal, el mapa muestra su propio plano. El diario conserva las pistas que ya has escuchado y los objetos que has investigado. Puedes regresar por el mismo umbral. En pantallas táctiles, usa las flechas para desplazarte y los botones curvos para girar.
 
-Consulta [CAMBIOS.md](CAMBIOS.md) y [QA-v3.2.md](QA-v3.2.md). La v3.2 es una candidata. La duración de cuatro horas y el ritmo de una primera partida siguen pendientes.
+Consulta [CAMBIOS.md](CAMBIOS.md) y [QA-v3.3.md](QA-v3.3.md). La duración de cuatro horas y el ritmo de una primera partida siguen pendientes.
 
 ## Cambios de v3.1.1
 
@@ -125,3 +125,13 @@ Consulta `VALIDACION.md`. Para ejecutar pruebas de navegador necesitas Python, P
 - Indicador de sellos opcionales junto al objetivo cuando queda pendiente derrotar al Vigía.
 - Guardado compatible con v2.x, registrando sellos activados y zonas visitadas.
 - Pruebas adicionales de interacción, recompensa única, reducción de daño y restauración simulada.
+
+## El peso del hierro · v3.3
+
+- Espada de Ceniza: equilibrada y disponible desde el inicio.
+- Lanza del Cantero: hallazgo del Patio de la Sal, mayor alcance y arco estrecho.
+- Hacha de Raíz: hallazgo del Huerto, golpe lento y fuerte que rompe guardias.
+- Aguja de Marea: hallazgo de Sondas, alcance máximo a cambio de precisión y aguante.
+- Cambia entre armas encontradas con **C**, el botón **Arma** en pantalla táctil o la **cruceta derecha** del mando. El arma equipada y las adquiridas se conservan en el guardado v2.
+
+El menú inicial adopta hierro ennegrecido, ceniza y un marco ritual. Los hallazgos se ubican en ramales que ya forman parte del recorrido.

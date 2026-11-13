@@ -419,3 +419,18 @@ if(process.env.ASHEN_SWING_CAPTURE){
   }
   console.log('Light and heavy sword swing frames captured.');
 }
+
+const arsenal=game(new Map(),mockCanvas,true);arsenal.start();
+for(const [id,x,y] of [['spear',38.5,14.5],['axe',45.5,37.5],['needle',58.5,26.5]]){
+  assert(arsenal.probe.canMove(x,y),'Hallazgo inaccesible: '+id);
+  Object.assign(arsenal.probe.player,{x,y});
+  arsenal.probe.interact();
+  assert(arsenal.state().ownedWeapons.includes(id),'Arma no recogida: '+id);
+  assert.equal(arsenal.state().equippedWeapon,id);
+}
+arsenal.tap('KeyK');
+const arsenalReload=game(arsenal.storage);arsenalReload.start();
+assert.deepEqual(Array.from(arsenalReload.state().ownedWeapons),['sword','spear','axe','needle']);
+assert.equal(arsenalReload.state().equippedWeapon,'needle');
+arsenalReload.tap('KeyC');assert.equal(arsenalReload.state().equippedWeapon,'sword');
+console.log('Armas: hallazgos accesibles, recogida, equipado, ciclo y persistencia: OK');
