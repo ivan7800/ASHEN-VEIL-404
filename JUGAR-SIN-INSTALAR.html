@@ -1,8 +1,11 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#090c14"><title>ASHEN VEIL 404 — Cosmic Horror Remaster</title><style>:root{color-scheme:dark;font-family:Georgia,'Times New Roman',serif}*{box-sizing:border-box}body{margin:0;background:#070910;color:#e3dcc7;overflow:hidden}#game{width:100vw;height:100vh;position:relative;background:#080a0e}#screen{position:absolute;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;image-rendering:crisp-edges}#vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse,transparent 30%,rgba(0,0,0,.52) 90%)}#scanlines{position:absolute;inset:0;pointer-events:none;opacity:.15;background:repeating-linear-gradient(0deg,transparent 0 3px,#000 3px 4px)}#hud{position:absolute;inset:0;pointer-events:none;text-shadow:0 2px 4px #000}#hud .hud-top{display:flex;align-items:center;justify-content:space-between;padding:23px 30px;letter-spacing:3px;font-size:11px}#hud .brand{font-size:17px;letter-spacing:5px;font-weight:bold}#hud .brand span{color:#9c7183}#hud .brand small{font:10px sans-serif;color:#a79883}#location{color:#b7a88e;letter-spacing:4px}#ashes{font-size:18px;color:#f1cf91}#hud .souls{color:#d8b980}#reticle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:rgba(245,229,187,.7);font-size:13px}#hud .hud-bottom{position:absolute;bottom:35px;left:30px;right:30px;display:flex;justify-content:space-between;align-items:end}.vitals{width:220px}.vitals small{font:9px sans-serif;letter-spacing:2px;color:#b4a995}.meter{width:100%;height:10px;margin:6px 0;background:rgba(10,10,15,.86);border:1px solid #71695c;box-shadow:inset 0 0 5px black}.meter i{display:block;height:100%;width:100%;transition:width .15s}.hp i{background:linear-gradient(90deg,#75303f,#cc6872)}.sta i{background:linear-gradient(90deg,#34584e,#80af8a)}.mana i{background:linear-gradient(90deg,#374267,#8d94c5)}.equip{display:flex;gap:8px}.slot{width:62px;height:65px;border:1px solid #766b57;background:linear-gradient(135deg,rgba(8,9,15,.91),rgba(58,45,52,.72));display:flex;align-items:center;justify-content:center;flex-direction:column}.slot strong{font-size:28px;font-weight:normal;color:#d6c6ab}.slot small{font:9px sans-serif;letter-spacing:1px;color:#b7a995}#toast{position:absolute;top:23%;left:50%;transform:translateX(-50%);font-size:17px;color:#f0d7a9;letter-spacing:2px;text-align:center;max-width:70%;opacity:0;transition:opacity .25s}#interact{position:absolute;bottom:27%;left:50%;transform:translateX(-50%);padding:10px 20px;background:rgba(6,9,15,.85);border:1px solid #5a5361;color:#e8d9b4;font-size:13px;letter-spacing:1px}#target{position:absolute;top:85px;left:50%;transform:translateX(-50%);width:180px;text-align:center}#target strong{font-size:11px;letter-spacing:2px}#target .meter{height:5px}#bossbar{position:absolute;left:25%;right:25%;bottom:110px;text-align:center}#bossname{font-size:13px;letter-spacing:3px;color:#e8cfad}#bossbar .meter{height:12px}.enemy i{background:linear-gradient(90deg,#6b2947,#bb6587)}#map{position:absolute;right:24px;top:76px;width:205px;height:205px;background:rgba(5,7,11,.75);border:1px solid #605a55}#map canvas{width:100%;height:100%;image-rendering:pixelated}.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 45%,rgba(20,19,31,.83),rgba(4,5,10,.97));text-align:center;z-index:5}.overlay.hidden{display:none}.menu-content{max-width:800px;padding:32px}.sigil{font-size:44px;color:#b89b86;text-shadow:0 0 45px #8b456e}.eyebrow{font:10px sans-serif;letter-spacing:5px;color:#9e8493}.menu-content h1{font-size:clamp(50px,9vw,116px);font-weight:400;letter-spacing:12px;margin:20px 0 0;color:#ded4bf;text-shadow:0 4px 35px #190e19}.menu-content h1 em{font-style:normal;color:#b17b8f}.menu-content h1 sup{font:16px sans-serif;letter-spacing:2px;vertical-align:top}.edition{font:11px sans-serif;letter-spacing:9px;color:#a57e91}.menu-content p{font-size:17px;line-height:1.7;color:#a9a1a3;margin:30px auto;max-width:530px;font-style:italic}.menu-content button,.panel button{background:transparent;border:1px solid #9e7989;color:#e7d2bc;padding:15px 32px;letter-spacing:4px;font:12px Georgia;cursor:pointer;transition:.2s}.menu-content button:hover{background:#543448;border-color:#e4bac9}.controls{margin-top:35px;font:10px/2.1 sans-serif;letter-spacing:1px;color:#746f77}.panel{width:min(600px,90vw);padding:42px;background:#14131c;border:1px solid #66566b;box-shadow:0 15px 100px #000}.panel h2{font-weight:normal;letter-spacing:7px}.panel p{color:#aaa;font-size:13px}.panel #items{display:grid;gap:15px;text-align:left}.item{border:1px solid #494451;padding:16px;color:#cfbdac}.item b{display:block;letter-spacing:2px;margin-bottom:6px}.item small{color:#9b93a0}#footer{position:absolute;z-index:1;bottom:7px;width:100%;text-align:center;font:9px sans-serif;letter-spacing:2px;color:#736d74;pointer-events:none}@media(max-width:700px){#hud .hud-top{padding:13px;gap:8px}#location{font-size:8px}#hud .brand{font-size:12px;letter-spacing:2px}.hud-bottom{left:12px!important;right:12px!important;bottom:17px!important}.vitals{width:150px}.slot{width:42px;height:50px}.slot strong{font-size:19px}.menu-content h1{letter-spacing:2px}.controls{font-size:9px}.menu-content{padding:14px}}
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#090c14"><title>ASHEN VEIL 404 — La piedra y el umbral</title><style>:root{color-scheme:dark;font-family:Georgia,'Times New Roman',serif}*{box-sizing:border-box}body{margin:0;background:#070910;color:#e3dcc7;overflow:hidden}#game{width:100vw;height:100vh;position:relative;background:#080a0e}#screen{position:absolute;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;image-rendering:crisp-edges}#vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse,transparent 48%,rgba(0,0,0,.30) 95%)}#scanlines{position:absolute;inset:0;pointer-events:none;opacity:.085;background:repeating-linear-gradient(0deg,transparent 0 3px,#000 3px 4px)}#hud{position:absolute;inset:0;pointer-events:none;text-shadow:0 2px 4px #000}#hud .hud-top{display:flex;align-items:center;justify-content:space-between;padding:23px 30px;letter-spacing:3px;font-size:11px}#hud .brand{font-size:17px;letter-spacing:5px;font-weight:bold}#hud .brand span{color:#9c7183}#hud .brand small{font:10px sans-serif;color:#a79883}#location{color:#b7a88e;letter-spacing:4px}#ashes{font-size:18px;color:#f1cf91}#hud .souls{color:#d8b980}#reticle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:rgba(245,229,187,.7);font-size:13px}#hud .hud-bottom{position:absolute;bottom:35px;left:30px;right:30px;display:flex;justify-content:space-between;align-items:end}.vitals{width:220px}.vitals small{font:9px sans-serif;letter-spacing:2px;color:#b4a995}.meter{width:100%;height:10px;margin:6px 0;background:rgba(10,10,15,.86);border:1px solid #71695c;box-shadow:inset 0 0 5px black}.meter i{display:block;height:100%;width:100%;transition:width .15s}.hp i{background:linear-gradient(90deg,#75303f,#cc6872)}.sta i{background:linear-gradient(90deg,#34584e,#80af8a)}.mana i{background:linear-gradient(90deg,#374267,#8d94c5)}.equip{display:flex;gap:8px}.slot{width:62px;height:65px;border:1px solid #766b57;background:linear-gradient(135deg,rgba(8,9,15,.91),rgba(58,45,52,.72));display:flex;align-items:center;justify-content:center;flex-direction:column}.slot strong{font-size:28px;font-weight:normal;color:#d6c6ab}.slot small{font:9px sans-serif;letter-spacing:1px;color:#b7a995}#toast{position:absolute;top:23%;left:50%;transform:translateX(-50%);font-size:17px;color:#f0d7a9;letter-spacing:2px;text-align:center;max-width:70%;opacity:0;transition:opacity .25s}#interact{position:absolute;bottom:27%;left:50%;transform:translateX(-50%);padding:10px 20px;background:rgba(6,9,15,.85);border:1px solid #5a5361;color:#e8d9b4;font-size:13px;letter-spacing:1px}#target{position:absolute;top:85px;left:50%;transform:translateX(-50%);width:180px;text-align:center}#target strong{font-size:11px;letter-spacing:2px}#target .meter{height:5px}#bossbar{position:absolute;left:25%;right:25%;bottom:110px;text-align:center}#bossname{font-size:13px;letter-spacing:3px;color:#e8cfad}#bossbar .meter{height:12px}.enemy i{background:linear-gradient(90deg,#6b2947,#bb6587)}#map{position:absolute;right:24px;top:76px;width:205px;height:205px;background:rgba(5,7,11,.75);border:1px solid #605a55}#map canvas{width:100%;height:100%;image-rendering:pixelated}.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 45%,rgba(20,19,31,.83),rgba(4,5,10,.97));text-align:center;z-index:5}.overlay.hidden{display:none}.menu-content{max-width:800px;padding:32px}.sigil{font-size:44px;color:#b89b86;text-shadow:0 0 45px #8b456e}.eyebrow{font:10px sans-serif;letter-spacing:5px;color:#9e8493}.menu-content h1{font-size:clamp(50px,9vw,116px);font-weight:400;letter-spacing:12px;margin:20px 0 0;color:#ded4bf;text-shadow:0 4px 35px #190e19}.menu-content h1 em{font-style:normal;color:#b17b8f}.menu-content h1 sup{font:16px sans-serif;letter-spacing:2px;vertical-align:top}.edition{font:11px sans-serif;letter-spacing:9px;color:#a57e91}.menu-content p{font-size:17px;line-height:1.7;color:#a9a1a3;margin:30px auto;max-width:530px;font-style:italic}.menu-content button,.panel button{background:transparent;border:1px solid #9e7989;color:#e7d2bc;padding:15px 32px;letter-spacing:4px;font:12px Georgia;cursor:pointer;transition:.2s}.menu-content button:hover{background:#543448;border-color:#e4bac9}.controls{margin-top:35px;font:10px/2.1 sans-serif;letter-spacing:1px;color:#746f77}.panel{width:min(600px,90vw);padding:42px;background:#14131c;border:1px solid #66566b;box-shadow:0 15px 100px #000}.panel h2{font-weight:normal;letter-spacing:7px}.panel p{color:#aaa;font-size:13px}.panel #items{display:grid;gap:15px;text-align:left}.item{border:1px solid #494451;padding:16px;color:#cfbdac}.item b{display:block;letter-spacing:2px;margin-bottom:6px}.item small{color:#9b93a0}#footer{position:absolute;z-index:1;bottom:7px;width:100%;text-align:center;font:9px sans-serif;letter-spacing:2px;color:#736d74;pointer-events:none}@media(max-width:700px){#hud .hud-top{padding:13px;gap:8px}#location{font-size:8px}#hud .brand{font-size:12px;letter-spacing:2px}#hud .hud-bottom{left:12px;right:12px;bottom:17px}.vitals{width:150px}.slot{width:42px;height:50px}.slot strong{font-size:19px}.menu-content h1{letter-spacing:2px}.controls{font-size:9px}.menu-content{padding:14px}}
 
 /* v2.4: clear objective without obscuring central sightlines */
-#objective{position:absolute;top:48px;left:50%;transform:translateX(-50%);width:max-content;max-width:82%;padding:5px 12px;border:1px solid rgba(203,183,162,.25);border-radius:2px;background:rgba(12,10,20,.62);color:#d9c1a8;font:600 clamp(9px,1.1vw,12px)/1.4 monospace;letter-spacing:.07em;text-align:center;pointer-events:none;text-shadow:0 1px 3px #000}
-@media(max-width:640px){#objective{top:56px;font-size:9px}}
+#readouts {
+  position:absolute; top:48px; left:50%; transform:translateX(-50%);
+  width:min(82%,44rem); display:grid; justify-items:center; gap:5px;
+}
+#objective{width:max-content;max-width:100%;padding:5px 12px;border:1px solid rgba(203,183,162,.25);border-radius:2px;background:rgba(12,10,20,.62);color:#d9c1a8;font:600 clamp(9px,1.1vw,12px)/1.4 monospace;letter-spacing:.07em;text-align:center;pointer-events:none;text-shadow:0 1px 3px #000}
 
 /* The title, pause and journal remain usable at 1280×800 and on shorter windows. */
 .overlay { overflow:auto; align-items:safe center; background:radial-gradient(ellipse at 50% 43%,rgba(45,30,51,.91),rgba(5,7,14,.98) 76%); }
@@ -16,7 +19,7 @@
 #inventory #items { grid-template-columns:repeat(auto-fit,minmax(min(100%,14rem),1fr)); gap:.65rem; }
 #inventory .item { padding:.75rem; }
 #inventory-close { margin-top:1rem; }
-button:focus-visible { outline:2px solid #ead0a7; outline-offset:4px; }
+button:focus-visible, summary:focus-visible { outline:2px solid #ead0a7; outline-offset:4px; }
 
 /* Cosmic Horror Remaster */
 :root { --parchment:#f0dfc4; --brass:#bfa17b; --violet:#c28d9d; }
@@ -43,34 +46,63 @@ summary { cursor:pointer; font:600 .8rem system-ui,sans-serif; }
 #volume { width:clamp(65px,17vw,112px); }
 #inventory .panel { overscroll-behavior:contain; background:#151220; }
 #inventory h2 { letter-spacing:.08em; }
-#inventory .item small { color:#c5b8c6; }
+#inventory .item small { color:#d9ccd2; font: .84rem/1.55 system-ui,sans-serif; }
 #hud .hud-top,#hud .hud-bottom { color:var(--parchment); }
-#target { top:clamp(79px,13vh,106px); }
-#map { width:min(36vw,240px); height:auto; aspect-ratio:6/5; top:clamp(83px,14vh,113px); }
+#target { position:static; transform:none; }
+#map { width:min(38vw,240px); height:auto; top:clamp(83px,14vh,113px); }
 #game[data-effects="reduced"] #scanlines { display:none; }
 #game[data-effects="reduced"] .meter i,#game[data-effects="reduced"] #toast { transition:none; }
 @media(max-width:500px) {
   #location { letter-spacing:.12em; }
   #hud .hud-top { letter-spacing:.12em; }
-  #target { top:104px; }
-  #map { top:126px; }
   #bossbar { left:14%; right:14%; bottom:78px; }
   #bossname { font-size:10px; letter-spacing:.1em; }
-  #toast { font-size:12px; top:24%; }
   #interact { font-size:11px; max-width:80%; width:max-content; text-align:center; }
 }
 #map { display:flex; flex-direction:column-reverse; }
 #map[hidden] { display:none; }
 #map canvas { height:auto; aspect-ratio:6/5; }
-.map-legend { display:flex; justify-content:center; flex-wrap:wrap; gap:3px 8px; padding:3px; background:#0c0e16; font:9px system-ui,sans-serif; }
-.map-legend span::before { content:""; display:inline-block; width:5px; height:5px; margin-right:3px; vertical-align:1px; background:#e5c78e; }
-.map-legend span:first-child::before { background:#9ad3b2; }
-.map-legend span:nth-child(2)::before { background:#ce97dc; }
-
-#encounter-warning {
-  position:absolute; top:clamp(120px,26%,195px); left:50%; transform:translateX(-50%);
-  max-width:85%; width:max-content; text-align:center; padding:.4em .7em;
-  color:#ffe0b9; background:#17121fe8; font: .83rem/1.3 system-ui,sans-serif;
+#map {
+  background:#110f18;
+  border-color:#8d735f;
+  box-shadow:0 4px 16px #000b,inset 0 0 0 2px #211a24;
+}
+.map-legend {
+  display:flex; justify-content:center; flex-wrap:wrap; gap:3px 9px;
+  padding:.35rem .25rem; background:#1b1420; color:#e9d9c3;
+  font:600 .63rem/1.3 system-ui,sans-serif;
+}
+.map-legend span::before {
+  content:""; display:inline-block; width:6px; height:6px;
+  margin-right:4px; vertical-align:1px; background:#e5c78e;
+}
+.map-legend .legend-altar::before {
+  background:#9ad3b2; clip-path:polygon(33% 0,67% 0,67% 33%,100% 33%,100% 67%,67% 67%,67% 100%,33% 100%,33% 67%,0 67%,0 33%,33% 33%);
+}
+.map-legend .legend-seal::before { background:#ce97dc; transform:rotate(45deg); }
+.map-legend .legend-passage::before { background:#a7c9dc; clip-path:polygon(0 0,100% 50%,0 100%); }
+#notices {
+  width:min(100%,34rem); margin-top:14px; display:grid; justify-items:center; gap:4px; text-align:center;
+}
+#encounter-warning,#toast {
+  position:static; transform:none; padding:.36em .65em; max-width:100%;
+  color:#f3dcc0; background:#17121fdd; border-inline:1px solid #987761;
+  font:600 clamp(.72rem,1.45vw,.87rem)/1.38 system-ui,sans-serif; letter-spacing:.045em;
+}
+#encounter-warning { color:#ffe7c4; }
+#toast:empty { display:none; }
+#reticle.hit { color:#ffe1b7; text-shadow:0 0 5px #29202c; }
+#reticle.hit::after {
+  content:""; position:absolute; inset:-1px -3px;
+  border-block:1px solid currentColor; transform:rotate(-45deg);
+}
+#reticle.hit[data-contact="guard"] { color:#dfba7b; }
+#reticle.hit[data-contact="guard"]::after {
+  inset:1px -2px; border:1px solid currentColor; transform:none;
+}
+#reticle.hit[data-contact="resonance"] { color:#ecd0ff; }
+#reticle.hit[data-contact="resonance"]::after {
+  inset:-2px -3px; border:1px solid currentColor; transform:rotate(45deg);
 }
 #touch-controls[hidden] { display:none }
 #touch-controls {
@@ -85,17 +117,7 @@ summary { cursor:pointer; font:600 .8rem system-ui,sans-serif; }
   color:#f4dfd9; background:#211629ec; border:1px solid #826675; border-radius:4px;
 }
 #game:has(.overlay:not(.hidden)) #touch-controls { display:none }
-@media (pointer:coarse) {
-  #hud .hud-bottom { bottom:186px }
-  #bossbar { bottom:236px }
-  #interact { bottom:245px }
-}
-
-@media (pointer:coarse) and (orientation:landscape) {
-  #hud .hud-bottom { bottom:13px; left:18%; right:24% }
-  #bossbar { bottom:62px; left:25%; right:25% }
-  #interact { bottom:76px; max-width:48% }
-}
+#game:has(.overlay:not(.hidden)) #hud { visibility:hidden; }
 
 /* v3.3: relief of blackened iron and ash, with readable focus and motion controls. */
 #menu.overlay:not(.is-paused){background:radial-gradient(ellipse at 50% 36%,#332727e8 0%,#0e1014f5 57%,#030405 95%);}
@@ -103,26 +125,124 @@ summary { cursor:pointer; font:600 .8rem system-ui,sans-serif; }
 #menu.overlay:not(.is-paused)::after{content:"✦     ◇     ✦";position:absolute;bottom:1.8rem;color:#ad8268;font-size:.9rem;letter-spacing:.85rem;pointer-events:none;opacity:.7;}
 #menu .menu-content{position:relative;z-index:1;padding:clamp(1rem,3vh,2rem);border:1px solid #8a715088;background:linear-gradient(155deg,#101014ed,#191517d9 52%,#080a0deb);box-shadow:0 2rem 6rem #000d,inset 0 0 3rem #0008;}
 #menu .crest{stroke:#c2a274;filter:drop-shadow(0 0 12px #a36a55);animation:omen 5s ease-in-out infinite alternate;}
-#menu h1{color:#f2dfb7;text-shadow:0 3px 1px #080606,0 0 24px #8f514d;line-height:1.05;}
+#menu h1{font-size:clamp(1.85rem,5.85vw,4.65rem);letter-spacing:.085em;color:#f2dfb7;text-shadow:0 3px 1px #080606,0 0 24px #8f514d;line-height:1.05;}
 #menu h1 em{color:#b88171;}
 #menu .edition{color:#d2af79;letter-spacing:.18em;}
 #menu #play{background:linear-gradient(#684438,#2c1d20);border:1px solid #c29a6c;box-shadow:inset 0 1px #e3bb8866,0 5px 16px #0009;}
 #menu #play:hover{background:linear-gradient(#825342,#3c2426);}
-#reticle.hit{color:#f7bc89;transform:translate(-50%,-50%) scale(1.8);}
-#weapon-slot{max-width:64px;overflow:hidden;text-overflow:clip;}
+
+
 @keyframes omen{to{opacity:.68;filter:drop-shadow(0 0 24px #c58b66)}}
 @media(prefers-reduced-motion:reduce){#menu .crest{animation:none}}
 @media(max-height:660px){#menu .menu-content{padding:.6rem 1rem}#menu .crest{height:40px}#menu .menu-content p{margin:.4rem auto}#menu .settings,#menu .help{margin:.3rem auto 0}}
-</style></head><body><main id="game"><canvas id="screen" width="480" height="270" aria-label="Mazmorra 2.5D en primera persona"></canvas><div id="vignette"></div><div id="scanlines"></div><section id="hud"><div class="hud-top"><div class="brand">ASHEN <span>VEIL</span> <small>404</small></div><div id="location">CRIPTA DEL DESPERTAR</div><div class="souls">✦ <span id="ashes">0</span> CENIZAS</div></div><div id="objective" role="status">OBJETIVO: ENCUENTRA LA LLAVE DE HUESO</div><div id="target" hidden><strong id="targetname"></strong><div class="meter enemy"><i id="targetbar"></i></div></div><div class="hud-bottom"><div class="vitals"><div class="meter hp"><i id="hpbar"></i></div><div class="meter sta"><i id="stbar"></i></div><div class="meter mana"><i id="mpbar"></i></div><small>VIDA · AGUANTE · ÉTER</small></div><div class="equip"><div class="slot"><strong>⚔</strong><small id="weapon-slot">ESPADA</small></div><div class="slot"><strong>✧</strong><small id="spellcount">3</small></div><div class="slot"><strong>✚</strong><small id="flasks">3</small></div></div></div><div id="encounter-warning" role="status" hidden></div><div id="toast" aria-live="polite"></div><div id="interact" hidden></div><div id="reticle">✦</div><div id="map" hidden><div class="map-legend"><span>Altar</span><span>Sello</span><span>Objeto</span></div></div><div id="bossbar" hidden><div id="bossname">EL VIGÍA DE LAS PROFUNDIDADES</div><div class="meter enemy"><i id="bossfill"></i></div></div></section><section id="menu" class="overlay" aria-label="Menú del juego"><div class="menu-content"><svg class="crest" viewBox="0 0 100 84" aria-hidden="true">
+
+/* The iron frame and the journal share the game's existing brass and slate colors. */
+#menu.overlay:not(.is-paused) {
+  background:radial-gradient(ellipse at 50% 34%,#2b2229c4 0%,#100d14e6 58%,#06070af5 96%);
+}
+#menu .menu-content {
+  background:linear-gradient(150deg,#120e17f5,#211922f0 52%,#0e1119f2);
+  box-shadow:0 1.4rem 4rem #000d,inset 0 0 0 3px #110e17,inset 0 0 0 4px #514052;
+}
+#menu #play { min-height:46px; padding:.7rem 1.1rem; }
+#menu .menu-actions button, #inventory-close { min-height:42px; }
+.settings summary,.help summary {
+  min-height:30px; padding:.36em .25em; outline-offset:4px;
+}
+#game[data-effects="reduced"] #menu .crest { animation:none; }
+#game[data-effects="reduced"] button { transition:none; }
+#inventory .panel {
+  width:min(890px,100%); border-color:#826952;
+  display:grid; grid-template-rows:auto auto minmax(0,1fr) auto; overflow:hidden;
+  background:linear-gradient(153deg,#1e1622,#100e18 68%);
+  box-shadow:0 12px 40px #000d,inset 0 0 0 3px #120e17;
+}
+#inventory .item { background:#15121d; border-color:#5e4b53; border-left:2px solid #8b7162; }
+#inventory .item b { color:#ecd5b5; font-size:.82rem; letter-spacing:.07em; }
+#inventory #items {
+  overflow:auto; overscroll-behavior:contain; padding-right:.25rem; align-content:start;
+  scrollbar-color:#987561 #15121d;
+}
+#inventory #items:focus-visible { outline:1px solid #b69b86; outline-offset:3px; }
+#inventory-close { justify-self:center; background:#332434; }
+#hud .hud-top { background:linear-gradient(#0b0a12e8,#0b0a1200); }
+.vitals { min-width:0; max-width:min(40vw,220px); }
+.vitals small { color:#e2d0bd; }
+.slot { height:54px; }
+.slot small { color:#f0d8bc; }
+.slot strong { font-size:20px; }
+.slot-weapon { border-color:#ac8b64; }
+#weapon-icon {
+  width:19px; height:24px; margin-bottom:2px; background:#e6d0b6;
+  clip-path:polygon(49% 0,66% 17%,59% 69%,81% 72%,81% 80%,60% 80%,57% 100%,43% 100%,44% 80%,22% 80%,22% 71%,42% 69%,38% 17%);
+}
+#weapon-icon[data-weapon="spear"] {
+  clip-path:polygon(50% 0,75% 40%,58% 56%,55% 100%,45% 100%,42% 56%,25% 40%);
+}
+#weapon-icon[data-weapon="axe"] {
+  clip-path:polygon(88% 12%,75% 51%,58% 51%,54% 100%,42% 100%,44% 51%,16% 60%,2% 48%,5% 18%,31% 8%,48% 22%,58% 13%);
+}
+#weapon-icon[data-weapon="needle"] {
+  background:#c1dcd7;
+  clip-path:polygon(50% 0,59% 38%,81% 54%,61% 70%,55% 100%,45% 100%,40% 70%,19% 54%,41% 38%,49% 57%,62% 54%,50% 46%,38% 54%,50% 63%,59% 56%);
+}
+@media (max-width:700px), (pointer:coarse) {
+  #hud .hud-top { gap:6px; padding:10px 11px; }
+  #hud .brand { font-size:.67rem; white-space:nowrap; }
+  #hud .brand small { font-size:.59rem; }
+  #location { font:600 clamp(.58rem,2vw,.74rem)/1.32 system-ui,sans-serif; letter-spacing:.06em; text-align:center; }
+  #hud .souls { font:600 .63rem/1.35 system-ui,sans-serif; white-space:nowrap; }
+  #ashes { font-size:.86rem; }
+  #readouts { top:40px; width:88%; }
+  #objective { font-size:.67rem; line-height:1.32; }
+  #target strong { font-size:.64rem; letter-spacing:.09em; }
+  #notices { margin-top:9px; }
+  #map { top:105px; right:8px; }
+  #interact { padding:.36em .65em; font:600 .72rem/1.3 system-ui,sans-serif; }
+  .vitals .meter { height:7px; margin:4px 0; }
+  .vitals small { font-size:.56rem; letter-spacing:.055em; }
+  .equip { gap:4px; }
+  .slot { width:41px; height:39px; }
+  .slot strong { font-size:16px; }
+  .slot small { font-size:.53rem; letter-spacing:.025em; }
+  #weapon-icon { width:14px; height:18px; }
+}
+@media (pointer:coarse) {
+  #game { --touch-height:calc(190px + max(5px,env(safe-area-inset-bottom))); }
+  .touch-grid button { font-size:.72rem; }
+}
+@media (pointer:coarse) and (orientation:portrait) {
+  #game { --scene-offset:clamp(22px,5dvh,44px); }
+  #screen { object-position:50% calc(50% - var(--scene-offset)); }
+  #reticle { top:calc(50% - var(--scene-offset)); }
+  #hud .hud-bottom { bottom:calc(var(--touch-height) + 10px); }
+  #bossbar { bottom:calc(var(--touch-height) + 70px); }
+  #interact { bottom:calc(50% + var(--scene-offset) - min(28.125vw,18dvh) + 7px); }
+  #map { width:min(40vw,182px); top:146px; }
+}
+@media (pointer:coarse) and (orientation:landscape) {
+  #hud .hud-top { padding-inline:15px; }
+  #hud .hud-bottom { left:153px; right:173px; bottom:10px; gap:7px; }
+  #hud .vitals { width:min(25vw,184px); }
+  #bossbar { left:max(154px,27%); right:max(169px,27%); bottom:60px; }
+  #interact { bottom:69px; max-width:42%; }
+  #map { left:8px; right:auto; top:76px; width:clamp(80px,calc(100dvh - 215px),min(20vw,146px)); }
+}
+@media (pointer:coarse) and (max-height:450px) {
+  #menu .menu-content { padding:.6rem .8rem; }
+  #menu .crest { height:30px; }
+  #inventory .panel { padding:.85rem; }
+}
+</style></head><body><main id="game"><canvas id="screen" width="480" height="270" aria-label="Mazmorra 2.5D en primera persona"></canvas><div id="vignette"></div><div id="scanlines"></div><section id="hud"><div class="hud-top"><div class="brand">ASHEN <span>VEIL</span> <small>404</small></div><div id="location">CRIPTA DEL DESPERTAR</div><div class="souls">✦ <span id="ashes">0</span> CENIZAS</div></div><div id="readouts"><div id="objective" role="status">OBJETIVO: ENCUENTRA LA LLAVE DE HUESO</div><div id="target" hidden><strong id="targetname"></strong><div class="meter enemy"><i id="targetbar"></i></div></div><div id="notices"><div id="encounter-warning" role="status" hidden></div><div id="toast" aria-live="polite"></div></div></div><div class="hud-bottom"><div class="vitals"><div class="meter hp"><i id="hpbar"></i></div><div class="meter sta"><i id="stbar"></i></div><div class="meter mana"><i id="mpbar"></i></div><small>VIDA · AGUANTE · ÉTER</small></div><div class="equip"><div class="slot slot-weapon"><span id="weapon-icon" data-weapon="sword" aria-hidden="true"></span><small id="weapon-slot">ESPADA</small></div><div class="slot"><strong>✧</strong><small id="spellcount">3</small></div><div class="slot"><strong>✚</strong><small id="flasks">3</small></div></div></div><div id="interact" hidden></div><div id="reticle">✦</div><div id="map" hidden><div class="map-legend"><span class="legend-altar">Altar</span><span class="legend-seal">Sello</span><span>Objeto</span><span class="legend-passage">Paso</span></div></div><div id="bossbar" hidden><div id="bossname">EL VIGÍA DE LAS PROFUNDIDADES</div><div class="meter enemy"><i id="bossfill"></i></div></div></section><section id="menu" class="overlay" aria-label="Menú del juego"><div class="menu-content"><svg class="crest" viewBox="0 0 100 84" aria-hidden="true">
 <path d="M16 77V38Q20 22 50 5Q80 22 84 38V77M29 77V44Q32 32 50 21Q68 32 71 44V77M8 77H92M50 14V32M50 57V76M37 68H63" />
-<path d="M19 46Q50 24 81 46Q50 67 19 46Z" /><path d="M50 34L57 46L50 57L43 46Z" class="crest-eye" /></svg><h2 class="pause-heading">Pausa</h2><h1>ASHEN <em>VEIL</em><sup>404</sup></h1><div class="edition">LA VOZ DEL UMBRAL · V3.5</div><p>La campana sonó bajo el agua. Desde entonces, la piedra recuerda tu nombre.</p><button id="play">DESPERTAR EN LA CRIPTA</button><div class="menu-actions"><button id="save-game" hidden>Guardar partida</button><button id="mute" aria-pressed="false">Silenciar</button></div><details class="settings">
+<path d="M19 46Q50 24 81 46Q50 67 19 46Z" /><path d="M50 34L57 46L50 57L43 46Z" class="crest-eye" /></svg><h2 class="pause-heading">Pausa</h2><h1>ASHEN <em>VEIL</em><sup>404</sup></h1><div class="edition">LA PIEDRA Y EL UMBRAL · V3.6</div><p>La campana sonó bajo el agua. Desde entonces, la piedra recuerda tu nombre.</p><button id="play">DESPERTAR EN LA CRIPTA</button><div class="menu-actions"><button id="save-game" hidden>Guardar partida</button><button id="mute" aria-pressed="false">Silenciar</button></div><details class="settings">
 <summary>Ajustes</summary>
 <div class="settings-fields">
 <label for="volume">Volumen<input id="volume" type="range" min="0" max="100" step="5" value="70"></label>
 <label><input id="quiet-effects" type="checkbox"> Reducir destellos y sacudidas</label>
 <label><input id="economy" type="checkbox"> Modo ligero (hasta 30 FPS)</label>
 </div></details>
-<p id="save-status" role="status"></p><details class="help"><summary>Controles</summary><div class="controls">WASD MOVER · RATÓN MIRAR · CLIC / H ATACAR · J GOLPE FUERTE · C CAMBIAR ARMA · DERECHO BLOQUEAR<br>SHIFT CORRER · ESPACIO ESQUIVAR · E INTERACTUAR · F CURAR · Q MAGIA<br>TAB INVENTARIO · M MAPA · L SUBIR NIVEL EN ALTAR · ESC PAUSA · K GUARDAR<br>MANDO: STICKS MOVER Y MIRAR · A USAR · B ESQUIVAR · X GOLPE FUERTE · Y CURAR<br>RT ATACAR · LT BLOQUEAR · RB MAGIA · START PAUSA · SELECT INVENTARIO · CRUCETA DERECHA ARMA</div></details></div></section><section id="inventory" class="overlay hidden"><div class="panel"><div class="eyebrow">EL PESO DE LO QUE LLEVAS</div><h2>Inventario y diario</h2><div id="items"></div><button id="inventory-close">Cerrar inventario</button></div></section><section id="ending" class="overlay hidden"><div class="menu-content"><div class="sigil">✧</div><div class="eyebrow">EL SILENCIO HA SIDO ROTO</div><h1 id="ending-title"></h1><p id="ending-story"></p><button id="again">VOLVER A DESPERTAR</button></div></section><section id="death" class="overlay hidden" aria-labelledby="death-title"><div class="menu-content">
+<p id="save-status" role="status"></p><details class="help"><summary>Controles</summary><div class="controls">WASD MOVER · RATÓN MIRAR · CLIC / H ATACAR · J GOLPE FUERTE · C CAMBIAR ARMA · DERECHO BLOQUEAR<br>SHIFT CORRER · ESPACIO ESQUIVAR · E INTERACTUAR · F CURAR · Q MAGIA<br>TAB INVENTARIO · M MAPA · L SUBIR NIVEL EN ALTAR · ESC PAUSA · K GUARDAR<br>MANDO: STICKS MOVER Y MIRAR · A USAR · B ESQUIVAR · X GOLPE FUERTE · Y CURAR<br>RT ATACAR · LT BLOQUEAR · RB MAGIA · START PAUSA · SELECT INVENTARIO · CRUCETA DERECHA ARMA</div></details></div></section><section id="inventory" class="overlay hidden"><div class="panel"><div class="eyebrow">EL PESO DE LO QUE LLEVAS</div><h2>Inventario y diario</h2><div id="items" role="region" aria-label="Contenido del inventario y diario" tabindex="0"></div><button id="inventory-close">Cerrar inventario</button></div></section><section id="ending" class="overlay hidden"><div class="menu-content"><div class="sigil">✧</div><div class="eyebrow">EL SILENCIO HA SIDO ROTO</div><h1 id="ending-title"></h1><p id="ending-story"></p><button id="again">VOLVER A DESPERTAR</button></div></section><section id="death" class="overlay hidden" aria-labelledby="death-title"><div class="menu-content">
 <h2 id="death-title">La cripta te reclama</h2>
 <p>Despiertas en el último altar. Las cenizas que llevabas esperan donde caíste.</p>
 <button id="respawn">Volver al altar</button>
@@ -305,11 +425,14 @@ const VeilArt = (() => {
       path([[36,12],[35,87],[43,91]],edge,2);
       rect(metal,32,29,7,3);
     } else if (kind === 'crane') {
-      rect(dark,9,91,43,9);
-      path([[14,95],[18,23],[26,17],[34,93]],stone);
-      path([[22,26],[57,12],[66,15],[64,21],[23,33]],edge);
-      path([[19,76],[43,24]],metal,3);
-      path([[57,19],[57,52],[52,56],[56,58]],metal,2);
+      path([[6,98],[13,89],[38,89],[45,98]],dark);
+      path([[15,94],[17,21],[24,17],[30,92]],stone);
+      path([[19,91],[20,24],[24,23],[24,92]],edge,2);
+      path([[19,24],[58,13],[66,16],[63,21],[21,31]],edge);
+      path([[23,53],[41,26],[50,22]],metal,2);
+      path([[58,19],[58,56],[51,62],[53,67],[58,67]],metal,2);
+      rect(dark,16,58,15,10);
+      rect(metal,21,59,3,6);
     } else if (kind === 'basin') {
       path([[8,71],[57,71],[66,80],[57,95],[14,95],[5,81]],stone);
       path([[10,74],[56,74],[60,79],[53,83],[14,83]],dark);
@@ -321,32 +444,114 @@ const VeilArt = (() => {
       path([[20,52],[35,45],[49,51],[47,57],[34,52],[23,58]],metal);
       rect(stone,19,94,34,6);
     } else if (kind === 'chair') {
-      for (const x of [21,49]) rect(edge,x,51,4,49);
-      rect(stone,21,55,32,4);
-      for (const x of [29,39]) rect(metal,x,58,3,12);
-      path([[22,72],[52,72],[58,78],[52,84],[17,84],[13,79]],edge);
+      path([[17,96],[21,79],[18,39],[24,35],[29,71],[46,72],[48,35],[54,38],[54,82],[56,98]],dark);
+      for (const x of [21,49]) rect(edge,x,39,4,53);
+      rect(stone,21,41,32,7);
+      rect(metal,26,41,20,1);
+      for (const x of [29,39]) rect(edge,x,45,3,24);
+      path([[22,69],[51,69],[58,78],[51,84],[17,84],[13,79]],edge);
+      path([[22,71],[48,71],[45,76],[18,77]],metal,1);
       rect(stone,15,82,4,18); rect(stone,49,82,4,18);
     } else if (kind === 'hollowTree') {
-      path([[15,100],[29,85],[28,63],[23,49],[15,44],[10,15],[19,33],[31,44],
-        [32,16],[44,3],[39,42],[55,29],[63,12],[60,38],[46,56],[43,85],[57,100]],stone);
-      path([[33,85],[31,66],[39,56],[40,78]],dark);
-      path([[29,96],[34,87],[40,93],[48,99]],edge,3);
+      path([[5,99],[24,88],[28,65],[22,52],[11,48],[3,31],[10,35],[18,43],
+        [17,24],[11,8],[23,16],[27,40],[35,48],[36,20],[32,11],[40,2],[45,13],
+        [42,40],[52,34],[55,18],[66,9],[63,26],[58,43],[48,53],[45,72],[49,89],[65,99]],stone);
+      path([[25,93],[31,76],[31,62],[39,54],[43,61],[39,78],[37,90]],dark);
+      path([[37,55],[43,61],[39,78],[39,89],[48,98]],edge,2);
+      path([[11,97],[27,89],[33,80],[28,65],[25,52],[17,44]],edge,2);
+      path([[39,24],[38,44],[47,46],[58,29]],metal,1);
+      rect(metal,42,80,2,3);
     } else if (kind === 'weight') {
-      rect(metal,33,3,4,49);
-      for (let y=8; y<51; y+=7) rect(edge,31,y,8,2);
-      path([[19,50],[53,50],[57,61],[51,72],[21,72],[15,61]],stone);
-      rect(edge,22,54,28,3);
-      rect(mortar,17,92,36,8);
-      rect(dark,24,87,24,7);
-    } else if (kind === 'mirror') {
+      rect(dark,10,22,9,73); rect(edge,12,25,3,69);
+      rect(dark,54,22,9,73); rect(edge,57,25,3,69);
+      rect(stone,10,22,53,7); rect(metal,12,22,48,2);
+      rect(metal,35,27,3,40);
+      for (let y=30; y<61; y+=6) rect(edge,33,y,7,2);
+      path([[23,55],[48,55],[53,62],[47,75],[24,75],[19,63]],stone);
+      rect(edge,25,59,23,3);
+      rect(metal,35,66,3,3);
+      rect(mortar,10,92,53,8); rect(dark,24,91,24,6);
+    } else if (kind.startsWith('mirror')) {
       rect(stone,29,81,14,13);
       rect(edge,22,94,28,6);
       path([[16,43],[35,28],[56,43],[53,70],[36,82],[19,70]],edge);
-      path([[20,44],[35,33],[51,44],[48,67],[35,76],[23,66]],dark);
-      path([[24,66],[44,40],[48,44],[28,70]],metal);
-      rect(light,41,43,3,2);
+      path([[20,44],[35,33],[51,44],[48,67],[35,76],[23,66]],kind.includes('light')?stone:dark);
+      const direction=Number(kind.at(-1));
+      const streaks=[
+        [[24,55],[28,47],[33,42],[29,54],[24,60]],
+        [[28,68],[37,45],[43,40],[41,50],[36,67]],
+        [[31,69],[42,51],[47,50],[43,60],[35,73]],
+      ];
+      path(streaks[direction],metal);
+      const [gx,gy]=streaks[direction][1];
+      rect(light,gx,gy,2,2);
+    } else if (kind === 'gauge') {
+      rect(mortar,30,52,12,48); rect(edge,31,53,3,41);
+      path([[13,33],[21,23],[50,23],[59,33],[59,58],[49,67],[22,67],[13,57]],stone);
+      path([[17,35],[24,28],[47,28],[55,35],[55,55],[47,62],[24,62],[17,55]],dark);
+      for(const [x,y] of [[21,39],[26,33],[35,31],[44,33],[50,39]])rect(light,x,y,2,3);
+      path([[27,50],[35,47],[45,36]],metal,2);
+      rect(light,34,45,4,4); rect(edge,25,94,23,6);
     }
     return canvas;
+  }
+
+  function materialWall(region, rect, path) {
+    const [dark, mortar, mid, rim, gold, light] = walls[region];
+    if(region==='nave'){
+      for(const x of [2,49]){
+        rect(mortar,x,0,13,64);rect(mid,x+2,0,4,64);rect(rim,x+2,0,1,43);
+      }
+      rect(dark,0,47,64,16);
+      for(const [y,c] of [[42,rim],[44,gold],[49,mid],[56,mortar]])rect(c,0,y,64,1);
+      return true;
+    }
+    if(region==='salt'){
+      for(const [x,y] of [[6,42],[25,54],[40,36],[54,48],[36,57]]){
+        path([[x-4,y+7],[x+2,y-7],[x+7,y+1],[x+10,y+7]],mid);
+        path([[x-2,y+4],[x+2,y-4],[x+6,y+2]],gold,1);
+      }
+      rect(mortar,0,60,64,4);rect(rim,1,60,57,1);
+      return true;
+    }
+    if(region==='archive'){
+      rect(dark,6,6,52,52);
+      for(const y of [8,24,40]){
+        for(let x=10;x<54;x+=5){
+          const offset=(x*3+y)%5;
+          rect(offset>2?rim:mid,x,y+offset+3,4,11-offset);
+          if(offset<2)rect(gold,x,y+7,3,1);
+        }
+        rect(rim,6,y+14,52,2);rect(mortar,6,y+16,52,1);
+      }
+      for(const x of [4,56])rect(mid,x,5,4,54);
+      return true;
+    }
+    if(region==='garden'){
+      for(const x of [6,52]){rect(dark,x,5,5,59);rect(mid,x+1,8,2,49);}
+      path([[0,53],[14,39],[28,42],[39,26],[55,20],[64,14]],dark,7);
+      path([[0,51],[14,37],[28,40],[39,24],[55,18],[64,12]],rim,2);
+      path([[17,38],[15,27],[24,21],[22,10]],mid,3);
+      path([[37,27],[46,31],[53,39],[59,40]],gold,1);
+      return true;
+    }
+    if(region==='soundings'){
+      for(const y of [16,34,49]){
+        rect(dark,0,y,64,8);rect(mid,0,y,64,5);rect(rim,0,y,64,1);
+        for(const x of [10,44]){rect(rim,x,y-2,5,9);rect(gold,x+1,y-1,2,1);}
+      }
+      return true;
+    }
+    if(region==='sky'){
+      rect(dark,5,5,54,50);rect(mid,5,5,54,1);rect(mortar,6,55,52,2);
+      for(const [x,y] of [[14,23],[20,39],[23,14],[31,28],[42,24],[51,41],[47,15]]){
+        rect(gold,x,y,1,1);
+      }
+      path([[19,39],[28,34],[31,28],[42,24],[47,15]],mid,1);
+      rect(light,31,28,2,1);
+      return true;
+    }
+    return false;
   }
 
   function wall(region, kind = 'wall', awake = false) {
@@ -371,6 +576,7 @@ const VeilArt = (() => {
       }
       return canvas;
     }
+    if(kind==='wall'&&materialWall(region, rect, path))return canvas;
     path(arch,rim);
     path([[13,55],[13,27],[16,21],[32,9],[48,21],[51,27],[51,55]],dark);
     path(arch,gold,1);
@@ -396,48 +602,17 @@ const VeilArt = (() => {
         }
       }
       path([[18,49],[27,52],[36,48],[45,51]],rim,2);
-    } else if (region === 'catacomb' || region === 'nave') {
+    } else if (region === 'catacomb') {
       for (let i=0;i<7;i++) {
         const x=15+i*6;
         path([[x,25+i%3],[x-3,37],[x+2,48],[x-1,56]],i%3?mid:rim,1+i%2);
         rect(gold,x-1,39+i%4*3,1,3);
-      }
-      if (region==='nave') {
-        for (const y of [43,47,52,56]) rect(y===52?gold:rim,0,y,64,1);
-        rect(light,27,49,10,1);
       }
     } else if (region === 'chapel') {
       for (const x of [16,23,28,37,43,49]) {
         path([[x,0],[x-8,19],[x+5,35],[x-4,48],[x+2,62]],mortar,5);
         path([[x,0],[x-8,19],[x+5,35],[x-4,48],[x+2,62]],rim,1);
       }
-    } else if (region==='salt') {
-      for(let i=0;i<26;i++){
-        const x=14+(i*19)%37,y=33+(i*7)%22;
-        rect(i%4?mid:light,x,y,1+i%3,1);
-      }
-      path([[14,43],[25,39],[35,45],[49,40]],rim,2);
-    } else if (region==='archive') {
-      for(const y of [23,35,47]){
-        rect(rim,16,y+7,32,2);
-        for(let i=0;i<7;i++)rect(i%3?gold:mid,17+i*4,y+(i%2),3,6);
-      }
-    } else if (region==='garden') {
-      for(const x of [21,31,42]){
-        path([[x,20],[x+3,32],[x-4,39],[x+1,56]],rim,2);
-        path([[x-4,39],[x-9,45],[x-11,49]],gold,1);
-      }
-    } else if (region==='soundings') {
-      for(const x of [20,29,38]){
-        rect(mid,x,20,4,35);rect(gold,x+1,23,1,30);
-      }
-      for(const y of [33,43,53])rect(rim,15,y,34,3);
-    } else if (region==='sky') {
-      for(let i=0;i<23;i++){
-        const x=16+(i*17)%32,y=19+(i*23)%35;
-        rect(i%5?gold:light,x,y,1+i%2,1);
-      }
-      path([[20,42],[26,34],[36,37],[43,25]],rim,1);
     } else {
       for (let i=0;i<4;i++) {
         path([[32,13+i*4],[45-i*3,33],[32,51-i*4],[19+i*3,33]],i%2?rim:gold,1);
@@ -463,79 +638,166 @@ const VeilArt = (() => {
     return canvas;
   }
 
-  function creature(type, pose, frame, phase = 1) {
+  function creature(type, pose, frame, phase = 1, kind = '') {
     const { canvas, rect, path } = painter(72,100);
-    const winding=pose==='windup', striking=pose==='strike';
-    const gait=pose==='walk'?frame-1:0;
-    const lean=pose==='hurt'?4:striking?-3:0;
-    const polygon = (points,color) => path(points.map(([x,y])=>[x+lean,y]),color);
-    const box = (color,x,y,w,h) => rect(color,x+lean,y,w,h);
-    const eye = winding?'#ffd3ab':'#bc9189';
+    const wake=pose==='wake', winding=pose==='windup', striking=pose==='strike';
+    const fall=pose==='fall', hurt=pose==='hurt', guarding=pose==='guard';
+    const gait=pose==='walk' ? frame-1 : 0;
+    const lean=hurt?4 : striking?-3 : 0;
+    const bodyFall=fall ? [10,24,40][frame] : 0;
+    const bend=(x,y)=>[36+(x-36)*(fall?1.14:1)+lean, y+bodyFall*(100-y)/100];
+    const polygon=(points,color,width)=>path(points.map(([x,y])=>bend(x,y)),color,width);
+    const box=(color,x,y,w,h)=>{
+      const [left,top]=bend(x,y);
+      rect(color,Math.round(left),Math.round(top),w,h);
+    };
+    const eye=winding||wake&&frame>0?'#ffe1b7':'#bc9189';
 
     if(type==='hollow') {
-      const head=winding?10:25+gait*2;
+      const neck=kind==='neck';
+      const head=wake ? 29-frame*8 : winding ? (neck?14-frame*6:30+frame*3) :
+        striking&&neck ? 10+frame*5 : 25+gait*2;
       polygon([[23,43],[48,44],[52,72],[43,87],[25,85],[18,71]],'#211923');
       polygon([[24,45],[36,41],[48,45],[44,70],[26,77],[20,56]],'#655054');
-      for(let i=0;i<6;i++)path([[24,48+i*4],[34,51+i*4],[46,47+i*4]],i%2?'#a38376':'#473743',2);
+      for(let i=0;i<6;i++)polygon([[24,48+i*4],[34,51+i*4],[46,47+i*4]],i%2?'#a38376':'#473743',2);
       polygon([[31,45],[32,head+11],[39,head+10],[41,44]],'#a28274');
-      box('#654e53',36,head+12,2,32-head);
+      box('#654e53',36,head+12,2,32-head>0?32-head:1);
       polygon([[27,head],[34,head-5],[44,head],[45,head+11],[37,head+18],[28,head+11]],'#bea291');
-      box('#382830',30,head+5,5,3);box(eye,39,head+5,4,2);
+      box('#382830',30,head+5,5,3);box(eye,39,head+5,striking&&neck?6:4,2);
       box('#30212b',34,head+11,6,3);
       polygon([[23,46],[15,53],[8,76],[14,83],[20,70],[30,53]],'#9b716a');
-      polygon([[46,45],[54,52],[59,striking?39:74],[65,striking?34:84],[66,69],[53,45]],'#79565a');
-      box('#9d8278',24,78,7,17+gait);box('#74575a',40,77,7,17-gait);
+      const arm=striking&&!neck ? [[45,46],[56,32],[70-frame*9,26],[67-frame*9,38],[50,58]] :
+        winding&&!neck ? [[46,45],[54,39],[64,44+frame*6],[62,52+frame*6],[48,57]] :
+        [[46,45],[54,52],[59,74-gait*2],[65,84],[66,69],[53,45]];
+      polygon(arm,'#79565a');
+      box('#9d8278',24,79,7,20+gait);box('#74575a',40,78,7,21-gait);
     } else if(type==='knight') {
       polygon([[15,48],[22,36],[50,35],[58,46],[55,85],[45,95],[24,98],[15,83]],'#17242b');
       polygon([[20,46],[29,37],[44,37],[50,44],[47,66],[25,69]],'#648182');
-      for (const [x,y] of [[22,45],[28,49],[30,57],[44,46],[26,71],[41,73]])box('#a0a99a',x,y,6,3);
-      polygon([[24,37],[22,25],[33,8],[48,22],[51,34],[38,44]],'#3a5258');
-      polygon([[25,28],[34,12],[45,23],[42,29],[30,33]],'#819791');
-      box(eye,30,32,14,2);
-      polygon([[8,48],[19,38],[30,46],[30,68],[16,84],[7,70]],'#23353e');
-      polygon([[10,50],[19,43],[26,50],[25,66],[16,77],[10,67]],'#536b70');
-      box('#a3a08b',16,51,3,16);
-      polygon(winding?[[47,62],[55,12],[60,3],[62,19],[54,64]]:[[47,69],[64,39],[70,34],[69,46],[54,74]],'#b4a695');
+      for(const [x,y] of [[22,45],[28,49],[30,57],[44,46],[26,71],[41,73]])box('#a0a99a',x,y,6,3);
+      box('#80908a',24+gait*2,82,9,14);box('#4a656a',41-gait*2,81,10,18);
+      const helm=wake?8-frame*4:0;
+      polygon([[24,37+helm],[22,25+helm],[33,8+helm],[48,22+helm],[51,34+helm],[38,44+helm]],'#3a5258');
+      polygon([[25,28+helm],[34,12+helm],[45,23+helm],[42,29+helm],[30,33+helm]],'#819791');
+      box(eye,30,32+helm,14,2);
+      const shield=guarding?10:wake?8-frame*4:0;
+      polygon([[8+shield,48],[19+shield,38],[30+shield,46],[30+shield,68],[16+shield,84],[7+shield,70]],'#23353e');
+      polygon([[10+shield,50],[19+shield,43],[26+shield,50],[25+shield,66],[16+shield,77],[10+shield,67]],'#536b70');
+      box(guarding?'#e2cca9':'#a3a08b',16+shield,51,3,16);
+      const blade=winding&&kind==='thrust' ? [[46,59],[66,48-frame*4],[70,53-frame*4],[51,65]] :
+        winding ? [[47,62],[55-frame*5,13],[60-frame*5,3],[63-frame*5,20],[54,64]] :
+        striking&&kind==='thrust' ? [[36,60],[15+frame*7,49],[28+frame*5,44],[54,61],[51,66]] :
+        striking ? [[46,64],[15+frame*10,71],[3+frame*12,67],[26+frame*9,58],[54,57]] :
+        [[47,69],[63,43-gait*4],[69,35-gait*4],[69,46-gait*4],[54,74]];
+      polygon(blade,'#b4a695');
+      if(winding||striking)polygon([blade[0],blade[1],blade[2]],'#e3cabc',1);
       box('#996c5e',46,66,13,4);
     } else if(type==='wraith') {
-      polygon([[35,8],[47,17],[53,35],[62,56],[59,86],[46,77],[39,96],[31,78],[12,85],[17,54],[24,35],[25,19]],'#241730');
-      polygon([[35,12],[43,20],[48,42],[57,63],[48,80],[43,69],[36,85],[26,70],[18,78],[21,54],[28,36],[29,20]],'#745a87');
-      polygon([[35,18],[43,28],[48,46],[42,61],[32,64],[26,49],[27,31]],'#a37c9f');
+      const fold=wake ? 8-frame*4 : winding&&kind==='feint' ? 5+frame*2 : striking ? -5+frame*3 : 0;
+      polygon([[35,8+fold],[47,17+fold],[53-fold,35],[62-fold,56],[59,86],[46,77],[39,98],
+        [31,78],[12,85],[17+fold,54],[24+fold,35],[25,19+fold]],'#241730');
+      polygon([[35,12+fold],[43,20+fold],[48-fold,42],[57-fold,63],[48,80],[43,69],[36,88],
+        [26,70],[18,78],[21+fold,54],[28+fold,36],[29,20+fold]],'#745a87');
+      polygon([[35,18+fold],[43,28+fold],[48-fold,46],[42,61],[32,64],[26+fold,49],[27+fold,31]],'#a37c9f');
       for(const [x,y,w] of [[32,31,8],[28,39,6],[39,39,7],[32,49,10],[23,57,5],[44,57,6]]) {
-        box('#2c1e35',x,y,w,winding?5:2);
-        if(winding)box(eye,x+2,y+1,2,2);
+        const open=wake?frame>0&&y<44:winding&&kind!=='feint'||striking;
+        box('#2c1e35',x,y+(fold>>1),w,open?5:2);
+        if(open)box(eye,x+2,y+1+(fold>>1),2,2);
       }
-      for(const x of [20,28,40,48])path([[x,61],[x-5,75],[x+gait,89]],'#a0789f',2);
+      for(const x of [20,28,40,48])polygon([[x,61],[x-5-gait,75],[x+gait*4,91]],
+        '#a0789f',2);
+      if(striking)polygon([[45,41],[61,39],[67,53],[63,57],[53,47]],'#c297b6');
     } else if(type==='drowned') {
-      path([[36,1],[30,24],[39,39],[29,59],[37,78]],'#719d8e',3);
-      polygon([[32,26],[45,33],[49,51],[54,71],[48,91],[33,84],[21,93],[19,75],[23,51]],'#20494c');
-      polygon([[26,40],[40,36],[48,47],[51,58],[60,69],[15,69],[22,57]],'#6d9e8d');
-      polygon([[31,42],[36,42],[32,62],[20,66],[28,56]],'#b4c6a8');
-      box('#172f36',12,69,51,6);box('#9ac3a5',16,68,44,2);
-      box(winding?'#ecdbaf':'#a28b79',34,72,6,10);
-      for(const x of [17,24,43,48])path([[x,74],[x+2,84],[x-2,97-gait*3]],'#537e7c',2);
-      box(eye,32,33,10,3);
+      const lift=wake?11-frame*6:winding? -4-frame*3:striking?-11+frame*6:0;
+      const pull=winding&&kind==='lunge'?7:striking&&kind==='lunge'?-8:0;
+      const chain=wake&&frame===0 ? [[39,6],[26,29],[41,49],[30,60]] :
+        [[36,3],[34+pull,23],[38+pull,40+lift],[35+pull,58+lift]];
+      polygon(chain,'#719d8e',3);
+      polygon([[32,26+lift],[45,33+lift],[49,51],[54,71],[48,91],[33,84],[21,97],[19,75],[23,51]],'#20494c');
+      polygon([[26+pull,40+lift],[40+pull,36+lift],[48+pull,47+lift],[51+pull,58+lift],
+        [60+pull,69+lift],[15+pull,69+lift],[22+pull,57+lift]],'#6d9e8d');
+      polygon([[31+pull,42+lift],[36+pull,42+lift],[32+pull,62+lift],
+        [20+pull,66+lift],[28+pull,56+lift]],'#b4c6a8');
+      box('#172f36',12+pull,69+lift,51,6);box('#9ac3a5',16+pull,68+lift,44,2);
+      box(winding||striking?'#ecdbaf':'#a28b79',34+pull+(striking?frame*3:0),72+lift,6,10);
+      for(const x of [17,24,43,48])polygon([[x+pull,74+lift],[x+2,84],[x-2,98-gait*3]],'#537e7c',2);
+      box(eye,32+pull,33+lift,10,3);
     } else {
-      const opened=phase===2 || striking;
-      polygon([[35,12],[12,6],[18,24],[8,33],[11,68],[3,91],[22,88],[32,96],[44,92],[65,96],[59,68],[68,36],[53,24],[61,7]],'#251923');
-      polygon([[35,18],[20,12],[27,29],[15,39],[17,62],[10,86],[26,78],[35,86],[47,80],[57,87],[53,62],[61,40],[47,29],[54,13]],'#7c4b58');
-      polygon([[35,25],[26,16],[30,32],[19,43],[26,62],[34,67],[47,62],[53,43],[42,32],[46,17]],'#c29686');
+      const opened=phase===2||striking||wake&&frame>0||winding;
+      const rise=wake?9-frame*4:0;
+      polygon([[35,12+rise],[12,6+rise],[18,24],[8,33],[11,68],[3,91],[22,88],[32,97],
+        [44,92],[65,97],[59,68],[68,36],[53,24],[61,7+rise]],'#251923');
+      polygon([[35,18+rise],[20,12+rise],[27,29],[15,39],[17,62],[10,86],[26,78],[35,86],
+        [47,80],[57,87],[53,62],[61,40],[47,29],[54,13+rise]],'#7c4b58');
+      polygon([[35,25],[26,16+rise],[30,32],[19,43],[26,62],[34,67],[47,62],
+        [53,43],[42,32],[46,17+rise]],'#c29686');
       for(let i=0;i<5;i++){
         box('#50303d',16+i*2,51+i*6,14,2);
         box('#50303d',43-i*2,51+i*6,11,2);
       }
       polygon([[21,46],[30,39],[36,38],[47,42],[52,47],[44,53],[36,55],[28,52]],'#372130');
-      if(opened || winding) {
-        polygon([[23,46],[36,40],[49,46],[36,52]],winding?'#ffe3b6':'#ecaa8e');
-        box('#3a2235',34,41,4,10);
-      } else box(eye,29,47,15,2);
-      polygon(winding?[[53,63],[62,12],[67,3],[69,18],[59,67]]:[[52,65],[67,68],[68,78],[50,74]],'#d6ac9a');
-      if(opened)for(const x of [14,24,44,56])path([[x,56],[x-6,71],[x+4,96]],'#d78979',2);
+      if(opened){
+        const open=winding&&kind==='ring'?7+frame*2:6;
+        polygon([[23,46],[36,46-open],[49,46],[36,46+open]],winding?'#ffe3b6':'#ecaa8e');
+        box('#3a2235',34,46-open+1,4,2*open-2);
+      }else box(eye,29,47,15,2);
+      const weapon=kind==='ring' ? [[53,66],[62,54],[69,45],[66,61],[58,73]] :
+        winding&&kind==='lunge' ? [[52,64],[66,44],[70,45],[69,53],[57,69]] :
+        winding ? [[53,63],[60-frame*4,13],[66-frame*4,3],[69-frame*4,18],[59,67]] :
+        striking&&kind==='lunge' ? [[51,68],[25+frame*6,53],[18+frame*7,46],[42,51],[61,65]] :
+        striking ? [[50,68],[20+frame*9,75],[4+frame*12,74],[35,62],[60,61]] :
+        [[52,65],[67,68+gait*4],[68,78+gait*4],[50,74]];
+      polygon(weapon,'#d6ac9a');
+      if(opened)for(const x of [14,24,44,56])polygon([[x,56],[x-6-gait*2,71],[x+4,96]],'#d78979',2);
     }
     return canvas;
   }
 
-  return { wall, creature, masonry, landmark };
+  const weaponProfiles={
+    sword:{edge:'#e7d8ce',mid:'#8d8495',dark:'#4a3f53',strap:'#a78992'},
+    spear:{edge:'#e4d4b0',mid:'#a29378',dark:'#50444c',strap:'#c7a583'},
+    axe:{edge:'#d1b4a0',mid:'#a18278',dark:'#51414f',strap:'#815d5a'},
+    needle:{edge:'#cfeded',mid:'#87adae',dark:'#3a5058',strap:'#98c2c0'},
+  };
+  function firstPersonWeapon(id){
+    const {canvas,rect,path}=painter(116,220);
+    const {edge,mid,dark,strap}=weaponProfiles[id];
+    const grip='#4c3944', seam='#6f5662';
+    rect(grip,53,56,12,144);
+    rect(dark,61,63,4,135);
+    for(let y=87;y<174;y+=10)rect(strap,54,y,4,2);
+    if(id==='sword'){
+      path([[52,163],[51,49],[58,21],[65,46],[67,163]],dark);
+      path([[52,157],[52,49],[58,23],[57,157]],edge);
+      path([[58,29],[65,49],[66,157],[60,156]],mid);
+      rect(strap,57,49,2,100);
+      path([[42,157],[73,159],[78,155],[77,164],[70,170],[42,165]],grip);
+      rect(mid,45,158,25,2);
+    }else if(id==='spear'){
+      path([[59,14],[71,47],[60,69],[48,47]],mid);
+      path([[59,15],[53,46],[59,64],[48,47]],edge);
+      path([[59,24],[62,49],[60,63],[58,48]],dark);
+      for(let y=67;y<84;y+=5){rect(dark,51,y,17,4);rect(edge,53,y,4,1);}
+    }else if(id==='axe'){
+      path([[62,51],[36,29],[18,32],[10,49],[8,65],[19,77],[36,74],[62,68]],dark);
+      path([[57,54],[35,33],[20,36],[14,51],[12,65],[20,73],[37,70],[57,64]],mid);
+      path([[20,34],[14,48],[10,65],[20,75],[29,72],[16,66],[16,54],[24,35]],edge);
+      path([[29,38],[39,50],[48,52],[54,66],[58,92]],strap,3);
+      rect(edge,44,55,5,2);
+    }else{
+      path([[59,13],[64,43],[60,62],[55,44]],edge);
+      rect(mid,58,32,2,33);
+      path([[59,42],[72,52],[68,61],[53,63],[46,55],[59,42]],mid,2);
+      rect(strap,51,67,16,4);rect(edge,54,69,4,1);
+      path([[53,77],[62,78],[64,83],[55,85],[53,88],[61,91]],mid,2);
+    }
+    path([[47,184],[50,173],[65,169],[72,173],[73,181],[61,187]],'#3f303e');
+    path([[51,176],[61,173],[69,175]],seam,2);
+    rect('#17202a',62,176,4,12);
+    return canvas;
+  }
+
+  return { wall, creature, masonry, landmark, firstPersonWeapon };
 })();
 </script><script>/* Room palettes, tile patterns and baked fixture weights. */
 const VeilLighting = (() => {
@@ -609,8 +871,7 @@ const VeilLighting = (() => {
     },
     soundings: {
       faces: [[66,25,'s','conduits'],[67,25,'s','conduits'],[68,25,'s','conduits'],[69,25,'s','conduits'],
-        [70,27,'w','conduits'],[70,28,'w','conduits'],[70,29,'w','conduits'],
-        ],
+        [70,27,'w','conduits'],[70,28,'w','conduits'],[70,29,'w','conduits']],
       strips: [[68,26,68,29,'grate'],[56,28,56,35,'grate']],
       lights: [[67.7,27.1,3,.53]],
     },
@@ -625,17 +886,13 @@ const VeilLighting = (() => {
 
   const landmarks = [
     [22.6,22.6,'catacomb','ossuary',1.28],
-    [8.7,6.8,'chapel','broken',1.28],
+    [9.55,6.15,'chapel','broken',1.04],
     [18.65,3,'sanctuary','needle',1.22],
     [20.35,3,'sanctuary','needle',1.22],
-    [46.6,6.9,'salt','crane',1.55],
+    [46.9,5.85,'salt','crane',1.26],
     [46.2,14.7,'salt','basin',.85],
     [62.1,11.65,'archive','lectern',.88],
-    [48.1,37.7,'garden','chair',.67],
     [48.9,33.55,'garden','hollowTree',1.52],
-    [68.6,32.05,'soundings','weight',1.35],
-    [34.8,51.4,'sky','mirror',.94],
-    [49.15,53.25,'sky','mirror',.94],
   ];
 
   function bake(grid, fixtures) {
@@ -652,16 +909,21 @@ const VeilLighting = (() => {
   function surface(name,u,v,ceiling) {
     const edge=u===0||v===0;
     const diamond=Math.abs(u-16)+Math.abs(v-16);
+    const grain=((u*17^v*29^(u*v))&15)*.004;
     const crack=(v>6&&v<25&&u===9+((v*3>>2)%9))||
       (u>13&&u<24&&v===21-(u>>2));
-    const grain=((u*17^v*29^(u*v))&15)*.004;
     if(ceiling){
-      const vault=Math.abs(u-16)===Math.min(v,32-v);
-      return (edge?.27:vault?.6:.38)+grain;
+      const rib = name==='crypt'||name==='sanctuary'
+        ? Math.abs(u-16)===Math.min(v,32-v)
+        : v===4||v===27;
+      if(name==='sky')return (u*19+v*53)%79===0 ? .62 : .25+grain;
+      return (edge?.25:rib?.46:.33)+grain;
     }
     if(name==='nave'){
-      const ripple=(u+v*2+((u>>2)&3))%19;
-      return (ripple===1?1.27:ripple<4?.92:.51)+grain;
+      const shift=(v*19&31);
+      const ripple=(u+shift)&31;
+      if(v%7===2&&ripple<16)return (ripple<8?.93:.66)+grain;
+      return .34+((v*5&7)*.018)+grain*.5;
     }
     if(name==='catacomb'){
       const joint=(v&15)===0||((u+((v>>4)*8))&15)===0;
@@ -669,6 +931,24 @@ const VeilLighting = (() => {
     }
     if(name==='chapel')return (edge?.33:crack?.42:diamond===11?.98:diamond<10?.64:.77)+grain;
     if(name==='sanctuary')return (edge?.44:diamond===12||diamond===10?1.18:crack?.48:.75)+grain;
+    if(name==='salt'){
+      const crust=(u*7+v*11+((u^v)*3))%37;
+      return (edge?.46:crust<3?1.13:crust>29?.85:.69)+grain;
+    }
+    if(name==='archive'){
+      const joint=v%8===0||((u+(v>>3)*11)&31)===0;
+      return (joint?.47:v%8===1?.89:.71)+grain;
+    }
+    if(name==='garden'){
+      const root=Math.abs(v-17-((u*3>>2)%11))<2;
+      return (root?.89:(u*13+v*7)%23===1?1.15:.62)+grain;
+    }
+    if(name==='soundings'){
+      const rim=u===0||v===0||u===30||v===30;
+      const rivet=(u===3||u===27)&&(v===3||v===27);
+      return (rivet?1.32:rim?.46:u===1||v===1?.94:.69)+grain;
+    }
+    if(name==='sky')return (edge?.45:crack?.57:.76)+grain;
     return (edge?.32:u===1||v===1?1.1:crack?.45:.78)+grain;
   }
 
@@ -683,27 +963,37 @@ const VeilLighting = (() => {
     });
     return [name,layers];
   }));
-  function architecturalFloor(area, style) {
+  function architecturalFloor(area, style, tileX, tileY, width, height) {
+    // Channels, risers and rings continue across the room rather than repeating in each cell.
+    const grate = area==='nave'&&style==='grate' ? [62,91,88] : null;
     const colors = surfaceColors[area][0].slice();
     for (let v = 0; v < 32; v++) for (let u = 0; u < 32; u++) {
       const rim = u === 2 || u === 29;
       const joint = (v & 15) === 0;
+      const perimeter = tileX===0&&u===2 || tileX===width-1&&u===29 ||
+        tileY===0&&v===2 || tileY===height-1&&v===29;
       let shade;
       switch (style) {
-        case 'ledgeX': shade = v === 2 || v === 29 ? 1.45 : u % 16 === 0 ? .60 : 1.06; break;
-        case 'grate': shade = rim ? 1.54 : v % 8 < 2 ? 1.09 : .57; break;
-        case 'drain': shade = u < 11 || u > 20 ? 1.17 : u === 11 || u === 20 ? 1.32 : .56; break;
-        case 'beds': shade = rim || v === 2 || v === 29 ? 1.48 : .82 + ((u * 3 + v) % 7) * .03; break;
+        case 'ledgeX': shade = perimeter ? 1.51 : v===4 || v===27 ? .64 : 1.03; break;
+        case 'grate': shade = rim ? 1.3 : u<4||u>27 ? .57 : v % 8 < 2 ? .99 : .68; break;
+        case 'drain': shade = v < 12 || v > 19 ? 1.09 : v === 12 || v === 19 ? 1.45 : .50; break;
+        case 'beds': shade = perimeter ? 1.52 : .9 + ((u * 3 + v) % 7) * .04; break;
         case 'orbit': {
-          const radius = Math.hypot(u - 15.5, v - 15.5);
-          shade = Math.abs(radius - 13) < .8 || Math.abs(radius - 7) < .65 ? 1.52 : 1.06;
+          const x=(tileX+(u+.5)/32-width/2)/(width*.45);
+          const y=(tileY+(v+.5)/32-height/2)/(height*.45);
+          const radius=Math.hypot(x,y);
+          shade = Math.abs(radius-1)<.018 || Math.abs(radius-.64)<.014 ? 1.83 :
+            Math.abs(x)<.012 ? 1.44 : 1.02;
           break;
         }
-        case 'dais': shade = rim || v === 2 || v === 29 ? 1.38 : 1.19; break;
+        case 'dais': shade = perimeter ? 1.45 : v===4&&tileY===0 ? .55 : 1.19; break;
         default: shade = rim ? 1.35 : joint ? .66 : 1.13;
       }
       const offset = (v * 32 + u) * 3;
-      for (let channel = 0; channel < 3; channel++) colors[offset + channel] *= shade;
+      for (let channel = 0; channel < 3; channel++) {
+        const base=grate ? grate[channel] : colors[offset+channel];
+        colors[offset+channel]=Math.min(255,base*shade);
+      }
     }
     return colors;
   }
@@ -853,7 +1143,7 @@ const VeilExpedition = (() => {
       id:'salt', name:'PATIO DE LA SAL', material:'salt', x:32, y:2, entry:[6.5,22.45], title:'Bajar al Patio de la Sal',
       rooms:[[8,14,10,17],[2,10,7,15],[2,5,5,10],[2,1,7,5],[7,2,13,3],[13,2,17,7],[11,7,16,9],[11,9,17,14],[7,13,11,14]],
       barriers:[['saltLow',10,2],['saltLow',10,3],['saltCrane',13,7],['saltCrane',14,7],['saltCrane',15,7],['saltCrane',16,7],['saltCrane',17,7],['saltCrane',10,13],['saltCrane',10,14],['saltReturn',8,11],['saltReturn',9,11],['saltReturn',10,11]],
-      props:[[9,15,'arch',1.5],[3,12,'coffin',1.15],[5,9,'brazier',.8],[4,2,'urn',.8],[16,5,'chains',1.3],[16.9,13.4,'saltPillar',.72]],
+      props:[[9,15,'arch',1.5],[3,12,'coffin',1.15],[5,9,'brazier',.8],[4,2,'urn',.8],[16.9,13.4,'saltPillar',.72]],
       stations:[
         ['saltMason',4.5,12.5,'El Cantero sentado','Lavábamos la sal con agua dulce. Luego hubo un día en que el agua recordó el mar. Empieza por la pila baja. La segunda está junto a la grúa.'],
         ['saltLow',4.5,3.5,'Lavar la pila baja','La sal se desprende en láminas. Debajo hay una huella de seis dedos.'],
@@ -938,8 +1228,10 @@ const VeilExpedition = (() => {
 })();
 </script><script>(()=>{'use strict';
 const W=480,H=270,PI=Math.PI,TAU=PI*2,FOV=.73,SAVE='ashen-veil-rebirth-v2';
+const VERSION='3.6.0';
 const $=id=>document.getElementById(id),screen=$('screen'),ctx=screen.getContext('2d',{alpha:false});ctx.imageSmoothingEnabled=false;
 let warningUntil=0,hitFlashUntil=0;
+let contactKind='hit';
 let tick=0,last=0,playing=false,paused=true,toastUntil=0,shake=0,spellAnim=0,injury=0,walkTime=0,mapOn=false;
 const keys=Object.create(null),rand=(x,y,s=0)=>{let n=Math.sin(x*127.1+y*311.7+s*81.3)*43758.5453;return n-Math.floor(n)},clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const MAP_WIDTH=72, MAP_HEIGHT=66;
@@ -988,7 +1280,10 @@ const weaponFinds=[
 objects.push(...weaponFinds);
 let ownedWeapons=['sword'],equippedWeapon='sword';
 function equipNext(){if(!playing||paused||swing)return;const i=ownedWeapons.indexOf(equippedWeapon);equippedWeapon=ownedWeapons[(i+1)%ownedWeapons.length];note('EQUIPADA: '+weapons[equippedWeapon].name,2.5);updateWeaponHud();save();}
-function updateWeaponHud(){const slot=$('weapon-slot');if(slot)slot.textContent=weapons[equippedWeapon].short;}
+function updateWeaponHud(){
+  $('weapon-slot').textContent=weapons[equippedWeapon].short;
+  $('weapon-icon').setAttribute('data-weapon',equippedWeapon);
+}
 
 const encounterSigns={
   w1:[6.2,1.25,'La figura del corredor levanta lentamente la cabeza.'],
@@ -1029,7 +1324,7 @@ const scenery=[
   {x:5.0,y:15.1,type:'torch',scale:.68},{x:9.4,y:17.45,type:'torch',scale:.62},
   {x:15.6,y:17.45,type:'torch',scale:.62},{x:20.6,y:13.3,type:'torch',scale:.73},
   {x:21.8,y:8.4,type:'torch',scale:.7},{x:13.7,y:5.4,type:'torch',scale:.68},
-  {x:7.6,y:6.4,type:'idol',scale:.98},{x:24.9,y:20.8,type:'idol',scale:1.06},
+  {x:5.2,y:6.05,type:'idol',scale:.82},{x:24.9,y:20.8,type:'idol',scale:1.06},
   {x:16.1,y:5.8,type:'urn',scale:.5},{x:22.8,y:5.8,type:'urn',scale:.5},
   {x:3.1,y:20.8,type:'urn',scale:.54},{x:24.5,y:15.8,type:'urn',scale:.52},
   {x:8.8,y:18.1,type:'arch',scale:1.42},{x:15.8,y:17.65,type:'arch',scale:1.32},
@@ -1040,7 +1335,7 @@ const scenery=[
   {x:3.7,y:19.7,type:'coffin',scale:1.16},{x:8.2,y:20.7,type:'coffin',scale:.92},
   {x:16.3,y:21.2,type:'bonepile',scale:.71},{x:23.4,y:17.5,type:'bonepile',scale:.66},
   {x:21.5,y:19.8,type:'fungus',scale:.7},{x:17.5,y:15.8,type:'fungus',scale:.53},
-  {x:9.6,y:7.6,type:'roots',scale:1.6},{x:4.6,y:9.6,type:'roots',scale:1.4},
+  {x:10.45,y:6.1,type:'roots',scale:1.45},{x:4.6,y:9.6,type:'roots',scale:1.4},
   {x:8.8,y:6.6,type:'stainedglass',scale:1.32},
   {x:17.1,y:4.5,type:'brazier',scale:.85},{x:22.9,y:4.5,type:'brazier',scale:.85},
   {x:19.5,y:2.7,type:'stainedglass',scale:1.7},
@@ -1057,7 +1352,7 @@ const routeLandmarks=[
   {x:27.25,y:20.9,type:'gauge',scale:1.3},
 ];
 const annexScenery=VeilExpedition.wings.flatMap(wing=>wing.props.map(([x,y,type,scale])=>({x:wing.x+x,y:wing.y+y,type,scale})));
-let bossDefeated=false;let enemies=[];function resetEnemies(){enemies=defs.map((d,i)=>({...d,maxhp:d.hp,alive:true,cool:i*.21,stun:0,flash:0,alert:false,waking:0,windup:0,attackPose:0,phase:1,strafeSign:i%2?1:-1,facing:Math.PI/2,attackKind:'slash',attackReach:1.5,attackArc:.85,attackDamage:d.damage,attacksMade:0,attackMin:0,route:[],nextRoute:0,guard:0,originX:d.x,originY:d.y}));}
+let bossDefeated=false;let enemies=[];function resetEnemies(){enemies=defs.map((d,i)=>({...d,maxhp:d.hp,alive:true,cool:i*.21,stun:0,flash:0,alert:false,waking:0,windup:0,attackPose:0,phase:1,strafeSign:i%2?1:-1,facing:Math.PI/2,attackKind:'slash',windupDuration:0,defeatedAt:null,attackReach:1.5,attackArc:.85,attackDamage:d.damage,attacksMade:0,attackMin:0,route:[],nextRoute:0,guard:0,originX:d.x,originY:d.y}));}
 resetEnemies();let dropped=null;
 function restoreAfterDeath(){
   const defeated=new Set(enemies.filter(enemy=>!enemy.alive).map(enemy=>enemy.id));
@@ -1150,15 +1445,64 @@ if(type==='brazier'){
 if(type==='exit'){poly([[14,93],[14,43],[36,9],[58,43],[58,93]],'#89748f');poly([[22,90],[22,45],[36,23],[50,45],[50,90]],'#282333');rect(33,40,6,43,'#d7b68c');rect(23,62,26,4,'#c3a0a9')}
 return c;}
 for(let t of ['altar','key','echo','relic','loot','exit','torch','idol','urn','arch','banner','chains','coffin','bonepile','fungus','roots','stainedglass','brazier'])sprite[t]=drawSprite(t);
-const poses=['idle','walk','windup','strike','hurt'];
-const framesFor=(type,phase)=>Object.fromEntries(poses.map(pose=>[
-  pose,Array.from({length:3},(_,frame)=>VeilArt.creature(type,pose,frame,phase))
-]));
+const enemyAttackKinds={
+  hollow:['slash','neck'], knight:['cleave','thrust'], wraith:['lunge','feint'],
+  drowned:['chime','lunge'], boss:['cleave','lunge','ring'],
+};
+function framesFor(type,phase){
+  const frames=(pose,kind)=>Array.from({length:3},(_,frame)=>VeilArt.creature(type,pose,frame,phase,kind));
+  const poses=['idle','walk','wake','hurt','fall'];
+  if(type==='knight')poses.push('guard');
+  const cels=Object.fromEntries(poses.map(pose=>[
+    pose, (pose==='walk'||pose==='wake'||pose==='fall')?frames(pose):[VeilArt.creature(type,pose,1,phase)],
+  ]));
+  for(const kind of enemyAttackKinds[type]){
+    cels['windup-'+kind]=frames('windup',kind);
+    cels['strike-'+kind]=frames('strike',kind);
+  }
+  return cels;
+}
 const enemyFrames=Object.fromEntries(Object.keys(creatureNames).map(type=>[type,framesFor(type,1)]));
 const watcherAwake=framesFor('boss',2);
+const weaponArt=Object.fromEntries(Object.keys(weapons).map(id=>[id,VeilArt.firstPersonWeapon(id)]));
+const fallTime=.52, strikeTime=.34;
+
+function enemyCel(enemy){
+  const cels=enemy.phase===2?watcherAwake:enemyFrames[enemy.type];
+  if(!enemy.alive){
+    const elapsed=tick-(enemy.defeatedAt??-Infinity);
+    if(elapsed>=fallTime)return null;
+    return cels.fall[settings.quiet?2:Math.min(2,Math.floor(elapsed/fallTime*3))];
+  }
+  if(enemy.flash>0&&enemy.stun>0&&enemy.waking<=0)return cels.hurt[0];
+  if(enemy.waking>0){
+    const fraction=1-enemy.waking/encounterSigns[enemy.id][1];
+    return cels.wake[settings.quiet?2:clamp(Math.floor(fraction*3),0,2)];
+  }
+  if(enemy.attackPose>0){
+    const frame=Math.min(2,Math.floor((1-enemy.attackPose/strikeTime)*3));
+    return cels['strike-'+enemy.attackKind][settings.quiet?0:Math.max(0,frame)];
+  }
+  if(enemy.windup>0){
+    const frame=1-enemy.windup/Math.max(enemy.windup,enemy.windupDuration);
+    return cels['windup-'+enemy.attackKind][settings.quiet?2:Math.min(2,Math.floor(frame*3))];
+  }
+  if(enemy.type==='knight'&&enemy.guard>0)return cels.guard[0];
+  if(enemy.alert&&enemy.stun<=0&&!settings.quiet)return cels.walk[Math.floor(tick*5+enemy.originX)%3];
+  return cels.idle[0];
+}
+
 let bladeSparks=[];
-function sparkBurst(x,y,tint='#e8b5a7',count=10){for(let i=0;i<count;i++)bladeSparks.push({x,y,vx:(rand(i,tick,2)-.5)*2.9,vy:(rand(i,tick,4)-.5)*2.9,life:.25+rand(i,tick,3)*.35,color:tint});if(bladeSparks.length>100)bladeSparks.splice(0,bladeSparks.length-100);}
-function enemyPose(e){if(e.flash>0)return 'hurt';if(e.attackPose>0)return 'strike';if(e.windup>0)return 'windup';if(e.waking>0)return 'windup';if(e.alert&&e.stun<=0)return 'walk';return 'idle';}
+function sparkBurst(x,y,tint='#e8b5a7',count=10,style='mote'){
+  for(let i=0;i<count;i++){
+    const life=.24+rand(i,tick,3)*.28;
+    const long=style==='spear'||style==='needle';
+    bladeSparks.push({x,y,vx:(rand(i,tick,2)-.5)*(long?1.15:2.9),
+      vy:(rand(i,tick,4)-.5)*(long?1.15:2.9),z:.35+rand(i,tick,7)*.32,
+      vz:(rand(i,tick,9)-.24)*1.05,life,color:tint,style});
+  }
+  if(bladeSparks.length>100)bladeSparks.splice(0,bladeSparks.length-100);
+}
 function solid(x,y){const ix=Math.floor(x),iy=Math.floor(y);if(iy<0||ix<0||iy>=grid.length||ix>=grid[0].length)return true;return grid[iy][ix]!==0;}
 function canMove(x,y,r=.23){return !solid(x-r,y-r)&&!solid(x+r,y-r)&&!solid(x-r,y+r)&&!solid(x+r,y+r);}
 function move(entity,dx,dy,r=.23){if(canMove(entity.x+dx,entity.y,r))entity.x+=dx;if(canMove(entity.x,entity.y+dy,r))entity.y+=dy;}
@@ -1336,24 +1680,32 @@ function resolveSwing({id,heavy}){
    const resonance=id==='needle'&&e.windup>0;
    if(spearTip)damage+=8;
    if(resonance)damage+=12;
-   hit(e,Math.round(damage*(index>0?.72:1)),heavy||id==='axe'||spearTip,id==='needle');
+   const blocked=hit(e,Math.round(damage*(index>0?.72:1)),heavy||id==='axe'||spearTip,id==='needle',
+     resonance?'resonance':id);
+   if(index===0)contactKind=blocked?'guard':resonance?'resonance':'hit';
    if(resonance)note('LA AGUJA ENCUENTRA LA RESONANCIA',1.2);
  }
  if(targets.length){VeilAudio.weapon(id,heavy,true);hitFlashUntil=tick+.17;}
 }
 
-function hit(e,damage,heavy=false,magic=false){if(!heavy&&e.type==='knight'&&e.guard>0&&!magic&&Math.abs(turnDelta(Math.atan2(player.y-e.y,player.x-e.x)-e.facing))<1.05){
+function hit(e,damage,heavy=false,magic=false,impact='mote'){if(!heavy&&e.type==='knight'&&e.guard>0&&!magic&&Math.abs(turnDelta(Math.atan2(player.y-e.y,player.x-e.x)-e.facing))<1.05){
   e.hp=Math.max(1,e.hp-Math.ceil(damage*.35));
   e.flash=.12;
+  sparkBurst(e.x,e.y,'#dec197',8,'guard');
   VeilAudio.cue('block');
   note('EL CARCELERO AGUANTA · BUSCA SU COSTADO O ROMPE LA GUARDIA',1.5);
-  return;
+  return true;
 }if(e.type==='wraith'&&magic){
   const lit=(bakedLight[Math.floor(e.y)]?.[Math.floor(e.x)]||0)>.26;
   damage=Math.round(damage*(lit||e.windup>0?1.28:.82));
 }
 e.hp=Math.max(0,e.hp-damage);e.flash=.24;const braced=e.type==='boss'&&e.phase===2&&e.windup>0&&!heavy;
-if(!braced){e.stun=heavy?.68:.3;e.windup=0;}e.guard=0;if(!e.alert&&!e.waking)e.waking=encounterSigns[e.id][1];shake=.055;sparkBurst(e.x,e.y,e.type==='wraith'?'#bba2e8':'#e4b29d',14);if(e.hp<=0){e.alive=false;player.ashes+=e.ashes;note(`+ ${e.ashes} CENIZAS`);beep(120,.33,'triangle',.035);save();if(e.type==='boss'){bossDefeated=true;save();note('EL VIGÍA HA CAÍDO — EL SELLO TE ESPERA',5)}}else if(e.type==='boss'&&e.phase===1&&e.hp<e.maxhp*.5){e.phase=2;e.attacksMade=0;e.cool=1.3;VeilAudio.cue('boss');note('EL VIGÍA ABRE EL OJO DEL UMBRAL',4);}}
+if(!braced){e.stun=heavy?.68:.3;e.windup=0;}e.guard=0;if(!e.alert&&!e.waking)e.waking=encounterSigns[e.id][1];shake=.055;
+const tint=impact==='resonance'||e.type==='wraith'?'#c4a5ea':weapons[impact]?.color??'#e4b29d';
+sparkBurst(e.x,e.y,tint,impact==='axe'?17:impact==='spear'?8:12,impact);
+if(e.hp<=0){e.alive=false;e.defeatedAt=tick;player.ashes+=e.ashes;note(`+ ${e.ashes} CENIZAS`);beep(120,.33,'triangle',.035);save();if(e.type==='boss'){bossDefeated=true;save();note('EL VIGÍA HA CAÍDO — EL SELLO TE ESPERA',5)}}else if(e.type==='boss'&&e.phase===1&&e.hp<e.maxhp*.5){e.phase=2;e.attacksMade=0;e.cool=1.3;VeilAudio.cue('boss');note('EL VIGÍA ABRE EL OJO DEL UMBRAL',4);}
+return false;
+}
 function spell(){if(!playing||paused||player.spellCd>0||player.mp<25||player.roll>0)return;player.mp-=25;player.spellCd=1.3;spellAnim=.65;sparkBurst(player.x+Math.cos(player.ang)*1.1,player.y+Math.sin(player.ang)*1.1,'#b78ffe',17);beep(490,.36,'sine',.06);let hitCount=0;for(let e of enemies){if(!e.alive||dist(player,e)>6.6)continue;let a=Math.atan2(e.y-player.y,e.x-player.x)-player.ang;if(Math.abs(Math.atan2(Math.sin(a),Math.cos(a)))<.22&&los(player.x,player.y,e.x,e.y)){hit(e,38+player.lv*5,false,true);hitCount++;}}if(!hitCount)note('EL ÉTER SE DISIPA');}
 function levelUp(){if(!objects.some(o=>o.kind==='altar'&&dist(player,o)<1.65&&los(player.x,player.y,o.x,o.y))){note('DEBES ESTAR JUNTO A UN ALTAR');return;}if(player.lv>=99)return;let cost=80*player.lv;if(player.ashes<cost){note(`NECESITAS ${cost} CENIZAS PARA ASCENDER`);return;}player.ashes-=cost;player.lv++;player.maxhp+=8;player.hp=player.maxhp;note(`EL ALMA SE FORTALECE — NIVEL ${player.lv}`,4);beep(680,.5,'sine',.04);save();}
 function heal(){if(!playing||paused||player.flasks<=0||player.hp>=player.maxhp)return;player.flasks--;player.hp=Math.min(player.maxhp,player.hp+55);note('LA SANGRE VUELVE A CALENTARSE');beep(600,.4,'sine',.025);save();}
@@ -1480,6 +1832,7 @@ function startEnemyAttack(e,dx,dy){
     e.attackReach=odd?1.61:2.18;e.attackArc=odd?.82:.38;e.attackDamage=e.damage;
     note(odd?'EL PENITENTE SE RETUERCE':'EL PENITENTE ESTIRA EL CUELLO',1);
   }
+  e.windupDuration=e.windup;
 }
 function resolvesEnemyAttack(e){
   const dx=player.x-e.x,dy=player.y-e.y,d=Math.hypot(dx,dy);
@@ -1564,7 +1917,7 @@ function enemyLogic(dt){
     if(e.windup>0){
       e.windup-=dt;
       if(e.windup<=0){
-        e.windup=0;e.attackPose=.34;resolvesEnemyAttack(e);
+        e.windup=0;e.attackPose=strikeTime;resolvesEnemyAttack(e);
         if(paused)return;
         e.cool=e.type==='wraith'?1.45:e.type==='boss'?(e.phase===2?1.5:1.75):e.type==='knight'?1.9:1.55;
       }
@@ -1587,22 +1940,21 @@ function tileType(ix,iy){
   return value===2?'pillar':value===3||value===5?'gate':value===4?'secret':'wall';
 }
 const renderRegions=grid.map((row,y)=>row.map((_,x)=>regionAt(x,y)));
-const architecturalFaces = new Map();
+const architecturalFaces = Array(MAP_WIDTH*MAP_HEIGHT*4);
+const wallFaceIndex = {w:0,e:1,n:2,s:3};
 const floorDetails = grid.map(row => row.map(() => null));
 for (const [area, design] of Object.entries(VeilLighting.architecture)) {
-  const palettes = new Map();
   const reliefs = new Map();
   for (const [x, y, face, feature] of design.faces) {
     if (!reliefs.has(feature)) {
       const canvas = VeilArt.masonry(area, feature);
       reliefs.set(feature, canvas.getContext('2d').getImageData(0,0,64,64).data);
     }
-    architecturalFaces.set(`${x},${y},${face}`, reliefs.get(feature));
+    architecturalFaces[(y*MAP_WIDTH+x)*4+wallFaceIndex[face]] = reliefs.get(feature);
   }
   for (const [left, top, right, bottom, style] of design.strips) {
-    if (!palettes.has(style)) palettes.set(style, VeilLighting.architecturalFloor(area, style));
     for (let y = top; y <= bottom; y++) {
-      for (let x = left; x <= right; x++) floorDetails[y][x] = palettes.get(style);
+      for (let x = left; x <= right; x++) floorDetails[y][x] = VeilLighting.architecturalFloor(area, style, x-left, y-top, right-left+1, bottom-top+1);
     }
   }
 }
@@ -1630,23 +1982,32 @@ const fixtureTints={
   nave:[104,229,196],catacomb:[104,229,196],
   salt:[229,207,159],archive:[210,175,137],garden:[143,204,166],soundings:[119,194,204],sky:[157,168,234],
 };
+const planeTextures=[0,1].map(plane=>renderRegions.map((row,y)=>row.map((area,x)=>
+  (plane===0&&floorDetails[y][x]) || VeilLighting.surfaceColors[area][plane]
+)));
+const planeLight=bakedLight.map(row=>row.map(fixture=>.57+fixture*.58));
+const waterTile=VeilLighting.surfaceColors.nave[0];
+const eyeWalls = grid.map((row,y)=>row.map((_,x)=>watcherWalls.has(x+','+y)));
 const zBuffer=new Float32Array(W);const floorImage=ctx.createImageData(W,H);const fc=floorImage.data;
-function drawBase(){
+function drawBase({sn,cs}){
+const rippleFrame=settings.quiet||settings.low?0:Math.floor(tick*5)&31;
 const stride=settings.low?2:1, planeStride=settings.low?4:2;
 const watching=enemies.some(e=>e.type==='boss'&&e.alive&&e.phase===2);
-const sn=Math.sin(player.ang),cs=Math.cos(player.ang),px=-sn*FOV,py=cs*FOV;
+const px=-sn*FOV,py=cs*FOV;
 // Cast both planes at half resolution and shade against the baked fixtures.
 for(let y=0;y<H;y+=planeStride){
-  const floor=y>=H/2, depth=Math.min(44,H*.315/(Math.abs(y-H/2)+.5));
+  const plane=y>=H/2?0:1, depth=Math.min(44,H*.315/(Math.abs(y-H/2)+.5));
+  const planeTiles=planeTextures[plane],defaultTile=VeilLighting.surfaceColors.crypt[plane];
   const stepX=depth*px*2*planeStride/W, stepY=depth*py*2*planeStride/W;
   let worldX=player.x+depth*(cs-px), worldY=player.y+depth*(sn-py);
   const distanceLight=clamp(1.12-depth*.058,.10,1);
   for(let x=0;x<W;x+=planeStride){
     const ix=Math.floor(worldX), iy=Math.floor(worldY);
-    const area=renderRegions[iy]?.[ix]??'crypt';
-    const layer=(floor && floorDetails[iy]?.[ix]) || VeilLighting.surfaceColors[area][floor?0:1];
-    const texel=((Math.floor(worldY*32)&31)*32+(Math.floor(worldX*32)&31))*3;
-    const light=distanceLight*(.57+(bakedLight[iy]?.[ix]||0)*.58);
+    const layer=planeTiles[iy]?.[ix]??defaultTile;
+    const textureX=Math.floor(worldX*32)&31;
+    const textureY=Math.floor(worldY*32)+(layer===waterTile?rippleFrame:0);
+    const texel=((textureY&31)*32+textureX)*3;
+    const light=distanceLight*(planeLight[iy]?.[ix]??.57);
     const r=layer[texel]*light, g=layer[texel+1]*light, b=layer[texel+2]*light;
     const offset=(y*W+x)*4;
     for(let row=0;row<planeStride&&y+row<H;row++){
@@ -1671,17 +2032,17 @@ for(let x=0;x<W;x+=stride){
   let wallX=side===0?player.y+wd*ry:player.x+wd*rx;
   wallX-=Math.floor(wallX);
   const area=renderRegions[my]?.[mx]??regionAt(mx,my), kind=tileType(mx,my);
-  const eyeOpen=kind==='wall'&&watcherWalls.has(mx+','+my)&&
+  const eyeOpen=kind==='wall'&&eyeWalls[my]?.[mx]&&
     (area==='chapel'&&player.relic||area==='sanctuary'&&(watching||bellRung));
-  const face=side===0?(rx>0?'w':'e'):(ry>0?'n':'s');
-  const relief=kind==='wall'&&architecturalFaces.get(`${mx},${my},${face}`);
+  const face=side===0?(rx>0?0:1):(ry>0?2:3);
+  const relief=kind==='wall'&&architecturalFaces[(my*MAP_WIDTH+mx)*4+face];
   const tex=eyeOpen?openedPixels[area]:relief||wallPixels[area][kind];
   let texX=(wallX*64)|0;
   if(side===0&&rx>0||side===1&&ry<0)texX=63-texX;
   const fixture=bakedLight[my-(side===1?Math.sign(ry):0)]?.[mx-(side===0?Math.sign(rx):0)]||0;
   const fog=clamp(Math.round(4+wd*1.08+side*2-fixture*10),1,24)/28;
-  const pulse=settings.quiet?.94:.9+Math.sin(tick*2.6+mx*.7+my*.45)*.1;
-  const lamp=Math.max(0,fixture-.23)*.31*pulse;
+  const pulse=settings.quiet||settings.low ? .94 : .94+Math.sin(tick*2.1+mx*.7+my*.45)*.06;
+  const lamp=Math.max(0,fixture-.23)*.23*pulse;
   const shade=(1-fog)*(1-lamp);
   const mist=VeilLighting.materials[area].fog,tint=fixtureTints[area];
   const rBias=mist[0]*fog*(1-lamp)+tint[0]*lamp;
@@ -1705,11 +2066,29 @@ function markerSprite(kind){const c=document.createElement('canvas');c.width=72;
  if(kind==='seal'){g.fillStyle='#25192f';g.fillRect(15,42,43,35);g.fillStyle='#bca4df';g.fillRect(22,45,29,4);g.fillRect(31,30,9,29);g.fillStyle='#e9c2ba';g.fillRect(29,32,13,7);g.fillStyle='#65336c';g.fillRect(28,54,16,8);}
  else if(kind==='lever'){g.fillStyle='#9a5e64';g.fillRect(36,22,7,10);g.fillStyle='#d7a498';g.fillRect(28,12,24,12);}
  else if(kind==='cache'){g.fillStyle='#9c80ba';g.fillRect(21,49,31,29);g.fillStyle='#d7b9f0';g.fillRect(27,54,18,5);}
+ else if(kind==='discovery'){
+   g.clearRect(0,0,72,100);
+   g.fillStyle='#3d3544';g.fillRect(16,75,42,24);
+   g.fillStyle='#63545c';g.fillRect(20,56,34,22);
+   g.fillStyle='#a08a78';g.fillRect(16,55,42,4);
+   g.fillStyle='#b9a38b';g.fillRect(25,59,23,3);
+   g.fillStyle='#887069';g.fillRect(24,65,19,2);
+   g.fillStyle='#291f2a';g.fillRect(22,93,32,6);
+ }
  else {g.fillStyle='#8b8190';g.fillRect(24,22,27,43);g.fillStyle='#d3bba1';g.fillRect(29,29,16,3);g.fillRect(29,37,13,3);g.fillRect(29,45,16,3);}
  return c;}
 for(const k of ['lever','cache','tablet','seal'])sprite[k]=markerSprite(k);
-sprite.discovery=sprite.tablet;
+sprite.discovery=markerSprite('discovery');
 sprite.passage=sprite.arch;
+sprite.workmark=document.createElement('canvas');
+sprite.workmark.width=72;sprite.workmark.height=100;
+{
+  const stone=sprite.workmark.getContext('2d');
+  stone.fillStyle='#3b3339';stone.fillRect(14,83,44,17);
+  stone.fillStyle='#826c64';stone.fillRect(10,79,52,6);
+  stone.fillStyle='#c3a680';stone.fillRect(23,79,25,2);
+  stone.fillStyle='#c3a680';stone.fillRect(34,72,4,9);
+}
 for(const [kind,color] of Object.entries({
   saltPillar:'#d3c0a2',ledger:'#c49a6d',tree:'#b3ccb1',gauge:'#80bac0',orrery:'#9ea9dd'
 })){
@@ -1746,6 +2125,35 @@ const architectureScenery = VeilLighting.landmarks.map(([x, y, region, kind, sca
   if (!sprite[type]) sprite[type] = VeilArt.landmark(region, kind);
   return {x, y, type, scale};
 });
+const stationArt={
+  saltCrane:{type:'workmark',scale:.57,shadow:true},
+  saltLow:{type:'architecture-salt-basin',scale:.78,shadow:true},
+  saltPrint:{type:'discovery',scale:.66,shadow:true},
+  gardenChair:{type:'garden-seat',scale:.82,shadow:true},
+  soundingsGauge:{type:'station-gauge',scale:1,shadow:true},
+  soundingsWeight:{type:'station-weight',scale:1.31,shadow:true},
+};
+sprite['garden-seat']=VeilArt.landmark('garden','chair');
+sprite['station-gauge']=VeilArt.landmark('soundings','gauge');
+sprite['station-weight']=VeilArt.landmark('soundings','weight');
+for(const finish of ['dark','light']){
+  for(let direction=0;direction<mirrorDirections.length;direction++){
+    const type='mirror-'+finish+'-'+direction;
+    sprite[type]=VeilArt.landmark('sky',type);
+  }
+}
+const mirrorArt={
+  skyDark:mirrorDirections.map((_,i)=>({type:'mirror-dark-'+i,scale:.97,shadow:true})),
+  skyLight:mirrorDirections.map((_,i)=>({type:'mirror-light-'+i,scale:.97,shadow:true})),
+};
+function objectArt(object){
+  if(isMirror(object.id))return mirrorArt[object.id][mirrorPositions[object.id]];
+  return stationArt[object.id]??{
+    type:object.kind==='weapon'?'relic':object.kind,
+    scale:object.kind==='passage'?1.42:object.kind==='exit'?1.35:.7,
+    shadow:object.kind==='altar'||object.kind==='discovery'||object.kind==='tablet',
+  };
+}
 sprite.bell=document.createElement('canvas');
 sprite.bell.width=72;sprite.bell.height=100;
 {
@@ -1773,54 +2181,158 @@ for(const type of ['trapWarning','trapActive']){
   }
   sprite[type]=image;
 }
-function worldSprite(x,y,type,scale=1,flash=0,frameImage=null){
-  const dx=x-player.x,dy=y-player.y,cs=Math.cos(player.ang),sn=Math.sin(player.ang);
-  const side=-sn*dx+cs*dy,forward=cs*dx+sn*dy;
+function worldSprite(camera,x,y,type,scale=1,frameImage=null,opacity=1){
+  const dx=x-player.x,dy=y-player.y;
+  const forward=camera.cs*dx+camera.sn*dy;
   if(forward<=.18||forward>24)return;
-  const center=W/2+side/forward*W/(2*FOV),height=H*scale/forward,width=height*.72;
-  const left=center-width/2,right=center+width/2,top=H/2+H*.43/forward-height;
-  const tex=frameImage||sprite[type];
-  if(!tex||right<0||left>W||top+height<0||top>H)return;
-  const minX=Math.max(0,Math.ceil(left)),maxX=Math.min(W,Math.floor(right));
-  const sampling=tex.width/width;
-  const glow=flash&&!settings.quiet&&!settings.low;
-  if(glow)ctx.filter='brightness(1.35)';
-  let run=minX;
-  while(run<maxX){
-    while(run<maxX&&forward>=zBuffer[run]-.08)run++;
+  const center=W/2+(-camera.sn*dx+camera.cs*dy)/forward*W/(2*FOV);
+  const height=H*scale/forward;
+  const texture=frameImage??sprite[type];
+  if(!texture)return;
+  const width=height*texture.width/texture.height;
+  const ground=H/2+H*.43/forward;
+  drawVisibleImage(texture,center-width/2,ground-height,width,height,forward,opacity);
+}
+function drawVisibleImage(texture,left,top,width,height,forward,opacity){
+  const right=left+width;
+  if(right<=0||left>=W||top+height<=0||top>=H)return;
+  const maxX=Math.min(W,Math.ceil(right));
+  const sampling=texture.width/width;
+  ctx.globalAlpha=opacity;
+  for(let run=Math.max(0,Math.ceil(left));run<maxX;){
+    while(run<maxX&&forward>=zBuffer[run])run++;
     const from=run;
-    while(run<maxX&&forward<zBuffer[run]-.08)run++;
-    if(from<run)ctx.drawImage(tex,(from-left)*sampling,0,(run-from)*sampling,tex.height,from,top,run-from,height);
+    while(run<maxX&&forward<zBuffer[run])run++;
+    if(from<run){
+      const band=Math.min(run,right)-from;
+      ctx.drawImage(texture,(from-left)*sampling,0,band*sampling,texture.height,from,top,band,height);
+    }
   }
-  if(glow)ctx.filter='none';
+  ctx.globalAlpha=1;
+}
+const footprint=document.createElement('canvas');
+footprint.width=32;footprint.height=8;
+{
+  const shadow=footprint.getContext('2d');
+  shadow.fillStyle='#100e18';
+  shadow.fillRect(4,1,24,6);
+  shadow.fillRect(1,3,30,2);
 }
 const cryptWitness={x:3.05,y:16.2,type:'idol',scale:1.08};
-function drawSprites(){let v=[...scenery,...routeLandmarks,...annexScenery,...architectureScenery,player.relic?{...cryptWitness,x:5.9,y:17.15}:cryptWitness];
-if(bellRung)v.push({x:28.35,y:14.4,type:'bell',scale:.7});for(const t of traps){const phase=trapPhase(t);if(phase!=='idle')v.push({...t,type:phase==='warning'?'trapWarning':'trapActive',scale:.28});}for(let e of enemies)if(e.alive)v.push({x:e.x,y:e.y,type:e.type,scale:e.type==='boss'?1.83:1.12,flash:e.flash,enemy:e});for(let o of objects)if(o.active&&!((o.kind==='key'&&player.key)||(o.kind==='relic'&&player.relic)||(o.kind==='loot'&&crimsonTaken)))v.push({...o,type:o.kind==='weapon'?'relic':o.kind,scale:o.kind==='passage'?1.42:o.kind==='exit'?1.35:.7});if(dropped)v.push({...dropped,type:'relic',scale:.5});v=v.filter(s=>Math.abs(s.x-player.x)<24&&Math.abs(s.y-player.y)<24);v.sort((a,b)=>dist(player,b)-dist(player,a));for(let s of v){let wobble=s.enemy?Math.sin(tick*(s.enemy.type==='wraith'?5.3:2.4)+s.enemy.x)*.033:0;
-  let bob=s.enemy?(s.enemy.windup>0?-.09:Math.sin(tick*5+s.enemy.y)*.016):s.type==='torch'?Math.sin(tick*7+s.x)*.03:0;
-  const art=s.enemy?.phase===2?watcherAwake:enemyFrames[s.type];
-  const frames=s.enemy?art?.[enemyPose(s.enemy)]:null;
-  const chosen=frames?frames[Math.floor(tick*(s.enemy.windup>0?8:5)+s.enemy.originX)%frames.length]:null;
-  worldSprite(s.x,s.y+bob,s.type,s.scale*(1+wobble),s.flash,chosen);
-}}
-function drawCombatParticles(){
- for(const p of bladeSparks){if(p.life<=0)continue;const dx=p.x-player.x,dy=p.y-player.y,forward=dx*Math.cos(player.ang)+dy*Math.sin(player.ang);if(forward<=.2)continue;
- const side=-dx*Math.sin(player.ang)+dy*Math.cos(player.ang),x=W/2+(side/forward)*W/(2*FOV),y=H/2-14/forward;
- if(x>=0&&x<W&&forward<zBuffer[Math.floor(x)]+.35){ctx.globalAlpha=clamp(p.life*2,0,.9);ctx.fillStyle=p.color;const size=clamp(9/forward,1,5);ctx.fillRect(x,y,size,size);}
- }ctx.globalAlpha=1;
+const movedWitness={...cryptWitness,x:5.9,y:17.15};
+const scenerySprites=[...scenery,...routeLandmarks,...annexScenery,...architectureScenery];
+const groundedProps=new Set(['altar','coffin','idol','arch','urn','bell','ledger','tree','gauge']);
+const rungBell={x:28.35,y:14.4,type:'bell',scale:.7};
+
+function drawSprites(camera){
+  const visible=[];
+  function add(source,type,scale,frameImage=undefined,opacity=1,shadow=false){
+    const dx=source.x-player.x,dy=source.y-player.y;
+    const depth=dx*camera.cs+dy*camera.sn;
+    if(depth>.18&&depth<24)visible.push({x:source.x,y:source.y,type,scale,frameImage,opacity,shadow,depth});
+  }
+  for(const s of scenerySprites)add(s,s.type,s.scale,undefined,1,
+    groundedProps.has(s.type)||s.type.startsWith('architecture-'));
+  add(player.relic?movedWitness:cryptWitness,'idol',1.08,undefined,1,true);
+  if(bellRung)add(rungBell,'bell',.7);
+  for(const trap of traps){
+    const phase=trapPhase(trap);
+    if(phase!=='idle')add(trap,phase==='warning'?'trapWarning':'trapActive',.28);
+  }
+  for(const enemy of enemies){
+    const image=enemyCel(enemy);
+    if(!image)continue;
+    const opacity=enemy.alive ? 1 : Math.max(.35,1-(tick-enemy.defeatedAt)/fallTime);
+    add(enemy,enemy.type,enemy.type==='boss'?1.83:1.12,image,opacity,enemy.type!=='wraith');
+  }
+  for(const object of objects){
+    if(!object.active)continue;
+    if(object.kind==='key'&&player.key||object.kind==='relic'&&player.relic||object.kind==='loot'&&crimsonTaken)continue;
+    const art=objectArt(object);
+    add(object,art.type,art.scale,undefined,1,art.shadow);
+  }
+  if(dropped)add(dropped,'relic',.5);
+  visible.sort((a,b)=>b.depth-a.depth);
+  for(const s of visible){
+    if(s.shadow){
+      const side=-camera.sn*(s.x-player.x)+camera.cs*(s.y-player.y);
+      const center=W/2+side/s.depth*W/(2*FOV);
+      const ground=H/2+H*.43/s.depth;
+      const width=H*.51*s.scale/s.depth;
+      const height=H*.09/s.depth;
+      drawVisibleImage(footprint,center-width/2,ground-height*.55,width,height,s.depth,s.opacity*.54);
+    }
+    worldSprite(camera,s.x,s.y,s.type,s.scale,s.frameImage,s.opacity);
+  }
+}
+
+function drawCombatParticles(camera){
+  for(const p of bladeSparks){
+    const dx=p.x-player.x,dy=p.y-player.y;
+    const forward=dx*camera.cs+dy*camera.sn;
+    if(forward<=.2)continue;
+    const x=W/2+(-dx*camera.sn+dy*camera.cs)/forward*W/(2*FOV);
+    const y=H/2+H*(.43-p.z)/forward;
+    if(x<0||x>=W||y<0||y>=H||forward>=zBuffer[x|0])continue;
+    const size=Math.round(clamp(7/forward,1,5));
+    ctx.globalAlpha=clamp(p.life*2,0,settings.quiet?.44:.88);
+    ctx.fillStyle=p.color;
+    if(p.style==='spear'||p.style==='needle')ctx.fillRect(x|0,y|0,1,size+1);
+    else if(p.style==='axe')ctx.fillRect(x|0,y|0,size+2,size);
+    else if(p.style==='resonance'){
+      ctx.fillRect((x|0)-1,y|0,size+2,1);
+      ctx.fillRect(x|0,(y|0)-1,1,size+2);
+    }else ctx.fillRect(x|0,y|0,size,size);
+  }
+  ctx.globalAlpha=1;
+}
+
+const ringPoints=Array.from({length:40},(_,index)=>{
+  const angle=index*TAU/40;
+  return [Math.cos(angle),Math.sin(angle)];
+});
+function drawWarningRings(camera){
+  for(const enemy of enemies){
+    if(!enemy.alive||!['ring','chime'].includes(enemy.attackKind)||
+      !(enemy.windup>0||enemy.attackPose>0)||dist(enemy,player)>6||
+      !los(player.x,player.y,enemy.x,enemy.y))continue;
+    ctx.globalAlpha=settings.quiet||enemy.windup>0 ? .73 : .54;
+    const ranges=[enemy.attackReach,enemy.attackMin];
+    if(enemy.type==='drowned'){
+      // Close ripples tie the warning to the bell in narrow parts of the nave.
+      const wave=settings.quiet||enemy.windup>0 ? .48 : .48+1.25*(1-enemy.attackPose/strikeTime);
+      ranges.push(wave);
+    }
+    for(const reach of ranges){
+      if(!reach)continue;
+      ctx.fillStyle=reach===enemy.attackMin?'#dfb7a0':enemy.type==='drowned'?'#b9d9bb':'#eab477';
+      for(let index=0;index<ringPoints.length;index+=settings.low?2:1){
+        const [cos,sin]=ringPoints[index],x=enemy.x+cos*reach,y=enemy.y+sin*reach;
+        if(solid(x,y)||!los(enemy.x,enemy.y,x,y))continue;
+        const dx=x-player.x,dy=y-player.y;
+        const depth=camera.cs*dx+camera.sn*dy;
+        if(depth<=.25)continue;
+        const px=W/2+(-camera.sn*dx+camera.cs*dy)/depth*W/(2*FOV);
+        const py=H/2+H*.43/depth;
+        if(px<0||px>=W||py>=H||depth>=zBuffer[px|0])continue;
+        ctx.fillRect(px|0,py|0,clamp(13/depth,2,8),depth<3?2:1);
+      }
+    }
+  }
+  ctx.globalAlpha=1;
 }
 function drawThreatIndicator(){
-  const imminent=enemies.filter(e=>e.alive&&(e.windup>0||e.waking>0)&&dist(player,e)<4&&los(player.x,player.y,e.x,e.y))
+  const imminent=enemies.filter(e=>e.alive&&(e.windup>0||e.waking>0)&&dist(player,e)<4&&
+    Math.abs(turnDelta(Math.atan2(e.y-player.y,e.x-player.x)-player.ang))<.65&&los(player.x,player.y,e.x,e.y))
     .sort((a,b)=>dist(player,a)-dist(player,b))[0];
   if(!imminent)return;
-  const strength=Math.min(1,Math.max(imminent.windup,imminent.waking)*1.6),pulse=settings.quiet?.75:.64+.15*Math.sin(tick*14);
   const radial=!imminent.waking&&['ring','chime'].includes(imminent.attackKind);
-  ctx.strokeStyle=radial?`rgba(250,199,126,${pulse})`:`rgba(246,123,117,${pulse})`;
-  ctx.lineWidth=2;
+  const pulse=settings.quiet?.8:.73+.08*Math.sin(tick*9);
+  ctx.strokeStyle=radial?`rgba(250,199,126,${pulse})`:`rgba(246,151,131,${pulse})`;
+  ctx.lineWidth=1.5;
   ctx.beginPath();
-  ctx.arc(W/2,H/2,(radial?19:12)+strength*5,radial?0:-PI*.78,radial?TAU:PI*.78);
+  ctx.arc(W/2,H/2,radial?16:12,radial?0:-PI*.78,radial?TAU:PI*.78);
   ctx.stroke();
-  ctx.fillStyle='rgba(250,181,151,.8)';ctx.fillRect(W/2-1,H/2-20,2,5);
 }
 function swordPose(progress,heavy){
   const strike=clamp(progress/.52,0,1),recovery=clamp((progress-.52)/.48,0,1);
@@ -1829,84 +2341,135 @@ function swordPose(progress,heavy){
   return {x:-reach*cut+reach*.9*reset,y:10*cut+38*reset,
     rotation:-.18-(heavy?.82:.68)*cut+(heavy?1.04:.9)*reset};
 }
-function weaponPose(id, progress, heavy){
-  const defaultPose=swordPose(progress,heavy);
-  const extension=Math.sin(progress*PI);
-  if(id==='spear')return {x:-72*extension,y:-33*extension,rotation:-.18-.62*extension};
-  if(id==='needle')return {x:-49*extension,y:23*extension,rotation:-.18-.31*extension};
-  if(id==='axe')return {x:defaultPose.x*.82,y:defaultPose.y-48*extension,rotation:defaultPose.rotation-.28*extension};
-  return defaultPose;
-}
-
-function drawEffects(){let bob=settings.quiet?0:Math.sin(walkTime*11)*Math.min(3.8,player.step*10);
-const progress=swing?(swing.age<swing.contact
-  ? .52*swing.age/swing.contact
-  : .52+.48*(swing.age-swing.contact)/(swing.duration-swing.contact)):0;
-const id=swing?.id??equippedWeapon,heavySwing=swing?.heavy??false;
-const pose=swing?weaponPose(id,progress,heavySwing):{x:0,y:0,rotation:-.18};
-const slash=swing?Math.max(0,1-Math.abs(progress-.52)*5)*(settings.quiet?.19:.47):0;
-const weapon=weapons[id];
-ctx.save();ctx.translate(W*.76+pose.x,H*.81+bob+pose.y);
-ctx.rotate(pose.rotation);
-ctx.fillStyle='#14121e';ctx.beginPath();ctx.ellipse(30,75,80,61,0,0,TAU);ctx.fill();
-ctx.fillStyle='#4a3b4b';ctx.fillRect(11,12,22,56);
-ctx.fillStyle='#8c7180';ctx.fillRect(18,14,7,44);
-if(id==='sword'){
-  ctx.beginPath();ctx.moveTo(10,5);ctx.lineTo(10,-126);ctx.lineTo(18,-153);
-  ctx.lineTo(25,-126);ctx.lineTo(25,5);ctx.closePath();
-  const steel=ctx.createLinearGradient(10,0,25,0);
-  steel.addColorStop(0,'#e7d8ce');steel.addColorStop(.28,'#8d8495');
-  steel.addColorStop(.58,'#50485e');steel.addColorStop(1,'#bdb2b9');
-  ctx.fillStyle=steel;ctx.fill();
-  ctx.fillStyle='#a78992';ctx.fillRect(16,-126,2,115);
-  ctx.fillStyle='#6e515f';ctx.fillRect(1,1,33,7);
-}else{
-  ctx.fillStyle='#5b474f';ctx.fillRect(15,-126,9,151);
-  ctx.fillStyle=weapon.color;
-  ctx.beginPath();
+function weaponPose(id,progress,heavy){
+  const base=swordPose(progress,heavy);
+  const prepare=clamp(progress/.52,0,1);
+  const extension=Math.sin(prepare*PI/2)*(1-clamp((progress-.52)/.48,0,1));
+  let pose={x:base.x*.52,y:base.y,rotation:base.rotation+(heavy?.14:0)*extension,scaleY:1};
+  if(id==='spear')pose={x:-(heavy?126:118)*extension,y:-5*extension,rotation:-.18-.08*extension,scaleY:1-.45*extension};
+  if(id==='needle')pose={x:-106*extension,y:2*extension,rotation:-.18-.21*extension,scaleY:1-.50*extension};
   if(id==='axe'){
-    ctx.moveTo(22,-127);ctx.lineTo(-8,-143);ctx.lineTo(-29,-135);
-    ctx.lineTo(-37,-102);ctx.lineTo(-22,-91);ctx.lineTo(22,-99);
-  }else{
-    const width=id==='spear'?10:4;
-    ctx.moveTo(19,-161);ctx.lineTo(19+width,-132);ctx.lineTo(19,-111);ctx.lineTo(19-width,-132);
+    const windup=Math.sin(prepare*PI)*(heavy?26:19);
+    pose={x:base.x*(heavy?.28:.37)+windup,y:base.y-(heavy?20:10)*extension,
+      rotation:base.rotation+.17*extension+windup*.018,scaleY:1};
   }
-  ctx.closePath();ctx.fill();
-  ctx.fillStyle='#e7d8ce';ctx.fillRect(18,-131,2,16);
-  if(id==='needle'){ctx.strokeStyle=weapon.color;ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(19,-125,10,7,0,0,TAU);ctx.stroke();}
+  // Complete the recovery at the idle pose so the next frame does not jump.
+  const settle=clamp((progress-.82)/.18,0,1);
+  return {x:pose.x*(1-settle),y:pose.y*(1-settle),
+    rotation:pose.rotation*(1-settle)-.18*settle,scaleY:1+(pose.scaleY-1)*(1-settle)};
 }
-ctx.restore();
-if(slash>0){
-  ctx.strokeStyle=weapon.color;ctx.globalAlpha=slash;ctx.lineWidth=2;ctx.beginPath();
-  if(id==='spear'||id==='needle'){
-    ctx.moveTo(W*.62,H*.67);ctx.lineTo(W*.5,H*.51);
-  }else{
-    ctx.arc(W*.53,H*.64,heavySwing?127:102,-2.83+progress*.9,-.65+progress*.65);
+const restingWeapon={x:0,y:0,rotation:-.18,scaleY:1};
+const weaponTip={sword:[17,21],spear:[18,14],axe:[-31,49],needle:[18,13]};
+function drawWeaponSleeve(x,y,pose){
+  const gripX=x+17*Math.cos(pose.rotation);
+  const gripY=y+17*Math.sin(pose.rotation);
+  ctx.fillStyle='#14121e';
+  ctx.beginPath();ctx.moveTo(gripX-12,gripY+2);ctx.lineTo(gripX+9,gripY-2);
+  ctx.lineTo(gripX+Math.max(12,(W*.95-gripX)*.51),H+8);
+  ctx.lineTo(gripX+Math.max(0,(W*.78-gripX)*.37),H+8);
+  ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#5e4b59';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(gripX-8,gripY+6);
+  ctx.lineTo(gripX+4,gripY+5);ctx.lineTo(gripX+Math.max(8,(W*.87-gripX)*.42),H);
+  ctx.stroke();
+}
+function drawWeaponTrail(id,heavy,progress,bob){
+  const strength=Math.max(0,1-Math.abs(progress-.52)*7);
+  if(!strength||settings.quiet)return;
+  const [tipX,tipY]=weaponTip[id];
+  ctx.strokeStyle=weapons[id].color;
+  ctx.globalAlpha=strength*(id==='axe'?.64:.48);
+  ctx.lineWidth=id==='axe'?3:1.5;
+  ctx.beginPath();
+  for(let index=0;index<4;index++){
+    const sample=clamp(Math.min(progress,.52)-(3-index)*.075,0,1);
+    const pose=weaponPose(id,sample,heavy);
+    const cos=Math.cos(pose.rotation),sin=Math.sin(pose.rotation),bladeY=(tipY-175)*pose.scaleY;
+    const x=W*.76+pose.x+tipX*cos-bladeY*sin;
+    const y=H*.81+bob+pose.y+tipX*sin+bladeY*cos;
+    if(index===0)ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
   }
   ctx.stroke();ctx.globalAlpha=1;
 }
-if(player.block){ctx.fillStyle='rgba(32,29,42,.9)';ctx.beginPath();ctx.moveTo(0,H*.47);ctx.lineTo(85,H*.38);ctx.lineTo(126,H*.71);ctx.lineTo(65,H);ctx.lineTo(0,H);ctx.fill();ctx.strokeStyle='#8a7785';ctx.lineWidth=6;ctx.stroke();}if(spellAnim>0){let r=28+(1-spellAnim/.65)*55;ctx.strokeStyle=`rgba(176,131,244,${spellAnim/.65*.7})`;ctx.lineWidth=4;ctx.beginPath();ctx.arc(W*.5,H*.5,r,0,TAU);ctx.stroke();}if(injury>0){ctx.fillStyle=`rgba(105,15,31,${injury*(settings.quiet?.075:.24)})`;ctx.fillRect(0,0,W,H);} }
-const moteField=Array.from({length:65},(_,i)=>({x:rand(i,3)*W,y:rand(i,4)*H,s:.5+rand(i,6)*2.4,z:rand(i,8)}));
-function drawAtmosphere(){
-  // A subtle animated veil: dust and drifting sparks, rendered below the weapon.
-  for(const p of settings.low||settings.quiet?[]:moteField){let x=(p.x+tick*(p.z*3+1.7))%W,y=(p.y+Math.sin(tick*.7+p.x)*4+tick*(p.z*1.1))%H;
-    ctx.fillStyle=p.z>.8?'rgba(209,137,134,.31)':'rgba(161,175,196,.18)';ctx.fillRect(x|0,y|0,p.s,p.s);
+function drawEffects(){
+  const bob=settings.quiet?0:Math.sin(walkTime*11)*Math.min(3.8,player.step*10);
+  const progress=swing?(swing.age<swing.contact
+    ? .52*swing.age/swing.contact
+    : .52+.48*(swing.age-swing.contact)/(swing.duration-swing.contact)):0;
+  const id=swing?.id??equippedWeapon,heavy=swing?.heavy??false;
+  const pose=swing?weaponPose(id,progress,heavy):restingWeapon;
+  if(swing)drawWeaponTrail(id,heavy,progress,bob);
+  const weaponX=Math.round(W*.76+pose.x),weaponY=Math.round(H*.81+bob+pose.y);
+  drawWeaponSleeve(weaponX,weaponY,pose);
+  ctx.save();
+  ctx.translate(weaponX,weaponY);
+  ctx.rotate(pose.rotation);
+  ctx.drawImage(weaponArt[id],-41,-175*pose.scaleY,116,220*pose.scaleY);
+  ctx.restore();
+  if(player.block){
+    ctx.fillStyle='rgba(32,29,42,.94)';
+    ctx.beginPath();ctx.moveTo(0,H*.47);ctx.lineTo(85,H*.38);ctx.lineTo(126,H*.71);
+    ctx.lineTo(65,H);ctx.lineTo(0,H);ctx.fill();
+    ctx.strokeStyle='#8a7785';ctx.lineWidth=6;ctx.stroke();
   }
-  const area=regionAt(player.x,player.y),tone=area==='nave'?'14,109,101':area==='catacomb'?'20,93,104':area==='chapel'?'96,49,123':area==='sanctuary'?'139,50,80':'69,62,90';
-  const glow=ctx.createRadialGradient(W/2,H*.42,20,W/2,H*.42,W*.65);glow.addColorStop(0,'rgba(0,0,0,0)');glow.addColorStop(1,`rgba(${tone},.15)`);ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
-  const danger=clamp(1-player.hp/player.maxhp,0,.65);
-  if(danger){ctx.fillStyle=`rgba(54,8,19,${danger*.10})`;ctx.fillRect(0,0,W,H);}
+  if(spellAnim>0){
+    const radius=settings.quiet?44:28+(1-spellAnim/.65)*55;
+    ctx.strokeStyle=`rgba(176,131,244,${spellAnim/.65*(settings.quiet?.42:.7)})`;
+    ctx.lineWidth=settings.quiet?2:4;
+    ctx.beginPath();ctx.arc(W*.5,H*.5,radius,0,TAU);ctx.stroke();
+  }
+  if(injury>0){
+    ctx.fillStyle=`rgba(105,15,31,${injury*(settings.quiet?.075:.24)})`;
+    ctx.fillRect(0,0,W,H);
+  }
+}
+const ambience={
+  crypt:{color:'#bda086',x:5.15,y:15.6,count:8,lift:.16},
+  catacomb:{color:'#8faea3',x:21.5,y:19.8,count:6,lift:-.11},
+  chapel:{color:'#b38d9e',x:8.5,y:7.45,count:9,lift:.06},
+  sanctuary:{color:'#bd8b76',x:19.5,y:3.9,count:9,lift:.13},
+  nave:{color:'#8cb8ab',x:28.1,y:15.65,count:7,lift:-.12},
+  salt:{color:'#c5b699',x:46.8,y:6.6,count:8,lift:.04},
+  archive:{color:'#bba084',x:61.75,y:10.3,count:8,lift:-.06},
+  garden:{color:'#a6b88d',x:48.2,y:33.35,count:10,lift:.09},
+  soundings:{color:'#99bab9',x:67.7,y:27.1,count:6,lift:.12},
+  sky:{color:'#aaaad0',x:41.5,y:53,count:7,lift:.02},
+};
+const motes=Object.fromEntries(Object.entries(ambience).map(([area,field])=>[
+  area,Array.from({length:field.count},(_,i)=>({
+    x:field.x+(rand(i,3)-.5)*2.2,y:field.y+(rand(i,4)-.5)*2.2,
+    z:rand(i,6),phase:rand(i,8),size:i%4===0?2:1,
+  })),
+]));
+function drawAtmosphere(camera){
+  if(!settings.quiet&&!settings.low){
+    const area=regionAt(player.x,player.y),field=ambience[area];
+    ctx.fillStyle=field.color;ctx.globalAlpha=.52;
+    for(const p of motes[area]){
+      const time=tick*.62+p.phase*TAU;
+      const dx=p.x+Math.sin(time)*.22-player.x,dy=p.y-player.y;
+      const depth=dx*camera.cs+dy*camera.sn;
+      if(depth<=.5||depth>10)continue;
+      const z=.12+((p.z+(tick*field.lift)%1+1)%1)*.8;
+      const x=W/2+(-dx*camera.sn+dy*camera.cs)/depth*W/(2*FOV),y=H/2+H*(.43-z)/depth;
+      if(x>=0&&x<W&&y>=0&&y<H&&depth<zBuffer[x|0])ctx.fillRect(x|0,y|0,p.size,p.size);
+    }
+    ctx.globalAlpha=1;
+  }
 }
 function render(){
-  drawBase();
+  const camera={sn:Math.sin(player.ang),cs:Math.cos(player.ang)};
+  drawBase(camera);
+  drawWarningRings(camera);
+  drawSprites(camera);
+  drawAtmosphere(camera);
+  drawCombatParticles(camera);
   ctx.save();
   if(!settings.quiet&&shake>.005)ctx.translate((Math.random()-.5)*shake*24,(Math.random()-.5)*shake*16);
-  drawSprites();
-  drawCombatParticles();
-  drawAtmosphere();
   drawEffects();
-  drawThreatIndicator();
   ctx.restore();
+  drawThreatIndicator();
 }
 const mapCanvas=document.createElement('canvas');
 mapCanvas.width=240;mapCanvas.height=200;
@@ -1919,10 +2482,10 @@ function drawMap(){
   const width=wing?19:30,height=wing?19:25,cell=wing?9:6.5;
   const xAt=x=>(240-width*cell)/2+(x-offsetX)*cell;
   const yAt=y=>(200-height*cell)/2+(y-offsetY)*cell;
-  mc.fillStyle='#0c0e16';mc.fillRect(0,0,240,200);
+  mc.fillStyle='#110f18';mc.fillRect(0,0,240,200);
   for(let y=offsetY;y<offsetY+height;y++)for(let x=offsetX;x<offsetX+width;x++){
     const value=grid[y][x];
-    mc.fillStyle=value===0?'#393747':value===3?'#a7855c':value===4?'#735274':'#10121c';
+    mc.fillStyle=value===0?'#544951':value===3||value===5?'#987b60':value===4?'#534354':'#15121d';
     mc.fillRect(xAt(x),yAt(y),cell-.6,cell-.6);
   }
   for(const object of [...objects,...traps]){
@@ -1930,9 +2493,17 @@ function drawMap(){
     if(object.kind==='discovery'&&!discoveries.includes(object.id))continue;
     if(object.kind==='discovery'&&object.choice&&archiveChoice!==object.id)continue;
     const trap=object.period&&trapPhase(object);
+    const x=xAt(object.x),y=yAt(object.y);
     mc.fillStyle=trap?(trap==='active'?'#d36f6d':trap==='warning'?'#d7ae78':'#796b68'):
       object.kind==='passage'?'#a7c9dc':object.kind==='altar'?'#9ad3b2':object.kind==='seal'?'#ce97dc':'#e5c78e';
-    mc.fillRect(xAt(object.x)-2,yAt(object.y)-2,4,4);
+    if(object.kind==='passage'||object.kind==='seal'){
+      const mark=object.kind==='passage'?4:3;
+      mc.beginPath();mc.moveTo(x,y-mark);mc.lineTo(x+mark,y);mc.lineTo(x,y+mark);
+      if(object.kind==='seal')mc.lineTo(x-mark,y);
+      mc.closePath();mc.fill();
+    }else if(object.kind==='altar'){
+      mc.fillRect(x-3,y-1,6,2);mc.fillRect(x-1,y-3,2,6);
+    }else mc.fillRect(x-2,y-2,4,4);
   }
   const x=xAt(player.x),y=yAt(player.y);
   mc.fillStyle='#efe6ca';mc.beginPath();mc.arc(x,y,3.5,0,TAU);mc.fill();
@@ -1982,13 +2553,23 @@ function hud(){
     Math.abs(turnDelta(Math.atan2(e.y-player.y,e.x-player.x)-player.ang))<.62&&los(player.x,player.y,e.x,e.y))
     .sort((a,b)=>dist(player,a)-dist(player,b))[0];$('target').hidden=!nearest;if(nearest){$('targetname').textContent=creatureNames[nearest.type];$('targetbar').style.width=100*nearest.hp/nearest.maxhp+'%';}$('hpbar').style.width=100*player.hp/player.maxhp+'%';$('stbar').style.width=player.st+'%';$('mpbar').style.width=player.mp/60*100+'%';$('ashes').textContent=player.ashes;$('flasks').textContent=player.flasks;$('spellcount').textContent=Math.floor(player.mp/25);$('location').textContent=getZone();$('objective').textContent=objectiveText();let b=enemies.find(e=>e.type==='boss');$('bossbar').hidden=!(b.alive&&b.alert&&getZone()===zones[3]);$('bossfill').style.width=100*b.hp/b.maxhp+'%';let o=nearObject();$('interact').hidden=!o;$('interact').textContent=o?`${coarsePointer?.matches?'':'[ E ]  '}${o.label.toUpperCase()}`:'';if(toastUntil<tick)$('toast').style.opacity='0';if(warningUntil<tick)$('encounter-warning').hidden=true;if(mapOn)drawMap();}
 let stepBeat=0,nextDrip=6;
-function update(dt){tick+=dt;if(tick<hitFlashUntil)$('reticle').classList.add('hit');else $('reticle').classList.remove('hit');player.attackCd=Math.max(0,player.attackCd-dt);player.spellCd=Math.max(0,player.spellCd-dt);player.hurt=Math.max(0,player.hurt-dt);player.roll=Math.max(0,player.roll-dt);spellAnim=Math.max(0,spellAnim-dt);injury=Math.max(0,injury-dt*2);shake=Math.max(0,shake-dt*.7);let fx=Math.cos(player.ang),fy=Math.sin(player.ang),sx=-fy,sy=fx;let [forward,strafe]=moveInput(),mag=Math.hypot(forward,strafe);player.block=!!keys.MouseRight||padBlock||touchBlock;player.ang+=touchLook*dt*1.95;if(keys.ArrowLeft)player.ang-=dt*1.75;if(keys.ArrowRight)player.ang+=dt*1.75;player.ang=turnDelta(player.ang);let sprint=(keys.ShiftLeft||keys.ShiftRight||padSprint)&&player.st>3&&mag>0&&!player.block,spd=player.roll>0?5.7:sprint?3.8:player.block?1.05:2.4;if(player.roll>0){forward=player.rollDir?.[0]??forward;strafe=player.rollDir?.[1]??strafe;mag=Math.hypot(forward,strafe);}if(mag>0){let dx=(fx*forward+sx*strafe)/Math.max(1,mag)*spd*dt,dy=(fy*forward+sy*strafe)/Math.max(1,mag)*spd*dt;const ox=player.x,oy=player.y;
+function update(dt){tick+=dt;
+if(tick<hitFlashUntil){
+  $('reticle').classList.add('hit');
+  $('reticle').setAttribute('data-contact',contactKind);
+}else $('reticle').classList.remove('hit');
+player.attackCd=Math.max(0,player.attackCd-dt);player.spellCd=Math.max(0,player.spellCd-dt);player.hurt=Math.max(0,player.hurt-dt);player.roll=Math.max(0,player.roll-dt);spellAnim=Math.max(0,spellAnim-dt);injury=Math.max(0,injury-dt*2);shake=Math.max(0,shake-dt*.7);let fx=Math.cos(player.ang),fy=Math.sin(player.ang),sx=-fy,sy=fx;let [forward,strafe]=moveInput(),mag=Math.hypot(forward,strafe);player.block=!!keys.MouseRight||padBlock||touchBlock;player.ang+=touchLook*dt*1.95;if(keys.ArrowLeft)player.ang-=dt*1.75;if(keys.ArrowRight)player.ang+=dt*1.75;player.ang=turnDelta(player.ang);let sprint=(keys.ShiftLeft||keys.ShiftRight||padSprint)&&player.st>3&&mag>0&&!player.block,spd=player.roll>0?5.7:sprint?3.8:player.block?1.05:2.4;if(player.roll>0){forward=player.rollDir?.[0]??forward;strafe=player.rollDir?.[1]??strafe;mag=Math.hypot(forward,strafe);}if(mag>0){let dx=(fx*forward+sx*strafe)/Math.max(1,mag)*spd*dt,dy=(fy*forward+sy*strafe)/Math.max(1,mag)*spd*dt;const ox=player.x,oy=player.y;
 move(player,dx,dy);
 stepBeat+=Math.hypot(player.x-ox,player.y-oy);
 if(stepBeat>(sprint?.94:.81)){
   VeilAudio.cue(['nave','soundings'].includes(regionAt(player.x,player.y))?'wetStep':'step');stepBeat=0;
 }
-walkTime+=dt*(sprint?1.7:1);player.step=Math.min(1,player.step+dt*6);}else player.step=Math.max(0,player.step-dt*6);if(sprint)player.st=Math.max(0,player.st-19*dt);else if(!player.block&&player.attackCd<.38)player.st=Math.min(100,player.st+24*dt);player.mp=Math.min(60,player.mp+(discoveries.includes('gardenFruit')?3.6:3)*dt);for(const p of bladeSparks){p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=Math.max(.1,1-dt*4);p.vy*=Math.max(.1,1-dt*4);}
+walkTime+=dt*(sprint?1.7:1);player.step=Math.min(1,player.step+dt*6);}else player.step=Math.max(0,player.step-dt*6);if(sprint)player.st=Math.max(0,player.st-19*dt);else if(!player.block&&player.attackCd<.38)player.st=Math.min(100,player.st+24*dt);player.mp=Math.min(60,player.mp+(discoveries.includes('gardenFruit')?3.6:3)*dt);for(const p of bladeSparks){p.life-=dt;
+  if(!settings.quiet){
+    const drag=Math.max(.1,1-dt*4);
+    p.x+=p.vx*dt;p.y+=p.vy*dt;p.z=Math.max(.02,p.z+p.vz*dt);p.vz-=1.7*dt;
+    p.vx*=drag;p.vy*=drag;
+  }}
  advanceSwing(dt);
  bladeSparks=bladeSparks.filter(p=>p.life>0);
  updateTraps(dt);
@@ -2063,10 +2644,10 @@ function showEnding(){
 }
 function begin(){VeilAudio.begin();if(!playing){playing=true;paused=false;if(player.won){$('menu').classList.add('hidden');showEnding();return;}$('menu').classList.add('hidden');note('Sigue las luces del corredor hacia las catacumbas. Allí llevaron la llave.',6);}else{paused=false;$('menu').classList.add('hidden');}needsDraw=true;lockPointer();}
 function togglePause(){if(!playing||player.won||!$('death').classList.contains('hidden'))return;if(!$('inventory').classList.contains('hidden')){$('inventory').classList.add('hidden');paused=false;lockPointer();return;}paused=!paused;if(paused){save();$('save-game').hidden=false;$('save-status').textContent='';$('menu').classList.add('is-paused');$('menu').classList.remove('hidden');$('play').textContent='REGRESAR A LA OSCURIDAD';document.exitPointerLock?.();$('play').focus();}else{$('menu').classList.add('hidden');lockPointer();}}
-function toggleInventory(){if(!playing||player.won||!$('death').classList.contains('hidden')||(!$('menu').classList.contains('hidden')))return;let inv=$('inventory');if(inv.classList.contains('hidden')){inv.classList.remove('hidden');paused=true;document.exitPointerLock?.();$('items').innerHTML=[...ownedWeapons.map(id=>`<div class="item"><b>${weapons[id].name}${equippedWeapon===id?' · EQUIPADA':''}</b><small>${weapons[id].lore} Alcance ${weapons[id].reach.toFixed(1)} · daño ${weapons[id].damage} · coste ${weapons[id].stamina}. Pulsa C para cambiar.</small></div>`),`<div class="item"><b>LLAVE DE HUESO</b><small>${player.key?'Una llave recuperada de la cripta.':'Aún no encontrada.'}</small></div>`,`<div class="item"><b>CORAZÓN DEL VACÍO</b><small>${player.relic?'El pulso de lo imposible recorre tus venas.':'Se oculta tras un muro quebradizo.'}</small></div>`,`<div class="item"><b>ECOS DEL VELO (${echoesCollected.length}/3)</b><small>Busca las tres memorias perdidas entre la cripta, las catacumbas y la capilla. Reunirlas refuerza permanentemente tus frascos.</small></div>`,`<div class="item"><b>RITOS DEL VIGÍA (${sealsBroken.length}/2)</b><small>Dos sellos opcionales: Sepultura, en la cripta; Herejía, tras el pasadizo de la capilla. Cada uno reduce el daño del Vigía un 15 % y concede 60 cenizas. No son necesarios para completar el juego.</small></div>`,`<div class="item"><b>REGIONES EXPLORADAS (${zonesVisited.length}/${zones.length})</b><small>${zonesVisited.join(' · ')||'Aún no hay registros.'}</small></div>`,`<div class="item"><b>OSARIO</b><small>${leverUsed?'La palanca ha revelado un escondite.':'Un mecanismo olvidado espera en las catacumbas.'} ${cacheOpened?'Recompensa recogida.':''}</small></div>`,`<div class="item"><b>NIVEL ${player.lv} · ${player.ashes} CENIZAS</b><small>Vida máxima: ${player.maxhp} · Frascos: ${player.maxflasks}</small></div>`,`<div class="item"><b>INSCRIPCIONES</b><small>${[
+function toggleInventory(){if(!playing||player.won||!$('death').classList.contains('hidden')||(!$('menu').classList.contains('hidden')))return;let inv=$('inventory');if(inv.classList.contains('hidden')){inv.classList.remove('hidden');paused=true;document.exitPointerLock?.();$('items').innerHTML=[...ownedWeapons.map(id=>`<div class="item"><b>${weapons[id].name}${equippedWeapon===id?' · EQUIPADA':''}</b><small>${weapons[id].lore} Alcance ${weapons[id].reach.toFixed(1)} · daño ${weapons[id].damage} · coste ${weapons[id].stamina}. Al cerrar el diario: C, Arma o cruceta derecha.</small></div>`),`<div class="item"><b>LLAVE DE HUESO</b><small>${player.key?'Una llave recuperada de la cripta.':'Aún no encontrada.'}</small></div>`,`<div class="item"><b>CORAZÓN DEL VACÍO</b><small>${player.relic?'El pulso de lo imposible recorre tus venas.':'Se oculta tras un muro quebradizo.'}</small></div>`,`<div class="item"><b>ECOS DEL VELO (${echoesCollected.length}/3)</b><small>Busca las tres memorias perdidas entre la cripta, las catacumbas y la capilla. Reunirlas refuerza permanentemente tus frascos.</small></div>`,`<div class="item"><b>RITOS DEL VIGÍA (${sealsBroken.length}/2)</b><small>Dos sellos opcionales: Sepultura, en la cripta; Herejía, tras el pasadizo de la capilla. Cada uno reduce el daño del Vigía un 15 % y concede 60 cenizas. No son necesarios para completar el juego.</small></div>`,`<div class="item"><b>REGIONES EXPLORADAS (${zonesVisited.length}/${zones.length})</b><small>${zonesVisited.join(' · ')||'Aún no hay registros.'}</small></div>`,`<div class="item"><b>OSARIO</b><small>${leverUsed?'La palanca ha revelado un escondite.':'Un mecanismo olvidado espera en las catacumbas.'} ${cacheOpened?'Recompensa recogida.':''}</small></div>`,`<div class="item"><b>NIVEL ${player.lv} · ${player.ashes} CENIZAS</b><small>Vida máxima: ${player.maxhp} · Frascos: ${player.maxflasks}</small></div>`,`<div class="item"><b>INSCRIPCIONES</b><small>${[
   tabletsRead.includes('tablet')?'Los muertos no temen a la noche. Temen a la campana. La pared agrietada queda al norte del altar.':'',
   tabletsRead.includes('tablet2')?'El Vigía selló la puerta desde el otro lado.':'',
-].filter(Boolean).join(' · ')||'Aún no has descifrado ninguna.'}</small></div>`,`<div class="item"><b>CAMPANA SUMERGIDA</b><small>${bellRung?'La campana ha vuelto a sonar.':'Busca una nave inundada al este de las catacumbas.'}</small></div>`,...additionalJournal()].join('');$('inventory-close').focus();}else{inv.classList.add('hidden');paused=false;lockPointer();}}
+].filter(Boolean).join(' · ')||'Aún no has descifrado ninguna.'}</small></div>`,`<div class="item"><b>CAMPANA SUMERGIDA</b><small>${bellRung?'La campana ha vuelto a sonar.':'Busca una nave inundada al este de las catacumbas.'}</small></div>`,...additionalJournal()].join('');$('items').focus();}else{inv.classList.add('hidden');paused=false;lockPointer();}}
 $('play').addEventListener('click',begin);$('again').addEventListener('click',restart);screen.addEventListener('click',()=>{VeilAudio.begin();if(!playing||paused)return;if(document.pointerLockElement!==screen)lockPointer();attack();});screen.addEventListener('contextmenu',e=>e.preventDefault());screen.addEventListener('mousedown',e=>{if(e.button===2)keys.MouseRight=true;});window.addEventListener('mouseup',e=>{if(e.button===2)keys.MouseRight=false;});document.addEventListener('mousemove',e=>{if(document.pointerLockElement===screen&&playing&&!paused)player.ang+=e.movementX*.0029;});
 window.addEventListener('keydown',e=>{if(playing&&!player.won&&['Space','Tab','ArrowLeft','ArrowRight'].includes(e.code)&&(!paused||!$('inventory').classList.contains('hidden')))e.preventDefault();if(e.repeat)return;keys[e.code]=true;if(!playing&&e.code!=='Enter')return;if(e.code==='Escape'){if(!$('inventory').classList.contains('hidden'))toggleInventory();else togglePause();return;}if(e.code==='Tab'&&playing&&$('menu').classList.contains('hidden')&&!player.won){toggleInventory();return;}if(!playing||paused){if(e.code==='Enter'&&!playing&&!['BUTTON','INPUT','SUMMARY'].includes(e.target.tagName))begin();return;}if(e.code==='Space')dodge();if(e.code==='KeyE')interact();if(e.code==='KeyF')heal();if(e.code==='KeyL')levelUp();if(e.code==='KeyQ')spell();if(e.code==='KeyJ')attack(true);if(e.code==='KeyH')attack();if(e.code==='KeyM')toggleMap();if(e.code==='KeyC')equipNext();if(e.code==='KeyR'&&nearObject()?.kind==='altar')interact();if(e.code==='KeyK')manualSave();if(e.code==='KeyU')toggleMute();});window.addEventListener('keyup',e=>{keys[e.code]=false;});window.addEventListener('blur',()=>{for(let k of Object.keys(keys))keys[k]=false;});document.addEventListener('pointerlockchange',()=>{
   if(!document.pointerLockElement)keys.MouseRight=false;
@@ -2198,6 +2779,6 @@ function safeSavePresent(){return saveReady;}
 if(saveWarning)$('save-status').textContent=saveWarning;
 if(saveReady)$('play').textContent=player.won?'VER EL DESENLACE':'CONTINUAR EL DESCENSO';
 // Read-only diagnostics for reproducible browser tests; no game-state mutation hooks.
-window.__ashenDiagnostics=()=>({version:'3.5.0',ownedWeapons:[...ownedWeapons],equippedWeapon,playing,paused,discoveries:[...discoveries],archiveChoice,mirrorPositions:{...mirrorPositions},awakening:enemies.filter(e=>e.alive&&e.waking>0).map(e=>e.id),objective:objectiveText(),bossDefeated,won:player.won,position:[+player.x.toFixed(2),+player.y.toFixed(2)],heading:player.ang,ending:player.won?(restoredEnding()?'restored':'first-light'):null, bellRung,shortcutOpen, hp:player.hp,stamina:+player.st.toFixed(1),mana:+player.mp.toFixed(1),zone:getZone(),enemiesAlive:enemies.filter(e=>e.alive).length,key:player.key,relic:player.relic,gate:player.gate,secret:player.secret,renderSize:[W,H],sceneryCount:scenery.length,echoes:echoesCollected.length,echoReward,sealsBroken:sealsBroken.length,sealsRemaining:objects.filter(o=>o.kind==='seal'&&o.active).length,zonesVisited:zonesVisited.length,echoLocations:objects.filter(o=>o.kind==='echo'&&o.active).length,textureCount:Object.values(textures).reduce((n,v)=>n+Object.keys(v).length,0)+Object.keys(awakeWall).length,region:regionAt(player.x,player.y),themedProps:scenery.filter(o=>['coffin','bonepile','fungus','roots','stainedglass','brazier'].includes(o.type)).length,animationFrames:[...Object.values(enemyFrames),watcherAwake].reduce((n,v)=>n+Object.values(v).reduce((m,a)=>m+a.length,0),0),enemyWindups:enemies.filter(e=>e.windup>0).length,enemyAttackPatterns:enemies.filter(e=>e.alive).map(e=>({id:e.id,kind:e.attackKind,attacks:e.attacksMade})),activeParticles:bladeSparks.filter(p=>p.life>0).length,trapCount:traps.length,activeTraps:traps.filter(t=>trapPhase(t)==='active').length,leverUsed,cacheOpened,tabletsRead:tabletsRead.length,artStyle:'retro-raycast-pixel',mapVisible:mapOn,savePresent:safeSavePresent()});
+window.__ashenDiagnostics=()=>({version:VERSION,ownedWeapons:[...ownedWeapons],equippedWeapon,playing,paused,discoveries:[...discoveries],archiveChoice,mirrorPositions:{...mirrorPositions},awakening:enemies.filter(e=>e.alive&&e.waking>0).map(e=>e.id),objective:objectiveText(),bossDefeated,won:player.won,position:[+player.x.toFixed(2),+player.y.toFixed(2)],heading:player.ang,ending:player.won?(restoredEnding()?'restored':'first-light'):null, bellRung,shortcutOpen, hp:player.hp,stamina:+player.st.toFixed(1),mana:+player.mp.toFixed(1),zone:getZone(),enemiesAlive:enemies.filter(e=>e.alive).length,key:player.key,relic:player.relic,gate:player.gate,secret:player.secret,renderSize:[W,H],sceneryCount:scenery.length,echoes:echoesCollected.length,echoReward,sealsBroken:sealsBroken.length,sealsRemaining:objects.filter(o=>o.kind==='seal'&&o.active).length,zonesVisited:zonesVisited.length,echoLocations:objects.filter(o=>o.kind==='echo'&&o.active).length,textureCount:Object.values(textures).reduce((n,v)=>n+Object.keys(v).length,0)+Object.keys(awakeWall).length,region:regionAt(player.x,player.y),themedProps:scenery.filter(o=>['coffin','bonepile','fungus','roots','stainedglass','brazier'].includes(o.type)).length,animationFrames:[...Object.values(enemyFrames),watcherAwake].reduce((n,v)=>n+Object.values(v).reduce((m,a)=>m+a.length,0),0),enemyWindups:enemies.filter(e=>e.windup>0).length,enemyAttackPatterns:enemies.filter(e=>e.alive).map(e=>({id:e.id,kind:e.attackKind,attacks:e.attacksMade})),activeParticles:bladeSparks.filter(p=>p.life>0).length,trapCount:traps.length,activeTraps:traps.filter(t=>trapPhase(t)==='active').length,leverUsed,cacheOpened,tabletsRead:tabletsRead.length,artStyle:'retro-raycast-pixel',mapVisible:mapOn,savePresent:safeSavePresent()});
 })();
 </script></body></html>

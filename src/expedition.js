@@ -5,7 +5,7 @@ const VeilExpedition = (() => {
       id:'salt', name:'PATIO DE LA SAL', material:'salt', x:32, y:2, entry:[6.5,22.45], title:'Bajar al Patio de la Sal',
       rooms:[[8,14,10,17],[2,10,7,15],[2,5,5,10],[2,1,7,5],[7,2,13,3],[13,2,17,7],[11,7,16,9],[11,9,17,14],[7,13,11,14]],
       barriers:[['saltLow',10,2],['saltLow',10,3],['saltCrane',13,7],['saltCrane',14,7],['saltCrane',15,7],['saltCrane',16,7],['saltCrane',17,7],['saltCrane',10,13],['saltCrane',10,14],['saltReturn',8,11],['saltReturn',9,11],['saltReturn',10,11]],
-      props:[[9,15,'arch',1.5],[3,12,'coffin',1.15],[5,9,'brazier',.8],[4,2,'urn',.8],[16,5,'chains',1.3],[16.9,13.4,'saltPillar',.72]],
+      props:[[9,15,'arch',1.5],[3,12,'coffin',1.15],[5,9,'brazier',.8],[4,2,'urn',.8],[16.9,13.4,'saltPillar',.72]],
       stations:[
         ['saltMason',4.5,12.5,'El Cantero sentado','Lavábamos la sal con agua dulce. Luego hubo un día en que el agua recordó el mar. Empieza por la pila baja. La segunda está junto a la grúa.'],
         ['saltLow',4.5,3.5,'Lavar la pila baja','La sal se desprende en láminas. Debajo hay una huella de seis dedos.'],

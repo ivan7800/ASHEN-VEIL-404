@@ -18,7 +18,7 @@ with sync_playwright() as p:
  # Tablet: no duplicate record; trap warning/damage and dodge protection.
  out=page.evaluate('''() => {const t=window.__test23;t.player.x=5.4;t.player.y=21.1;t.interact();t.interact();const tablets=window.__ashenDiagnostics().tabletsRead;t.player.x=13.2;t.player.y=17.6;t.player.hurt=0;t.player.roll=0;t.setTick(0);t.resetCooldown();const before=t.player.hp;t.updateTraps(.016);const damaged=t.player.hp<before;t.player.hurt=0;t.player.roll=.3;t.resetCooldown();t.setTick(0);const after=t.player.hp;t.updateTraps(.016);return {tablets,damaged,dodgeProtected:t.player.hp===after}}''')
  assert out=={'tablets':1,'damaged':True,'dodgeProtected':True},out
- state=page.evaluate('window.__ashenDiagnostics()');assert state['trapCount']==3 and state['animationFrames']==90,state
+ state=page.evaluate('window.__ashenDiagnostics()');assert state['trapCount']==3 and state['animationFrames']==151,state
  assert not errs,errs
  print('PASS v2.3: lever unlock, unique reward, lore tablet single read, trap damage, roll immunity, no JS errors')
  print('mechanics:',result,out)

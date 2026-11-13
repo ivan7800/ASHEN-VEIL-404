@@ -70,8 +70,7 @@ const VeilLighting = (() => {
     },
     soundings: {
       faces: [[66,25,'s','conduits'],[67,25,'s','conduits'],[68,25,'s','conduits'],[69,25,'s','conduits'],
-        [70,27,'w','conduits'],[70,28,'w','conduits'],[70,29,'w','conduits'],
-        ],
+        [70,27,'w','conduits'],[70,28,'w','conduits'],[70,29,'w','conduits']],
       strips: [[68,26,68,29,'grate'],[56,28,56,35,'grate']],
       lights: [[67.7,27.1,3,.53]],
     },
@@ -86,17 +85,13 @@ const VeilLighting = (() => {
 
   const landmarks = [
     [22.6,22.6,'catacomb','ossuary',1.28],
-    [8.7,6.8,'chapel','broken',1.28],
+    [9.55,6.15,'chapel','broken',1.04],
     [18.65,3,'sanctuary','needle',1.22],
     [20.35,3,'sanctuary','needle',1.22],
-    [46.6,6.9,'salt','crane',1.55],
+    [46.9,5.85,'salt','crane',1.26],
     [46.2,14.7,'salt','basin',.85],
     [62.1,11.65,'archive','lectern',.88],
-    [48.1,37.7,'garden','chair',.67],
     [48.9,33.55,'garden','hollowTree',1.52],
-    [68.6,32.05,'soundings','weight',1.35],
-    [34.8,51.4,'sky','mirror',.94],
-    [49.15,53.25,'sky','mirror',.94],
   ];
 
   function bake(grid, fixtures) {
@@ -113,16 +108,21 @@ const VeilLighting = (() => {
   function surface(name,u,v,ceiling) {
     const edge=u===0||v===0;
     const diamond=Math.abs(u-16)+Math.abs(v-16);
+    const grain=((u*17^v*29^(u*v))&15)*.004;
     const crack=(v>6&&v<25&&u===9+((v*3>>2)%9))||
       (u>13&&u<24&&v===21-(u>>2));
-    const grain=((u*17^v*29^(u*v))&15)*.004;
     if(ceiling){
-      const vault=Math.abs(u-16)===Math.min(v,32-v);
-      return (edge?.27:vault?.6:.38)+grain;
+      const rib = name==='crypt'||name==='sanctuary'
+        ? Math.abs(u-16)===Math.min(v,32-v)
+        : v===4||v===27;
+      if(name==='sky')return (u*19+v*53)%79===0 ? .62 : .25+grain;
+      return (edge?.25:rib?.46:.33)+grain;
     }
     if(name==='nave'){
-      const ripple=(u+v*2+((u>>2)&3))%19;
-      return (ripple===1?1.27:ripple<4?.92:.51)+grain;
+      const shift=(v*19&31);
+      const ripple=(u+shift)&31;
+      if(v%7===2&&ripple<16)return (ripple<8?.93:.66)+grain;
+      return .34+((v*5&7)*.018)+grain*.5;
     }
     if(name==='catacomb'){
       const joint=(v&15)===0||((u+((v>>4)*8))&15)===0;
@@ -130,6 +130,24 @@ const VeilLighting = (() => {
     }
     if(name==='chapel')return (edge?.33:crack?.42:diamond===11?.98:diamond<10?.64:.77)+grain;
     if(name==='sanctuary')return (edge?.44:diamond===12||diamond===10?1.18:crack?.48:.75)+grain;
+    if(name==='salt'){
+      const crust=(u*7+v*11+((u^v)*3))%37;
+      return (edge?.46:crust<3?1.13:crust>29?.85:.69)+grain;
+    }
+    if(name==='archive'){
+      const joint=v%8===0||((u+(v>>3)*11)&31)===0;
+      return (joint?.47:v%8===1?.89:.71)+grain;
+    }
+    if(name==='garden'){
+      const root=Math.abs(v-17-((u*3>>2)%11))<2;
+      return (root?.89:(u*13+v*7)%23===1?1.15:.62)+grain;
+    }
+    if(name==='soundings'){
+      const rim=u===0||v===0||u===30||v===30;
+      const rivet=(u===3||u===27)&&(v===3||v===27);
+      return (rivet?1.32:rim?.46:u===1||v===1?.94:.69)+grain;
+    }
+    if(name==='sky')return (edge?.45:crack?.57:.76)+grain;
     return (edge?.32:u===1||v===1?1.1:crack?.45:.78)+grain;
   }
 
@@ -144,27 +162,37 @@ const VeilLighting = (() => {
     });
     return [name,layers];
   }));
-  function architecturalFloor(area, style) {
+  function architecturalFloor(area, style, tileX, tileY, width, height) {
+    // Channels, risers and rings continue across the room rather than repeating in each cell.
+    const grate = area==='nave'&&style==='grate' ? [62,91,88] : null;
     const colors = surfaceColors[area][0].slice();
     for (let v = 0; v < 32; v++) for (let u = 0; u < 32; u++) {
       const rim = u === 2 || u === 29;
       const joint = (v & 15) === 0;
+      const perimeter = tileX===0&&u===2 || tileX===width-1&&u===29 ||
+        tileY===0&&v===2 || tileY===height-1&&v===29;
       let shade;
       switch (style) {
-        case 'ledgeX': shade = v === 2 || v === 29 ? 1.45 : u % 16 === 0 ? .60 : 1.06; break;
-        case 'grate': shade = rim ? 1.54 : v % 8 < 2 ? 1.09 : .57; break;
-        case 'drain': shade = u < 11 || u > 20 ? 1.17 : u === 11 || u === 20 ? 1.32 : .56; break;
-        case 'beds': shade = rim || v === 2 || v === 29 ? 1.48 : .82 + ((u * 3 + v) % 7) * .03; break;
+        case 'ledgeX': shade = perimeter ? 1.51 : v===4 || v===27 ? .64 : 1.03; break;
+        case 'grate': shade = rim ? 1.3 : u<4||u>27 ? .57 : v % 8 < 2 ? .99 : .68; break;
+        case 'drain': shade = v < 12 || v > 19 ? 1.09 : v === 12 || v === 19 ? 1.45 : .50; break;
+        case 'beds': shade = perimeter ? 1.52 : .9 + ((u * 3 + v) % 7) * .04; break;
         case 'orbit': {
-          const radius = Math.hypot(u - 15.5, v - 15.5);
-          shade = Math.abs(radius - 13) < .8 || Math.abs(radius - 7) < .65 ? 1.52 : 1.06;
+          const x=(tileX+(u+.5)/32-width/2)/(width*.45);
+          const y=(tileY+(v+.5)/32-height/2)/(height*.45);
+          const radius=Math.hypot(x,y);
+          shade = Math.abs(radius-1)<.018 || Math.abs(radius-.64)<.014 ? 1.83 :
+            Math.abs(x)<.012 ? 1.44 : 1.02;
           break;
         }
-        case 'dais': shade = rim || v === 2 || v === 29 ? 1.38 : 1.19; break;
+        case 'dais': shade = perimeter ? 1.45 : v===4&&tileY===0 ? .55 : 1.19; break;
         default: shade = rim ? 1.35 : joint ? .66 : 1.13;
       }
       const offset = (v * 32 + u) * 3;
-      for (let channel = 0; channel < 3; channel++) colors[offset + channel] *= shade;
+      for (let channel = 0; channel < 3; channel++) {
+        const base=grate ? grate[channel] : colors[offset+channel];
+        colors[offset+channel]=Math.min(255,base*shade);
+      }
     }
     return colors;
   }

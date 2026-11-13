@@ -1,7 +1,9 @@
 (()=>{'use strict';
 const W=480,H=270,PI=Math.PI,TAU=PI*2,FOV=.73,SAVE='ashen-veil-rebirth-v2';
+const VERSION='3.6.0';
 const $=id=>document.getElementById(id),screen=$('screen'),ctx=screen.getContext('2d',{alpha:false});ctx.imageSmoothingEnabled=false;
 let warningUntil=0,hitFlashUntil=0;
+let contactKind='hit';
 let tick=0,last=0,playing=false,paused=true,toastUntil=0,shake=0,spellAnim=0,injury=0,walkTime=0,mapOn=false;
 const keys=Object.create(null),rand=(x,y,s=0)=>{let n=Math.sin(x*127.1+y*311.7+s*81.3)*43758.5453;return n-Math.floor(n)},clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const MAP_WIDTH=72, MAP_HEIGHT=66;
@@ -50,7 +52,10 @@ const weaponFinds=[
 objects.push(...weaponFinds);
 let ownedWeapons=['sword'],equippedWeapon='sword';
 function equipNext(){if(!playing||paused||swing)return;const i=ownedWeapons.indexOf(equippedWeapon);equippedWeapon=ownedWeapons[(i+1)%ownedWeapons.length];note('EQUIPADA: '+weapons[equippedWeapon].name,2.5);updateWeaponHud();save();}
-function updateWeaponHud(){const slot=$('weapon-slot');if(slot)slot.textContent=weapons[equippedWeapon].short;}
+function updateWeaponHud(){
+  $('weapon-slot').textContent=weapons[equippedWeapon].short;
+  $('weapon-icon').setAttribute('data-weapon',equippedWeapon);
+}
 
 const encounterSigns={
   w1:[6.2,1.25,'La figura del corredor levanta lentamente la cabeza.'],
@@ -91,7 +96,7 @@ const scenery=[
   {x:5.0,y:15.1,type:'torch',scale:.68},{x:9.4,y:17.45,type:'torch',scale:.62},
   {x:15.6,y:17.45,type:'torch',scale:.62},{x:20.6,y:13.3,type:'torch',scale:.73},
   {x:21.8,y:8.4,type:'torch',scale:.7},{x:13.7,y:5.4,type:'torch',scale:.68},
-  {x:7.6,y:6.4,type:'idol',scale:.98},{x:24.9,y:20.8,type:'idol',scale:1.06},
+  {x:5.2,y:6.05,type:'idol',scale:.82},{x:24.9,y:20.8,type:'idol',scale:1.06},
   {x:16.1,y:5.8,type:'urn',scale:.5},{x:22.8,y:5.8,type:'urn',scale:.5},
   {x:3.1,y:20.8,type:'urn',scale:.54},{x:24.5,y:15.8,type:'urn',scale:.52},
   {x:8.8,y:18.1,type:'arch',scale:1.42},{x:15.8,y:17.65,type:'arch',scale:1.32},
@@ -102,7 +107,7 @@ const scenery=[
   {x:3.7,y:19.7,type:'coffin',scale:1.16},{x:8.2,y:20.7,type:'coffin',scale:.92},
   {x:16.3,y:21.2,type:'bonepile',scale:.71},{x:23.4,y:17.5,type:'bonepile',scale:.66},
   {x:21.5,y:19.8,type:'fungus',scale:.7},{x:17.5,y:15.8,type:'fungus',scale:.53},
-  {x:9.6,y:7.6,type:'roots',scale:1.6},{x:4.6,y:9.6,type:'roots',scale:1.4},
+  {x:10.45,y:6.1,type:'roots',scale:1.45},{x:4.6,y:9.6,type:'roots',scale:1.4},
   {x:8.8,y:6.6,type:'stainedglass',scale:1.32},
   {x:17.1,y:4.5,type:'brazier',scale:.85},{x:22.9,y:4.5,type:'brazier',scale:.85},
   {x:19.5,y:2.7,type:'stainedglass',scale:1.7},
@@ -119,7 +124,7 @@ const routeLandmarks=[
   {x:27.25,y:20.9,type:'gauge',scale:1.3},
 ];
 const annexScenery=VeilExpedition.wings.flatMap(wing=>wing.props.map(([x,y,type,scale])=>({x:wing.x+x,y:wing.y+y,type,scale})));
-let bossDefeated=false;let enemies=[];function resetEnemies(){enemies=defs.map((d,i)=>({...d,maxhp:d.hp,alive:true,cool:i*.21,stun:0,flash:0,alert:false,waking:0,windup:0,attackPose:0,phase:1,strafeSign:i%2?1:-1,facing:Math.PI/2,attackKind:'slash',attackReach:1.5,attackArc:.85,attackDamage:d.damage,attacksMade:0,attackMin:0,route:[],nextRoute:0,guard:0,originX:d.x,originY:d.y}));}
+let bossDefeated=false;let enemies=[];function resetEnemies(){enemies=defs.map((d,i)=>({...d,maxhp:d.hp,alive:true,cool:i*.21,stun:0,flash:0,alert:false,waking:0,windup:0,attackPose:0,phase:1,strafeSign:i%2?1:-1,facing:Math.PI/2,attackKind:'slash',windupDuration:0,defeatedAt:null,attackReach:1.5,attackArc:.85,attackDamage:d.damage,attacksMade:0,attackMin:0,route:[],nextRoute:0,guard:0,originX:d.x,originY:d.y}));}
 resetEnemies();let dropped=null;
 function restoreAfterDeath(){
   const defeated=new Set(enemies.filter(enemy=>!enemy.alive).map(enemy=>enemy.id));
@@ -212,15 +217,64 @@ if(type==='brazier'){
 if(type==='exit'){poly([[14,93],[14,43],[36,9],[58,43],[58,93]],'#89748f');poly([[22,90],[22,45],[36,23],[50,45],[50,90]],'#282333');rect(33,40,6,43,'#d7b68c');rect(23,62,26,4,'#c3a0a9')}
 return c;}
 for(let t of ['altar','key','echo','relic','loot','exit','torch','idol','urn','arch','banner','chains','coffin','bonepile','fungus','roots','stainedglass','brazier'])sprite[t]=drawSprite(t);
-const poses=['idle','walk','windup','strike','hurt'];
-const framesFor=(type,phase)=>Object.fromEntries(poses.map(pose=>[
-  pose,Array.from({length:3},(_,frame)=>VeilArt.creature(type,pose,frame,phase))
-]));
+const enemyAttackKinds={
+  hollow:['slash','neck'], knight:['cleave','thrust'], wraith:['lunge','feint'],
+  drowned:['chime','lunge'], boss:['cleave','lunge','ring'],
+};
+function framesFor(type,phase){
+  const frames=(pose,kind)=>Array.from({length:3},(_,frame)=>VeilArt.creature(type,pose,frame,phase,kind));
+  const poses=['idle','walk','wake','hurt','fall'];
+  if(type==='knight')poses.push('guard');
+  const cels=Object.fromEntries(poses.map(pose=>[
+    pose, (pose==='walk'||pose==='wake'||pose==='fall')?frames(pose):[VeilArt.creature(type,pose,1,phase)],
+  ]));
+  for(const kind of enemyAttackKinds[type]){
+    cels['windup-'+kind]=frames('windup',kind);
+    cels['strike-'+kind]=frames('strike',kind);
+  }
+  return cels;
+}
 const enemyFrames=Object.fromEntries(Object.keys(creatureNames).map(type=>[type,framesFor(type,1)]));
 const watcherAwake=framesFor('boss',2);
+const weaponArt=Object.fromEntries(Object.keys(weapons).map(id=>[id,VeilArt.firstPersonWeapon(id)]));
+const fallTime=.52, strikeTime=.34;
+
+function enemyCel(enemy){
+  const cels=enemy.phase===2?watcherAwake:enemyFrames[enemy.type];
+  if(!enemy.alive){
+    const elapsed=tick-(enemy.defeatedAt??-Infinity);
+    if(elapsed>=fallTime)return null;
+    return cels.fall[settings.quiet?2:Math.min(2,Math.floor(elapsed/fallTime*3))];
+  }
+  if(enemy.flash>0&&enemy.stun>0&&enemy.waking<=0)return cels.hurt[0];
+  if(enemy.waking>0){
+    const fraction=1-enemy.waking/encounterSigns[enemy.id][1];
+    return cels.wake[settings.quiet?2:clamp(Math.floor(fraction*3),0,2)];
+  }
+  if(enemy.attackPose>0){
+    const frame=Math.min(2,Math.floor((1-enemy.attackPose/strikeTime)*3));
+    return cels['strike-'+enemy.attackKind][settings.quiet?0:Math.max(0,frame)];
+  }
+  if(enemy.windup>0){
+    const frame=1-enemy.windup/Math.max(enemy.windup,enemy.windupDuration);
+    return cels['windup-'+enemy.attackKind][settings.quiet?2:Math.min(2,Math.floor(frame*3))];
+  }
+  if(enemy.type==='knight'&&enemy.guard>0)return cels.guard[0];
+  if(enemy.alert&&enemy.stun<=0&&!settings.quiet)return cels.walk[Math.floor(tick*5+enemy.originX)%3];
+  return cels.idle[0];
+}
+
 let bladeSparks=[];
-function sparkBurst(x,y,tint='#e8b5a7',count=10){for(let i=0;i<count;i++)bladeSparks.push({x,y,vx:(rand(i,tick,2)-.5)*2.9,vy:(rand(i,tick,4)-.5)*2.9,life:.25+rand(i,tick,3)*.35,color:tint});if(bladeSparks.length>100)bladeSparks.splice(0,bladeSparks.length-100);}
-function enemyPose(e){if(e.flash>0)return 'hurt';if(e.attackPose>0)return 'strike';if(e.windup>0)return 'windup';if(e.waking>0)return 'windup';if(e.alert&&e.stun<=0)return 'walk';return 'idle';}
+function sparkBurst(x,y,tint='#e8b5a7',count=10,style='mote'){
+  for(let i=0;i<count;i++){
+    const life=.24+rand(i,tick,3)*.28;
+    const long=style==='spear'||style==='needle';
+    bladeSparks.push({x,y,vx:(rand(i,tick,2)-.5)*(long?1.15:2.9),
+      vy:(rand(i,tick,4)-.5)*(long?1.15:2.9),z:.35+rand(i,tick,7)*.32,
+      vz:(rand(i,tick,9)-.24)*1.05,life,color:tint,style});
+  }
+  if(bladeSparks.length>100)bladeSparks.splice(0,bladeSparks.length-100);
+}
 function solid(x,y){const ix=Math.floor(x),iy=Math.floor(y);if(iy<0||ix<0||iy>=grid.length||ix>=grid[0].length)return true;return grid[iy][ix]!==0;}
 function canMove(x,y,r=.23){return !solid(x-r,y-r)&&!solid(x+r,y-r)&&!solid(x-r,y+r)&&!solid(x+r,y+r);}
 function move(entity,dx,dy,r=.23){if(canMove(entity.x+dx,entity.y,r))entity.x+=dx;if(canMove(entity.x,entity.y+dy,r))entity.y+=dy;}
@@ -398,24 +452,32 @@ function resolveSwing({id,heavy}){
    const resonance=id==='needle'&&e.windup>0;
    if(spearTip)damage+=8;
    if(resonance)damage+=12;
-   hit(e,Math.round(damage*(index>0?.72:1)),heavy||id==='axe'||spearTip,id==='needle');
+   const blocked=hit(e,Math.round(damage*(index>0?.72:1)),heavy||id==='axe'||spearTip,id==='needle',
+     resonance?'resonance':id);
+   if(index===0)contactKind=blocked?'guard':resonance?'resonance':'hit';
    if(resonance)note('LA AGUJA ENCUENTRA LA RESONANCIA',1.2);
  }
  if(targets.length){VeilAudio.weapon(id,heavy,true);hitFlashUntil=tick+.17;}
 }
 
-function hit(e,damage,heavy=false,magic=false){if(!heavy&&e.type==='knight'&&e.guard>0&&!magic&&Math.abs(turnDelta(Math.atan2(player.y-e.y,player.x-e.x)-e.facing))<1.05){
+function hit(e,damage,heavy=false,magic=false,impact='mote'){if(!heavy&&e.type==='knight'&&e.guard>0&&!magic&&Math.abs(turnDelta(Math.atan2(player.y-e.y,player.x-e.x)-e.facing))<1.05){
   e.hp=Math.max(1,e.hp-Math.ceil(damage*.35));
   e.flash=.12;
+  sparkBurst(e.x,e.y,'#dec197',8,'guard');
   VeilAudio.cue('block');
   note('EL CARCELERO AGUANTA · BUSCA SU COSTADO O ROMPE LA GUARDIA',1.5);
-  return;
+  return true;
 }if(e.type==='wraith'&&magic){
   const lit=(bakedLight[Math.floor(e.y)]?.[Math.floor(e.x)]||0)>.26;
   damage=Math.round(damage*(lit||e.windup>0?1.28:.82));
 }
 e.hp=Math.max(0,e.hp-damage);e.flash=.24;const braced=e.type==='boss'&&e.phase===2&&e.windup>0&&!heavy;
-if(!braced){e.stun=heavy?.68:.3;e.windup=0;}e.guard=0;if(!e.alert&&!e.waking)e.waking=encounterSigns[e.id][1];shake=.055;sparkBurst(e.x,e.y,e.type==='wraith'?'#bba2e8':'#e4b29d',14);if(e.hp<=0){e.alive=false;player.ashes+=e.ashes;note(`+ ${e.ashes} CENIZAS`);beep(120,.33,'triangle',.035);save();if(e.type==='boss'){bossDefeated=true;save();note('EL VIGÍA HA CAÍDO — EL SELLO TE ESPERA',5)}}else if(e.type==='boss'&&e.phase===1&&e.hp<e.maxhp*.5){e.phase=2;e.attacksMade=0;e.cool=1.3;VeilAudio.cue('boss');note('EL VIGÍA ABRE EL OJO DEL UMBRAL',4);}}
+if(!braced){e.stun=heavy?.68:.3;e.windup=0;}e.guard=0;if(!e.alert&&!e.waking)e.waking=encounterSigns[e.id][1];shake=.055;
+const tint=impact==='resonance'||e.type==='wraith'?'#c4a5ea':weapons[impact]?.color??'#e4b29d';
+sparkBurst(e.x,e.y,tint,impact==='axe'?17:impact==='spear'?8:12,impact);
+if(e.hp<=0){e.alive=false;e.defeatedAt=tick;player.ashes+=e.ashes;note(`+ ${e.ashes} CENIZAS`);beep(120,.33,'triangle',.035);save();if(e.type==='boss'){bossDefeated=true;save();note('EL VIGÍA HA CAÍDO — EL SELLO TE ESPERA',5)}}else if(e.type==='boss'&&e.phase===1&&e.hp<e.maxhp*.5){e.phase=2;e.attacksMade=0;e.cool=1.3;VeilAudio.cue('boss');note('EL VIGÍA ABRE EL OJO DEL UMBRAL',4);}
+return false;
+}
 function spell(){if(!playing||paused||player.spellCd>0||player.mp<25||player.roll>0)return;player.mp-=25;player.spellCd=1.3;spellAnim=.65;sparkBurst(player.x+Math.cos(player.ang)*1.1,player.y+Math.sin(player.ang)*1.1,'#b78ffe',17);beep(490,.36,'sine',.06);let hitCount=0;for(let e of enemies){if(!e.alive||dist(player,e)>6.6)continue;let a=Math.atan2(e.y-player.y,e.x-player.x)-player.ang;if(Math.abs(Math.atan2(Math.sin(a),Math.cos(a)))<.22&&los(player.x,player.y,e.x,e.y)){hit(e,38+player.lv*5,false,true);hitCount++;}}if(!hitCount)note('EL ÉTER SE DISIPA');}
 function levelUp(){if(!objects.some(o=>o.kind==='altar'&&dist(player,o)<1.65&&los(player.x,player.y,o.x,o.y))){note('DEBES ESTAR JUNTO A UN ALTAR');return;}if(player.lv>=99)return;let cost=80*player.lv;if(player.ashes<cost){note(`NECESITAS ${cost} CENIZAS PARA ASCENDER`);return;}player.ashes-=cost;player.lv++;player.maxhp+=8;player.hp=player.maxhp;note(`EL ALMA SE FORTALECE — NIVEL ${player.lv}`,4);beep(680,.5,'sine',.04);save();}
 function heal(){if(!playing||paused||player.flasks<=0||player.hp>=player.maxhp)return;player.flasks--;player.hp=Math.min(player.maxhp,player.hp+55);note('LA SANGRE VUELVE A CALENTARSE');beep(600,.4,'sine',.025);save();}
@@ -542,6 +604,7 @@ function startEnemyAttack(e,dx,dy){
     e.attackReach=odd?1.61:2.18;e.attackArc=odd?.82:.38;e.attackDamage=e.damage;
     note(odd?'EL PENITENTE SE RETUERCE':'EL PENITENTE ESTIRA EL CUELLO',1);
   }
+  e.windupDuration=e.windup;
 }
 function resolvesEnemyAttack(e){
   const dx=player.x-e.x,dy=player.y-e.y,d=Math.hypot(dx,dy);
@@ -626,7 +689,7 @@ function enemyLogic(dt){
     if(e.windup>0){
       e.windup-=dt;
       if(e.windup<=0){
-        e.windup=0;e.attackPose=.34;resolvesEnemyAttack(e);
+        e.windup=0;e.attackPose=strikeTime;resolvesEnemyAttack(e);
         if(paused)return;
         e.cool=e.type==='wraith'?1.45:e.type==='boss'?(e.phase===2?1.5:1.75):e.type==='knight'?1.9:1.55;
       }
@@ -649,22 +712,21 @@ function tileType(ix,iy){
   return value===2?'pillar':value===3||value===5?'gate':value===4?'secret':'wall';
 }
 const renderRegions=grid.map((row,y)=>row.map((_,x)=>regionAt(x,y)));
-const architecturalFaces = new Map();
+const architecturalFaces = Array(MAP_WIDTH*MAP_HEIGHT*4);
+const wallFaceIndex = {w:0,e:1,n:2,s:3};
 const floorDetails = grid.map(row => row.map(() => null));
 for (const [area, design] of Object.entries(VeilLighting.architecture)) {
-  const palettes = new Map();
   const reliefs = new Map();
   for (const [x, y, face, feature] of design.faces) {
     if (!reliefs.has(feature)) {
       const canvas = VeilArt.masonry(area, feature);
       reliefs.set(feature, canvas.getContext('2d').getImageData(0,0,64,64).data);
     }
-    architecturalFaces.set(`${x},${y},${face}`, reliefs.get(feature));
+    architecturalFaces[(y*MAP_WIDTH+x)*4+wallFaceIndex[face]] = reliefs.get(feature);
   }
   for (const [left, top, right, bottom, style] of design.strips) {
-    if (!palettes.has(style)) palettes.set(style, VeilLighting.architecturalFloor(area, style));
     for (let y = top; y <= bottom; y++) {
-      for (let x = left; x <= right; x++) floorDetails[y][x] = palettes.get(style);
+      for (let x = left; x <= right; x++) floorDetails[y][x] = VeilLighting.architecturalFloor(area, style, x-left, y-top, right-left+1, bottom-top+1);
     }
   }
 }
@@ -692,23 +754,32 @@ const fixtureTints={
   nave:[104,229,196],catacomb:[104,229,196],
   salt:[229,207,159],archive:[210,175,137],garden:[143,204,166],soundings:[119,194,204],sky:[157,168,234],
 };
+const planeTextures=[0,1].map(plane=>renderRegions.map((row,y)=>row.map((area,x)=>
+  (plane===0&&floorDetails[y][x]) || VeilLighting.surfaceColors[area][plane]
+)));
+const planeLight=bakedLight.map(row=>row.map(fixture=>.57+fixture*.58));
+const waterTile=VeilLighting.surfaceColors.nave[0];
+const eyeWalls = grid.map((row,y)=>row.map((_,x)=>watcherWalls.has(x+','+y)));
 const zBuffer=new Float32Array(W);const floorImage=ctx.createImageData(W,H);const fc=floorImage.data;
-function drawBase(){
+function drawBase({sn,cs}){
+const rippleFrame=settings.quiet||settings.low?0:Math.floor(tick*5)&31;
 const stride=settings.low?2:1, planeStride=settings.low?4:2;
 const watching=enemies.some(e=>e.type==='boss'&&e.alive&&e.phase===2);
-const sn=Math.sin(player.ang),cs=Math.cos(player.ang),px=-sn*FOV,py=cs*FOV;
+const px=-sn*FOV,py=cs*FOV;
 // Cast both planes at half resolution and shade against the baked fixtures.
 for(let y=0;y<H;y+=planeStride){
-  const floor=y>=H/2, depth=Math.min(44,H*.315/(Math.abs(y-H/2)+.5));
+  const plane=y>=H/2?0:1, depth=Math.min(44,H*.315/(Math.abs(y-H/2)+.5));
+  const planeTiles=planeTextures[plane],defaultTile=VeilLighting.surfaceColors.crypt[plane];
   const stepX=depth*px*2*planeStride/W, stepY=depth*py*2*planeStride/W;
   let worldX=player.x+depth*(cs-px), worldY=player.y+depth*(sn-py);
   const distanceLight=clamp(1.12-depth*.058,.10,1);
   for(let x=0;x<W;x+=planeStride){
     const ix=Math.floor(worldX), iy=Math.floor(worldY);
-    const area=renderRegions[iy]?.[ix]??'crypt';
-    const layer=(floor && floorDetails[iy]?.[ix]) || VeilLighting.surfaceColors[area][floor?0:1];
-    const texel=((Math.floor(worldY*32)&31)*32+(Math.floor(worldX*32)&31))*3;
-    const light=distanceLight*(.57+(bakedLight[iy]?.[ix]||0)*.58);
+    const layer=planeTiles[iy]?.[ix]??defaultTile;
+    const textureX=Math.floor(worldX*32)&31;
+    const textureY=Math.floor(worldY*32)+(layer===waterTile?rippleFrame:0);
+    const texel=((textureY&31)*32+textureX)*3;
+    const light=distanceLight*(planeLight[iy]?.[ix]??.57);
     const r=layer[texel]*light, g=layer[texel+1]*light, b=layer[texel+2]*light;
     const offset=(y*W+x)*4;
     for(let row=0;row<planeStride&&y+row<H;row++){
@@ -733,17 +804,17 @@ for(let x=0;x<W;x+=stride){
   let wallX=side===0?player.y+wd*ry:player.x+wd*rx;
   wallX-=Math.floor(wallX);
   const area=renderRegions[my]?.[mx]??regionAt(mx,my), kind=tileType(mx,my);
-  const eyeOpen=kind==='wall'&&watcherWalls.has(mx+','+my)&&
+  const eyeOpen=kind==='wall'&&eyeWalls[my]?.[mx]&&
     (area==='chapel'&&player.relic||area==='sanctuary'&&(watching||bellRung));
-  const face=side===0?(rx>0?'w':'e'):(ry>0?'n':'s');
-  const relief=kind==='wall'&&architecturalFaces.get(`${mx},${my},${face}`);
+  const face=side===0?(rx>0?0:1):(ry>0?2:3);
+  const relief=kind==='wall'&&architecturalFaces[(my*MAP_WIDTH+mx)*4+face];
   const tex=eyeOpen?openedPixels[area]:relief||wallPixels[area][kind];
   let texX=(wallX*64)|0;
   if(side===0&&rx>0||side===1&&ry<0)texX=63-texX;
   const fixture=bakedLight[my-(side===1?Math.sign(ry):0)]?.[mx-(side===0?Math.sign(rx):0)]||0;
   const fog=clamp(Math.round(4+wd*1.08+side*2-fixture*10),1,24)/28;
-  const pulse=settings.quiet?.94:.9+Math.sin(tick*2.6+mx*.7+my*.45)*.1;
-  const lamp=Math.max(0,fixture-.23)*.31*pulse;
+  const pulse=settings.quiet||settings.low ? .94 : .94+Math.sin(tick*2.1+mx*.7+my*.45)*.06;
+  const lamp=Math.max(0,fixture-.23)*.23*pulse;
   const shade=(1-fog)*(1-lamp);
   const mist=VeilLighting.materials[area].fog,tint=fixtureTints[area];
   const rBias=mist[0]*fog*(1-lamp)+tint[0]*lamp;
@@ -767,11 +838,29 @@ function markerSprite(kind){const c=document.createElement('canvas');c.width=72;
  if(kind==='seal'){g.fillStyle='#25192f';g.fillRect(15,42,43,35);g.fillStyle='#bca4df';g.fillRect(22,45,29,4);g.fillRect(31,30,9,29);g.fillStyle='#e9c2ba';g.fillRect(29,32,13,7);g.fillStyle='#65336c';g.fillRect(28,54,16,8);}
  else if(kind==='lever'){g.fillStyle='#9a5e64';g.fillRect(36,22,7,10);g.fillStyle='#d7a498';g.fillRect(28,12,24,12);}
  else if(kind==='cache'){g.fillStyle='#9c80ba';g.fillRect(21,49,31,29);g.fillStyle='#d7b9f0';g.fillRect(27,54,18,5);}
+ else if(kind==='discovery'){
+   g.clearRect(0,0,72,100);
+   g.fillStyle='#3d3544';g.fillRect(16,75,42,24);
+   g.fillStyle='#63545c';g.fillRect(20,56,34,22);
+   g.fillStyle='#a08a78';g.fillRect(16,55,42,4);
+   g.fillStyle='#b9a38b';g.fillRect(25,59,23,3);
+   g.fillStyle='#887069';g.fillRect(24,65,19,2);
+   g.fillStyle='#291f2a';g.fillRect(22,93,32,6);
+ }
  else {g.fillStyle='#8b8190';g.fillRect(24,22,27,43);g.fillStyle='#d3bba1';g.fillRect(29,29,16,3);g.fillRect(29,37,13,3);g.fillRect(29,45,16,3);}
  return c;}
 for(const k of ['lever','cache','tablet','seal'])sprite[k]=markerSprite(k);
-sprite.discovery=sprite.tablet;
+sprite.discovery=markerSprite('discovery');
 sprite.passage=sprite.arch;
+sprite.workmark=document.createElement('canvas');
+sprite.workmark.width=72;sprite.workmark.height=100;
+{
+  const stone=sprite.workmark.getContext('2d');
+  stone.fillStyle='#3b3339';stone.fillRect(14,83,44,17);
+  stone.fillStyle='#826c64';stone.fillRect(10,79,52,6);
+  stone.fillStyle='#c3a680';stone.fillRect(23,79,25,2);
+  stone.fillStyle='#c3a680';stone.fillRect(34,72,4,9);
+}
 for(const [kind,color] of Object.entries({
   saltPillar:'#d3c0a2',ledger:'#c49a6d',tree:'#b3ccb1',gauge:'#80bac0',orrery:'#9ea9dd'
 })){
@@ -808,6 +897,35 @@ const architectureScenery = VeilLighting.landmarks.map(([x, y, region, kind, sca
   if (!sprite[type]) sprite[type] = VeilArt.landmark(region, kind);
   return {x, y, type, scale};
 });
+const stationArt={
+  saltCrane:{type:'workmark',scale:.57,shadow:true},
+  saltLow:{type:'architecture-salt-basin',scale:.78,shadow:true},
+  saltPrint:{type:'discovery',scale:.66,shadow:true},
+  gardenChair:{type:'garden-seat',scale:.82,shadow:true},
+  soundingsGauge:{type:'station-gauge',scale:1,shadow:true},
+  soundingsWeight:{type:'station-weight',scale:1.31,shadow:true},
+};
+sprite['garden-seat']=VeilArt.landmark('garden','chair');
+sprite['station-gauge']=VeilArt.landmark('soundings','gauge');
+sprite['station-weight']=VeilArt.landmark('soundings','weight');
+for(const finish of ['dark','light']){
+  for(let direction=0;direction<mirrorDirections.length;direction++){
+    const type='mirror-'+finish+'-'+direction;
+    sprite[type]=VeilArt.landmark('sky',type);
+  }
+}
+const mirrorArt={
+  skyDark:mirrorDirections.map((_,i)=>({type:'mirror-dark-'+i,scale:.97,shadow:true})),
+  skyLight:mirrorDirections.map((_,i)=>({type:'mirror-light-'+i,scale:.97,shadow:true})),
+};
+function objectArt(object){
+  if(isMirror(object.id))return mirrorArt[object.id][mirrorPositions[object.id]];
+  return stationArt[object.id]??{
+    type:object.kind==='weapon'?'relic':object.kind,
+    scale:object.kind==='passage'?1.42:object.kind==='exit'?1.35:.7,
+    shadow:object.kind==='altar'||object.kind==='discovery'||object.kind==='tablet',
+  };
+}
 sprite.bell=document.createElement('canvas');
 sprite.bell.width=72;sprite.bell.height=100;
 {
@@ -835,54 +953,158 @@ for(const type of ['trapWarning','trapActive']){
   }
   sprite[type]=image;
 }
-function worldSprite(x,y,type,scale=1,flash=0,frameImage=null){
-  const dx=x-player.x,dy=y-player.y,cs=Math.cos(player.ang),sn=Math.sin(player.ang);
-  const side=-sn*dx+cs*dy,forward=cs*dx+sn*dy;
+function worldSprite(camera,x,y,type,scale=1,frameImage=null,opacity=1){
+  const dx=x-player.x,dy=y-player.y;
+  const forward=camera.cs*dx+camera.sn*dy;
   if(forward<=.18||forward>24)return;
-  const center=W/2+side/forward*W/(2*FOV),height=H*scale/forward,width=height*.72;
-  const left=center-width/2,right=center+width/2,top=H/2+H*.43/forward-height;
-  const tex=frameImage||sprite[type];
-  if(!tex||right<0||left>W||top+height<0||top>H)return;
-  const minX=Math.max(0,Math.ceil(left)),maxX=Math.min(W,Math.floor(right));
-  const sampling=tex.width/width;
-  const glow=flash&&!settings.quiet&&!settings.low;
-  if(glow)ctx.filter='brightness(1.35)';
-  let run=minX;
-  while(run<maxX){
-    while(run<maxX&&forward>=zBuffer[run]-.08)run++;
+  const center=W/2+(-camera.sn*dx+camera.cs*dy)/forward*W/(2*FOV);
+  const height=H*scale/forward;
+  const texture=frameImage??sprite[type];
+  if(!texture)return;
+  const width=height*texture.width/texture.height;
+  const ground=H/2+H*.43/forward;
+  drawVisibleImage(texture,center-width/2,ground-height,width,height,forward,opacity);
+}
+function drawVisibleImage(texture,left,top,width,height,forward,opacity){
+  const right=left+width;
+  if(right<=0||left>=W||top+height<=0||top>=H)return;
+  const maxX=Math.min(W,Math.ceil(right));
+  const sampling=texture.width/width;
+  ctx.globalAlpha=opacity;
+  for(let run=Math.max(0,Math.ceil(left));run<maxX;){
+    while(run<maxX&&forward>=zBuffer[run])run++;
     const from=run;
-    while(run<maxX&&forward<zBuffer[run]-.08)run++;
-    if(from<run)ctx.drawImage(tex,(from-left)*sampling,0,(run-from)*sampling,tex.height,from,top,run-from,height);
+    while(run<maxX&&forward<zBuffer[run])run++;
+    if(from<run){
+      const band=Math.min(run,right)-from;
+      ctx.drawImage(texture,(from-left)*sampling,0,band*sampling,texture.height,from,top,band,height);
+    }
   }
-  if(glow)ctx.filter='none';
+  ctx.globalAlpha=1;
+}
+const footprint=document.createElement('canvas');
+footprint.width=32;footprint.height=8;
+{
+  const shadow=footprint.getContext('2d');
+  shadow.fillStyle='#100e18';
+  shadow.fillRect(4,1,24,6);
+  shadow.fillRect(1,3,30,2);
 }
 const cryptWitness={x:3.05,y:16.2,type:'idol',scale:1.08};
-function drawSprites(){let v=[...scenery,...routeLandmarks,...annexScenery,...architectureScenery,player.relic?{...cryptWitness,x:5.9,y:17.15}:cryptWitness];
-if(bellRung)v.push({x:28.35,y:14.4,type:'bell',scale:.7});for(const t of traps){const phase=trapPhase(t);if(phase!=='idle')v.push({...t,type:phase==='warning'?'trapWarning':'trapActive',scale:.28});}for(let e of enemies)if(e.alive)v.push({x:e.x,y:e.y,type:e.type,scale:e.type==='boss'?1.83:1.12,flash:e.flash,enemy:e});for(let o of objects)if(o.active&&!((o.kind==='key'&&player.key)||(o.kind==='relic'&&player.relic)||(o.kind==='loot'&&crimsonTaken)))v.push({...o,type:o.kind==='weapon'?'relic':o.kind,scale:o.kind==='passage'?1.42:o.kind==='exit'?1.35:.7});if(dropped)v.push({...dropped,type:'relic',scale:.5});v=v.filter(s=>Math.abs(s.x-player.x)<24&&Math.abs(s.y-player.y)<24);v.sort((a,b)=>dist(player,b)-dist(player,a));for(let s of v){let wobble=s.enemy?Math.sin(tick*(s.enemy.type==='wraith'?5.3:2.4)+s.enemy.x)*.033:0;
-  let bob=s.enemy?(s.enemy.windup>0?-.09:Math.sin(tick*5+s.enemy.y)*.016):s.type==='torch'?Math.sin(tick*7+s.x)*.03:0;
-  const art=s.enemy?.phase===2?watcherAwake:enemyFrames[s.type];
-  const frames=s.enemy?art?.[enemyPose(s.enemy)]:null;
-  const chosen=frames?frames[Math.floor(tick*(s.enemy.windup>0?8:5)+s.enemy.originX)%frames.length]:null;
-  worldSprite(s.x,s.y+bob,s.type,s.scale*(1+wobble),s.flash,chosen);
-}}
-function drawCombatParticles(){
- for(const p of bladeSparks){if(p.life<=0)continue;const dx=p.x-player.x,dy=p.y-player.y,forward=dx*Math.cos(player.ang)+dy*Math.sin(player.ang);if(forward<=.2)continue;
- const side=-dx*Math.sin(player.ang)+dy*Math.cos(player.ang),x=W/2+(side/forward)*W/(2*FOV),y=H/2-14/forward;
- if(x>=0&&x<W&&forward<zBuffer[Math.floor(x)]+.35){ctx.globalAlpha=clamp(p.life*2,0,.9);ctx.fillStyle=p.color;const size=clamp(9/forward,1,5);ctx.fillRect(x,y,size,size);}
- }ctx.globalAlpha=1;
+const movedWitness={...cryptWitness,x:5.9,y:17.15};
+const scenerySprites=[...scenery,...routeLandmarks,...annexScenery,...architectureScenery];
+const groundedProps=new Set(['altar','coffin','idol','arch','urn','bell','ledger','tree','gauge']);
+const rungBell={x:28.35,y:14.4,type:'bell',scale:.7};
+
+function drawSprites(camera){
+  const visible=[];
+  function add(source,type,scale,frameImage=undefined,opacity=1,shadow=false){
+    const dx=source.x-player.x,dy=source.y-player.y;
+    const depth=dx*camera.cs+dy*camera.sn;
+    if(depth>.18&&depth<24)visible.push({x:source.x,y:source.y,type,scale,frameImage,opacity,shadow,depth});
+  }
+  for(const s of scenerySprites)add(s,s.type,s.scale,undefined,1,
+    groundedProps.has(s.type)||s.type.startsWith('architecture-'));
+  add(player.relic?movedWitness:cryptWitness,'idol',1.08,undefined,1,true);
+  if(bellRung)add(rungBell,'bell',.7);
+  for(const trap of traps){
+    const phase=trapPhase(trap);
+    if(phase!=='idle')add(trap,phase==='warning'?'trapWarning':'trapActive',.28);
+  }
+  for(const enemy of enemies){
+    const image=enemyCel(enemy);
+    if(!image)continue;
+    const opacity=enemy.alive ? 1 : Math.max(.35,1-(tick-enemy.defeatedAt)/fallTime);
+    add(enemy,enemy.type,enemy.type==='boss'?1.83:1.12,image,opacity,enemy.type!=='wraith');
+  }
+  for(const object of objects){
+    if(!object.active)continue;
+    if(object.kind==='key'&&player.key||object.kind==='relic'&&player.relic||object.kind==='loot'&&crimsonTaken)continue;
+    const art=objectArt(object);
+    add(object,art.type,art.scale,undefined,1,art.shadow);
+  }
+  if(dropped)add(dropped,'relic',.5);
+  visible.sort((a,b)=>b.depth-a.depth);
+  for(const s of visible){
+    if(s.shadow){
+      const side=-camera.sn*(s.x-player.x)+camera.cs*(s.y-player.y);
+      const center=W/2+side/s.depth*W/(2*FOV);
+      const ground=H/2+H*.43/s.depth;
+      const width=H*.51*s.scale/s.depth;
+      const height=H*.09/s.depth;
+      drawVisibleImage(footprint,center-width/2,ground-height*.55,width,height,s.depth,s.opacity*.54);
+    }
+    worldSprite(camera,s.x,s.y,s.type,s.scale,s.frameImage,s.opacity);
+  }
+}
+
+function drawCombatParticles(camera){
+  for(const p of bladeSparks){
+    const dx=p.x-player.x,dy=p.y-player.y;
+    const forward=dx*camera.cs+dy*camera.sn;
+    if(forward<=.2)continue;
+    const x=W/2+(-dx*camera.sn+dy*camera.cs)/forward*W/(2*FOV);
+    const y=H/2+H*(.43-p.z)/forward;
+    if(x<0||x>=W||y<0||y>=H||forward>=zBuffer[x|0])continue;
+    const size=Math.round(clamp(7/forward,1,5));
+    ctx.globalAlpha=clamp(p.life*2,0,settings.quiet?.44:.88);
+    ctx.fillStyle=p.color;
+    if(p.style==='spear'||p.style==='needle')ctx.fillRect(x|0,y|0,1,size+1);
+    else if(p.style==='axe')ctx.fillRect(x|0,y|0,size+2,size);
+    else if(p.style==='resonance'){
+      ctx.fillRect((x|0)-1,y|0,size+2,1);
+      ctx.fillRect(x|0,(y|0)-1,1,size+2);
+    }else ctx.fillRect(x|0,y|0,size,size);
+  }
+  ctx.globalAlpha=1;
+}
+
+const ringPoints=Array.from({length:40},(_,index)=>{
+  const angle=index*TAU/40;
+  return [Math.cos(angle),Math.sin(angle)];
+});
+function drawWarningRings(camera){
+  for(const enemy of enemies){
+    if(!enemy.alive||!['ring','chime'].includes(enemy.attackKind)||
+      !(enemy.windup>0||enemy.attackPose>0)||dist(enemy,player)>6||
+      !los(player.x,player.y,enemy.x,enemy.y))continue;
+    ctx.globalAlpha=settings.quiet||enemy.windup>0 ? .73 : .54;
+    const ranges=[enemy.attackReach,enemy.attackMin];
+    if(enemy.type==='drowned'){
+      // Close ripples tie the warning to the bell in narrow parts of the nave.
+      const wave=settings.quiet||enemy.windup>0 ? .48 : .48+1.25*(1-enemy.attackPose/strikeTime);
+      ranges.push(wave);
+    }
+    for(const reach of ranges){
+      if(!reach)continue;
+      ctx.fillStyle=reach===enemy.attackMin?'#dfb7a0':enemy.type==='drowned'?'#b9d9bb':'#eab477';
+      for(let index=0;index<ringPoints.length;index+=settings.low?2:1){
+        const [cos,sin]=ringPoints[index],x=enemy.x+cos*reach,y=enemy.y+sin*reach;
+        if(solid(x,y)||!los(enemy.x,enemy.y,x,y))continue;
+        const dx=x-player.x,dy=y-player.y;
+        const depth=camera.cs*dx+camera.sn*dy;
+        if(depth<=.25)continue;
+        const px=W/2+(-camera.sn*dx+camera.cs*dy)/depth*W/(2*FOV);
+        const py=H/2+H*.43/depth;
+        if(px<0||px>=W||py>=H||depth>=zBuffer[px|0])continue;
+        ctx.fillRect(px|0,py|0,clamp(13/depth,2,8),depth<3?2:1);
+      }
+    }
+  }
+  ctx.globalAlpha=1;
 }
 function drawThreatIndicator(){
-  const imminent=enemies.filter(e=>e.alive&&(e.windup>0||e.waking>0)&&dist(player,e)<4&&los(player.x,player.y,e.x,e.y))
+  const imminent=enemies.filter(e=>e.alive&&(e.windup>0||e.waking>0)&&dist(player,e)<4&&
+    Math.abs(turnDelta(Math.atan2(e.y-player.y,e.x-player.x)-player.ang))<.65&&los(player.x,player.y,e.x,e.y))
     .sort((a,b)=>dist(player,a)-dist(player,b))[0];
   if(!imminent)return;
-  const strength=Math.min(1,Math.max(imminent.windup,imminent.waking)*1.6),pulse=settings.quiet?.75:.64+.15*Math.sin(tick*14);
   const radial=!imminent.waking&&['ring','chime'].includes(imminent.attackKind);
-  ctx.strokeStyle=radial?`rgba(250,199,126,${pulse})`:`rgba(246,123,117,${pulse})`;
-  ctx.lineWidth=2;
+  const pulse=settings.quiet?.8:.73+.08*Math.sin(tick*9);
+  ctx.strokeStyle=radial?`rgba(250,199,126,${pulse})`:`rgba(246,151,131,${pulse})`;
+  ctx.lineWidth=1.5;
   ctx.beginPath();
-  ctx.arc(W/2,H/2,(radial?19:12)+strength*5,radial?0:-PI*.78,radial?TAU:PI*.78);
+  ctx.arc(W/2,H/2,radial?16:12,radial?0:-PI*.78,radial?TAU:PI*.78);
   ctx.stroke();
-  ctx.fillStyle='rgba(250,181,151,.8)';ctx.fillRect(W/2-1,H/2-20,2,5);
 }
 function swordPose(progress,heavy){
   const strike=clamp(progress/.52,0,1),recovery=clamp((progress-.52)/.48,0,1);
@@ -891,84 +1113,135 @@ function swordPose(progress,heavy){
   return {x:-reach*cut+reach*.9*reset,y:10*cut+38*reset,
     rotation:-.18-(heavy?.82:.68)*cut+(heavy?1.04:.9)*reset};
 }
-function weaponPose(id, progress, heavy){
-  const defaultPose=swordPose(progress,heavy);
-  const extension=Math.sin(progress*PI);
-  if(id==='spear')return {x:-72*extension,y:-33*extension,rotation:-.18-.62*extension};
-  if(id==='needle')return {x:-49*extension,y:23*extension,rotation:-.18-.31*extension};
-  if(id==='axe')return {x:defaultPose.x*.82,y:defaultPose.y-48*extension,rotation:defaultPose.rotation-.28*extension};
-  return defaultPose;
-}
-
-function drawEffects(){let bob=settings.quiet?0:Math.sin(walkTime*11)*Math.min(3.8,player.step*10);
-const progress=swing?(swing.age<swing.contact
-  ? .52*swing.age/swing.contact
-  : .52+.48*(swing.age-swing.contact)/(swing.duration-swing.contact)):0;
-const id=swing?.id??equippedWeapon,heavySwing=swing?.heavy??false;
-const pose=swing?weaponPose(id,progress,heavySwing):{x:0,y:0,rotation:-.18};
-const slash=swing?Math.max(0,1-Math.abs(progress-.52)*5)*(settings.quiet?.19:.47):0;
-const weapon=weapons[id];
-ctx.save();ctx.translate(W*.76+pose.x,H*.81+bob+pose.y);
-ctx.rotate(pose.rotation);
-ctx.fillStyle='#14121e';ctx.beginPath();ctx.ellipse(30,75,80,61,0,0,TAU);ctx.fill();
-ctx.fillStyle='#4a3b4b';ctx.fillRect(11,12,22,56);
-ctx.fillStyle='#8c7180';ctx.fillRect(18,14,7,44);
-if(id==='sword'){
-  ctx.beginPath();ctx.moveTo(10,5);ctx.lineTo(10,-126);ctx.lineTo(18,-153);
-  ctx.lineTo(25,-126);ctx.lineTo(25,5);ctx.closePath();
-  const steel=ctx.createLinearGradient(10,0,25,0);
-  steel.addColorStop(0,'#e7d8ce');steel.addColorStop(.28,'#8d8495');
-  steel.addColorStop(.58,'#50485e');steel.addColorStop(1,'#bdb2b9');
-  ctx.fillStyle=steel;ctx.fill();
-  ctx.fillStyle='#a78992';ctx.fillRect(16,-126,2,115);
-  ctx.fillStyle='#6e515f';ctx.fillRect(1,1,33,7);
-}else{
-  ctx.fillStyle='#5b474f';ctx.fillRect(15,-126,9,151);
-  ctx.fillStyle=weapon.color;
-  ctx.beginPath();
+function weaponPose(id,progress,heavy){
+  const base=swordPose(progress,heavy);
+  const prepare=clamp(progress/.52,0,1);
+  const extension=Math.sin(prepare*PI/2)*(1-clamp((progress-.52)/.48,0,1));
+  let pose={x:base.x*.52,y:base.y,rotation:base.rotation+(heavy?.14:0)*extension,scaleY:1};
+  if(id==='spear')pose={x:-(heavy?126:118)*extension,y:-5*extension,rotation:-.18-.08*extension,scaleY:1-.45*extension};
+  if(id==='needle')pose={x:-106*extension,y:2*extension,rotation:-.18-.21*extension,scaleY:1-.50*extension};
   if(id==='axe'){
-    ctx.moveTo(22,-127);ctx.lineTo(-8,-143);ctx.lineTo(-29,-135);
-    ctx.lineTo(-37,-102);ctx.lineTo(-22,-91);ctx.lineTo(22,-99);
-  }else{
-    const width=id==='spear'?10:4;
-    ctx.moveTo(19,-161);ctx.lineTo(19+width,-132);ctx.lineTo(19,-111);ctx.lineTo(19-width,-132);
+    const windup=Math.sin(prepare*PI)*(heavy?26:19);
+    pose={x:base.x*(heavy?.28:.37)+windup,y:base.y-(heavy?20:10)*extension,
+      rotation:base.rotation+.17*extension+windup*.018,scaleY:1};
   }
-  ctx.closePath();ctx.fill();
-  ctx.fillStyle='#e7d8ce';ctx.fillRect(18,-131,2,16);
-  if(id==='needle'){ctx.strokeStyle=weapon.color;ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(19,-125,10,7,0,0,TAU);ctx.stroke();}
+  // Complete the recovery at the idle pose so the next frame does not jump.
+  const settle=clamp((progress-.82)/.18,0,1);
+  return {x:pose.x*(1-settle),y:pose.y*(1-settle),
+    rotation:pose.rotation*(1-settle)-.18*settle,scaleY:1+(pose.scaleY-1)*(1-settle)};
 }
-ctx.restore();
-if(slash>0){
-  ctx.strokeStyle=weapon.color;ctx.globalAlpha=slash;ctx.lineWidth=2;ctx.beginPath();
-  if(id==='spear'||id==='needle'){
-    ctx.moveTo(W*.62,H*.67);ctx.lineTo(W*.5,H*.51);
-  }else{
-    ctx.arc(W*.53,H*.64,heavySwing?127:102,-2.83+progress*.9,-.65+progress*.65);
+const restingWeapon={x:0,y:0,rotation:-.18,scaleY:1};
+const weaponTip={sword:[17,21],spear:[18,14],axe:[-31,49],needle:[18,13]};
+function drawWeaponSleeve(x,y,pose){
+  const gripX=x+17*Math.cos(pose.rotation);
+  const gripY=y+17*Math.sin(pose.rotation);
+  ctx.fillStyle='#14121e';
+  ctx.beginPath();ctx.moveTo(gripX-12,gripY+2);ctx.lineTo(gripX+9,gripY-2);
+  ctx.lineTo(gripX+Math.max(12,(W*.95-gripX)*.51),H+8);
+  ctx.lineTo(gripX+Math.max(0,(W*.78-gripX)*.37),H+8);
+  ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#5e4b59';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(gripX-8,gripY+6);
+  ctx.lineTo(gripX+4,gripY+5);ctx.lineTo(gripX+Math.max(8,(W*.87-gripX)*.42),H);
+  ctx.stroke();
+}
+function drawWeaponTrail(id,heavy,progress,bob){
+  const strength=Math.max(0,1-Math.abs(progress-.52)*7);
+  if(!strength||settings.quiet)return;
+  const [tipX,tipY]=weaponTip[id];
+  ctx.strokeStyle=weapons[id].color;
+  ctx.globalAlpha=strength*(id==='axe'?.64:.48);
+  ctx.lineWidth=id==='axe'?3:1.5;
+  ctx.beginPath();
+  for(let index=0;index<4;index++){
+    const sample=clamp(Math.min(progress,.52)-(3-index)*.075,0,1);
+    const pose=weaponPose(id,sample,heavy);
+    const cos=Math.cos(pose.rotation),sin=Math.sin(pose.rotation),bladeY=(tipY-175)*pose.scaleY;
+    const x=W*.76+pose.x+tipX*cos-bladeY*sin;
+    const y=H*.81+bob+pose.y+tipX*sin+bladeY*cos;
+    if(index===0)ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
   }
   ctx.stroke();ctx.globalAlpha=1;
 }
-if(player.block){ctx.fillStyle='rgba(32,29,42,.9)';ctx.beginPath();ctx.moveTo(0,H*.47);ctx.lineTo(85,H*.38);ctx.lineTo(126,H*.71);ctx.lineTo(65,H);ctx.lineTo(0,H);ctx.fill();ctx.strokeStyle='#8a7785';ctx.lineWidth=6;ctx.stroke();}if(spellAnim>0){let r=28+(1-spellAnim/.65)*55;ctx.strokeStyle=`rgba(176,131,244,${spellAnim/.65*.7})`;ctx.lineWidth=4;ctx.beginPath();ctx.arc(W*.5,H*.5,r,0,TAU);ctx.stroke();}if(injury>0){ctx.fillStyle=`rgba(105,15,31,${injury*(settings.quiet?.075:.24)})`;ctx.fillRect(0,0,W,H);} }
-const moteField=Array.from({length:65},(_,i)=>({x:rand(i,3)*W,y:rand(i,4)*H,s:.5+rand(i,6)*2.4,z:rand(i,8)}));
-function drawAtmosphere(){
-  // A subtle animated veil: dust and drifting sparks, rendered below the weapon.
-  for(const p of settings.low||settings.quiet?[]:moteField){let x=(p.x+tick*(p.z*3+1.7))%W,y=(p.y+Math.sin(tick*.7+p.x)*4+tick*(p.z*1.1))%H;
-    ctx.fillStyle=p.z>.8?'rgba(209,137,134,.31)':'rgba(161,175,196,.18)';ctx.fillRect(x|0,y|0,p.s,p.s);
+function drawEffects(){
+  const bob=settings.quiet?0:Math.sin(walkTime*11)*Math.min(3.8,player.step*10);
+  const progress=swing?(swing.age<swing.contact
+    ? .52*swing.age/swing.contact
+    : .52+.48*(swing.age-swing.contact)/(swing.duration-swing.contact)):0;
+  const id=swing?.id??equippedWeapon,heavy=swing?.heavy??false;
+  const pose=swing?weaponPose(id,progress,heavy):restingWeapon;
+  if(swing)drawWeaponTrail(id,heavy,progress,bob);
+  const weaponX=Math.round(W*.76+pose.x),weaponY=Math.round(H*.81+bob+pose.y);
+  drawWeaponSleeve(weaponX,weaponY,pose);
+  ctx.save();
+  ctx.translate(weaponX,weaponY);
+  ctx.rotate(pose.rotation);
+  ctx.drawImage(weaponArt[id],-41,-175*pose.scaleY,116,220*pose.scaleY);
+  ctx.restore();
+  if(player.block){
+    ctx.fillStyle='rgba(32,29,42,.94)';
+    ctx.beginPath();ctx.moveTo(0,H*.47);ctx.lineTo(85,H*.38);ctx.lineTo(126,H*.71);
+    ctx.lineTo(65,H);ctx.lineTo(0,H);ctx.fill();
+    ctx.strokeStyle='#8a7785';ctx.lineWidth=6;ctx.stroke();
   }
-  const area=regionAt(player.x,player.y),tone=area==='nave'?'14,109,101':area==='catacomb'?'20,93,104':area==='chapel'?'96,49,123':area==='sanctuary'?'139,50,80':'69,62,90';
-  const glow=ctx.createRadialGradient(W/2,H*.42,20,W/2,H*.42,W*.65);glow.addColorStop(0,'rgba(0,0,0,0)');glow.addColorStop(1,`rgba(${tone},.15)`);ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
-  const danger=clamp(1-player.hp/player.maxhp,0,.65);
-  if(danger){ctx.fillStyle=`rgba(54,8,19,${danger*.10})`;ctx.fillRect(0,0,W,H);}
+  if(spellAnim>0){
+    const radius=settings.quiet?44:28+(1-spellAnim/.65)*55;
+    ctx.strokeStyle=`rgba(176,131,244,${spellAnim/.65*(settings.quiet?.42:.7)})`;
+    ctx.lineWidth=settings.quiet?2:4;
+    ctx.beginPath();ctx.arc(W*.5,H*.5,radius,0,TAU);ctx.stroke();
+  }
+  if(injury>0){
+    ctx.fillStyle=`rgba(105,15,31,${injury*(settings.quiet?.075:.24)})`;
+    ctx.fillRect(0,0,W,H);
+  }
+}
+const ambience={
+  crypt:{color:'#bda086',x:5.15,y:15.6,count:8,lift:.16},
+  catacomb:{color:'#8faea3',x:21.5,y:19.8,count:6,lift:-.11},
+  chapel:{color:'#b38d9e',x:8.5,y:7.45,count:9,lift:.06},
+  sanctuary:{color:'#bd8b76',x:19.5,y:3.9,count:9,lift:.13},
+  nave:{color:'#8cb8ab',x:28.1,y:15.65,count:7,lift:-.12},
+  salt:{color:'#c5b699',x:46.8,y:6.6,count:8,lift:.04},
+  archive:{color:'#bba084',x:61.75,y:10.3,count:8,lift:-.06},
+  garden:{color:'#a6b88d',x:48.2,y:33.35,count:10,lift:.09},
+  soundings:{color:'#99bab9',x:67.7,y:27.1,count:6,lift:.12},
+  sky:{color:'#aaaad0',x:41.5,y:53,count:7,lift:.02},
+};
+const motes=Object.fromEntries(Object.entries(ambience).map(([area,field])=>[
+  area,Array.from({length:field.count},(_,i)=>({
+    x:field.x+(rand(i,3)-.5)*2.2,y:field.y+(rand(i,4)-.5)*2.2,
+    z:rand(i,6),phase:rand(i,8),size:i%4===0?2:1,
+  })),
+]));
+function drawAtmosphere(camera){
+  if(!settings.quiet&&!settings.low){
+    const area=regionAt(player.x,player.y),field=ambience[area];
+    ctx.fillStyle=field.color;ctx.globalAlpha=.52;
+    for(const p of motes[area]){
+      const time=tick*.62+p.phase*TAU;
+      const dx=p.x+Math.sin(time)*.22-player.x,dy=p.y-player.y;
+      const depth=dx*camera.cs+dy*camera.sn;
+      if(depth<=.5||depth>10)continue;
+      const z=.12+((p.z+(tick*field.lift)%1+1)%1)*.8;
+      const x=W/2+(-dx*camera.sn+dy*camera.cs)/depth*W/(2*FOV),y=H/2+H*(.43-z)/depth;
+      if(x>=0&&x<W&&y>=0&&y<H&&depth<zBuffer[x|0])ctx.fillRect(x|0,y|0,p.size,p.size);
+    }
+    ctx.globalAlpha=1;
+  }
 }
 function render(){
-  drawBase();
+  const camera={sn:Math.sin(player.ang),cs:Math.cos(player.ang)};
+  drawBase(camera);
+  drawWarningRings(camera);
+  drawSprites(camera);
+  drawAtmosphere(camera);
+  drawCombatParticles(camera);
   ctx.save();
   if(!settings.quiet&&shake>.005)ctx.translate((Math.random()-.5)*shake*24,(Math.random()-.5)*shake*16);
-  drawSprites();
-  drawCombatParticles();
-  drawAtmosphere();
   drawEffects();
-  drawThreatIndicator();
   ctx.restore();
+  drawThreatIndicator();
 }
 const mapCanvas=document.createElement('canvas');
 mapCanvas.width=240;mapCanvas.height=200;
@@ -981,10 +1254,10 @@ function drawMap(){
   const width=wing?19:30,height=wing?19:25,cell=wing?9:6.5;
   const xAt=x=>(240-width*cell)/2+(x-offsetX)*cell;
   const yAt=y=>(200-height*cell)/2+(y-offsetY)*cell;
-  mc.fillStyle='#0c0e16';mc.fillRect(0,0,240,200);
+  mc.fillStyle='#110f18';mc.fillRect(0,0,240,200);
   for(let y=offsetY;y<offsetY+height;y++)for(let x=offsetX;x<offsetX+width;x++){
     const value=grid[y][x];
-    mc.fillStyle=value===0?'#393747':value===3?'#a7855c':value===4?'#735274':'#10121c';
+    mc.fillStyle=value===0?'#544951':value===3||value===5?'#987b60':value===4?'#534354':'#15121d';
     mc.fillRect(xAt(x),yAt(y),cell-.6,cell-.6);
   }
   for(const object of [...objects,...traps]){
@@ -992,9 +1265,17 @@ function drawMap(){
     if(object.kind==='discovery'&&!discoveries.includes(object.id))continue;
     if(object.kind==='discovery'&&object.choice&&archiveChoice!==object.id)continue;
     const trap=object.period&&trapPhase(object);
+    const x=xAt(object.x),y=yAt(object.y);
     mc.fillStyle=trap?(trap==='active'?'#d36f6d':trap==='warning'?'#d7ae78':'#796b68'):
       object.kind==='passage'?'#a7c9dc':object.kind==='altar'?'#9ad3b2':object.kind==='seal'?'#ce97dc':'#e5c78e';
-    mc.fillRect(xAt(object.x)-2,yAt(object.y)-2,4,4);
+    if(object.kind==='passage'||object.kind==='seal'){
+      const mark=object.kind==='passage'?4:3;
+      mc.beginPath();mc.moveTo(x,y-mark);mc.lineTo(x+mark,y);mc.lineTo(x,y+mark);
+      if(object.kind==='seal')mc.lineTo(x-mark,y);
+      mc.closePath();mc.fill();
+    }else if(object.kind==='altar'){
+      mc.fillRect(x-3,y-1,6,2);mc.fillRect(x-1,y-3,2,6);
+    }else mc.fillRect(x-2,y-2,4,4);
   }
   const x=xAt(player.x),y=yAt(player.y);
   mc.fillStyle='#efe6ca';mc.beginPath();mc.arc(x,y,3.5,0,TAU);mc.fill();
@@ -1044,13 +1325,23 @@ function hud(){
     Math.abs(turnDelta(Math.atan2(e.y-player.y,e.x-player.x)-player.ang))<.62&&los(player.x,player.y,e.x,e.y))
     .sort((a,b)=>dist(player,a)-dist(player,b))[0];$('target').hidden=!nearest;if(nearest){$('targetname').textContent=creatureNames[nearest.type];$('targetbar').style.width=100*nearest.hp/nearest.maxhp+'%';}$('hpbar').style.width=100*player.hp/player.maxhp+'%';$('stbar').style.width=player.st+'%';$('mpbar').style.width=player.mp/60*100+'%';$('ashes').textContent=player.ashes;$('flasks').textContent=player.flasks;$('spellcount').textContent=Math.floor(player.mp/25);$('location').textContent=getZone();$('objective').textContent=objectiveText();let b=enemies.find(e=>e.type==='boss');$('bossbar').hidden=!(b.alive&&b.alert&&getZone()===zones[3]);$('bossfill').style.width=100*b.hp/b.maxhp+'%';let o=nearObject();$('interact').hidden=!o;$('interact').textContent=o?`${coarsePointer?.matches?'':'[ E ]  '}${o.label.toUpperCase()}`:'';if(toastUntil<tick)$('toast').style.opacity='0';if(warningUntil<tick)$('encounter-warning').hidden=true;if(mapOn)drawMap();}
 let stepBeat=0,nextDrip=6;
-function update(dt){tick+=dt;if(tick<hitFlashUntil)$('reticle').classList.add('hit');else $('reticle').classList.remove('hit');player.attackCd=Math.max(0,player.attackCd-dt);player.spellCd=Math.max(0,player.spellCd-dt);player.hurt=Math.max(0,player.hurt-dt);player.roll=Math.max(0,player.roll-dt);spellAnim=Math.max(0,spellAnim-dt);injury=Math.max(0,injury-dt*2);shake=Math.max(0,shake-dt*.7);let fx=Math.cos(player.ang),fy=Math.sin(player.ang),sx=-fy,sy=fx;let [forward,strafe]=moveInput(),mag=Math.hypot(forward,strafe);player.block=!!keys.MouseRight||padBlock||touchBlock;player.ang+=touchLook*dt*1.95;if(keys.ArrowLeft)player.ang-=dt*1.75;if(keys.ArrowRight)player.ang+=dt*1.75;player.ang=turnDelta(player.ang);let sprint=(keys.ShiftLeft||keys.ShiftRight||padSprint)&&player.st>3&&mag>0&&!player.block,spd=player.roll>0?5.7:sprint?3.8:player.block?1.05:2.4;if(player.roll>0){forward=player.rollDir?.[0]??forward;strafe=player.rollDir?.[1]??strafe;mag=Math.hypot(forward,strafe);}if(mag>0){let dx=(fx*forward+sx*strafe)/Math.max(1,mag)*spd*dt,dy=(fy*forward+sy*strafe)/Math.max(1,mag)*spd*dt;const ox=player.x,oy=player.y;
+function update(dt){tick+=dt;
+if(tick<hitFlashUntil){
+  $('reticle').classList.add('hit');
+  $('reticle').setAttribute('data-contact',contactKind);
+}else $('reticle').classList.remove('hit');
+player.attackCd=Math.max(0,player.attackCd-dt);player.spellCd=Math.max(0,player.spellCd-dt);player.hurt=Math.max(0,player.hurt-dt);player.roll=Math.max(0,player.roll-dt);spellAnim=Math.max(0,spellAnim-dt);injury=Math.max(0,injury-dt*2);shake=Math.max(0,shake-dt*.7);let fx=Math.cos(player.ang),fy=Math.sin(player.ang),sx=-fy,sy=fx;let [forward,strafe]=moveInput(),mag=Math.hypot(forward,strafe);player.block=!!keys.MouseRight||padBlock||touchBlock;player.ang+=touchLook*dt*1.95;if(keys.ArrowLeft)player.ang-=dt*1.75;if(keys.ArrowRight)player.ang+=dt*1.75;player.ang=turnDelta(player.ang);let sprint=(keys.ShiftLeft||keys.ShiftRight||padSprint)&&player.st>3&&mag>0&&!player.block,spd=player.roll>0?5.7:sprint?3.8:player.block?1.05:2.4;if(player.roll>0){forward=player.rollDir?.[0]??forward;strafe=player.rollDir?.[1]??strafe;mag=Math.hypot(forward,strafe);}if(mag>0){let dx=(fx*forward+sx*strafe)/Math.max(1,mag)*spd*dt,dy=(fy*forward+sy*strafe)/Math.max(1,mag)*spd*dt;const ox=player.x,oy=player.y;
 move(player,dx,dy);
 stepBeat+=Math.hypot(player.x-ox,player.y-oy);
 if(stepBeat>(sprint?.94:.81)){
   VeilAudio.cue(['nave','soundings'].includes(regionAt(player.x,player.y))?'wetStep':'step');stepBeat=0;
 }
-walkTime+=dt*(sprint?1.7:1);player.step=Math.min(1,player.step+dt*6);}else player.step=Math.max(0,player.step-dt*6);if(sprint)player.st=Math.max(0,player.st-19*dt);else if(!player.block&&player.attackCd<.38)player.st=Math.min(100,player.st+24*dt);player.mp=Math.min(60,player.mp+(discoveries.includes('gardenFruit')?3.6:3)*dt);for(const p of bladeSparks){p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=Math.max(.1,1-dt*4);p.vy*=Math.max(.1,1-dt*4);}
+walkTime+=dt*(sprint?1.7:1);player.step=Math.min(1,player.step+dt*6);}else player.step=Math.max(0,player.step-dt*6);if(sprint)player.st=Math.max(0,player.st-19*dt);else if(!player.block&&player.attackCd<.38)player.st=Math.min(100,player.st+24*dt);player.mp=Math.min(60,player.mp+(discoveries.includes('gardenFruit')?3.6:3)*dt);for(const p of bladeSparks){p.life-=dt;
+  if(!settings.quiet){
+    const drag=Math.max(.1,1-dt*4);
+    p.x+=p.vx*dt;p.y+=p.vy*dt;p.z=Math.max(.02,p.z+p.vz*dt);p.vz-=1.7*dt;
+    p.vx*=drag;p.vy*=drag;
+  }}
  advanceSwing(dt);
  bladeSparks=bladeSparks.filter(p=>p.life>0);
  updateTraps(dt);
@@ -1125,10 +1416,10 @@ function showEnding(){
 }
 function begin(){VeilAudio.begin();if(!playing){playing=true;paused=false;if(player.won){$('menu').classList.add('hidden');showEnding();return;}$('menu').classList.add('hidden');note('Sigue las luces del corredor hacia las catacumbas. Allí llevaron la llave.',6);}else{paused=false;$('menu').classList.add('hidden');}needsDraw=true;lockPointer();}
 function togglePause(){if(!playing||player.won||!$('death').classList.contains('hidden'))return;if(!$('inventory').classList.contains('hidden')){$('inventory').classList.add('hidden');paused=false;lockPointer();return;}paused=!paused;if(paused){save();$('save-game').hidden=false;$('save-status').textContent='';$('menu').classList.add('is-paused');$('menu').classList.remove('hidden');$('play').textContent='REGRESAR A LA OSCURIDAD';document.exitPointerLock?.();$('play').focus();}else{$('menu').classList.add('hidden');lockPointer();}}
-function toggleInventory(){if(!playing||player.won||!$('death').classList.contains('hidden')||(!$('menu').classList.contains('hidden')))return;let inv=$('inventory');if(inv.classList.contains('hidden')){inv.classList.remove('hidden');paused=true;document.exitPointerLock?.();$('items').innerHTML=[...ownedWeapons.map(id=>`<div class="item"><b>${weapons[id].name}${equippedWeapon===id?' · EQUIPADA':''}</b><small>${weapons[id].lore} Alcance ${weapons[id].reach.toFixed(1)} · daño ${weapons[id].damage} · coste ${weapons[id].stamina}. Pulsa C para cambiar.</small></div>`),`<div class="item"><b>LLAVE DE HUESO</b><small>${player.key?'Una llave recuperada de la cripta.':'Aún no encontrada.'}</small></div>`,`<div class="item"><b>CORAZÓN DEL VACÍO</b><small>${player.relic?'El pulso de lo imposible recorre tus venas.':'Se oculta tras un muro quebradizo.'}</small></div>`,`<div class="item"><b>ECOS DEL VELO (${echoesCollected.length}/3)</b><small>Busca las tres memorias perdidas entre la cripta, las catacumbas y la capilla. Reunirlas refuerza permanentemente tus frascos.</small></div>`,`<div class="item"><b>RITOS DEL VIGÍA (${sealsBroken.length}/2)</b><small>Dos sellos opcionales: Sepultura, en la cripta; Herejía, tras el pasadizo de la capilla. Cada uno reduce el daño del Vigía un 15 % y concede 60 cenizas. No son necesarios para completar el juego.</small></div>`,`<div class="item"><b>REGIONES EXPLORADAS (${zonesVisited.length}/${zones.length})</b><small>${zonesVisited.join(' · ')||'Aún no hay registros.'}</small></div>`,`<div class="item"><b>OSARIO</b><small>${leverUsed?'La palanca ha revelado un escondite.':'Un mecanismo olvidado espera en las catacumbas.'} ${cacheOpened?'Recompensa recogida.':''}</small></div>`,`<div class="item"><b>NIVEL ${player.lv} · ${player.ashes} CENIZAS</b><small>Vida máxima: ${player.maxhp} · Frascos: ${player.maxflasks}</small></div>`,`<div class="item"><b>INSCRIPCIONES</b><small>${[
+function toggleInventory(){if(!playing||player.won||!$('death').classList.contains('hidden')||(!$('menu').classList.contains('hidden')))return;let inv=$('inventory');if(inv.classList.contains('hidden')){inv.classList.remove('hidden');paused=true;document.exitPointerLock?.();$('items').innerHTML=[...ownedWeapons.map(id=>`<div class="item"><b>${weapons[id].name}${equippedWeapon===id?' · EQUIPADA':''}</b><small>${weapons[id].lore} Alcance ${weapons[id].reach.toFixed(1)} · daño ${weapons[id].damage} · coste ${weapons[id].stamina}. Al cerrar el diario: C, Arma o cruceta derecha.</small></div>`),`<div class="item"><b>LLAVE DE HUESO</b><small>${player.key?'Una llave recuperada de la cripta.':'Aún no encontrada.'}</small></div>`,`<div class="item"><b>CORAZÓN DEL VACÍO</b><small>${player.relic?'El pulso de lo imposible recorre tus venas.':'Se oculta tras un muro quebradizo.'}</small></div>`,`<div class="item"><b>ECOS DEL VELO (${echoesCollected.length}/3)</b><small>Busca las tres memorias perdidas entre la cripta, las catacumbas y la capilla. Reunirlas refuerza permanentemente tus frascos.</small></div>`,`<div class="item"><b>RITOS DEL VIGÍA (${sealsBroken.length}/2)</b><small>Dos sellos opcionales: Sepultura, en la cripta; Herejía, tras el pasadizo de la capilla. Cada uno reduce el daño del Vigía un 15 % y concede 60 cenizas. No son necesarios para completar el juego.</small></div>`,`<div class="item"><b>REGIONES EXPLORADAS (${zonesVisited.length}/${zones.length})</b><small>${zonesVisited.join(' · ')||'Aún no hay registros.'}</small></div>`,`<div class="item"><b>OSARIO</b><small>${leverUsed?'La palanca ha revelado un escondite.':'Un mecanismo olvidado espera en las catacumbas.'} ${cacheOpened?'Recompensa recogida.':''}</small></div>`,`<div class="item"><b>NIVEL ${player.lv} · ${player.ashes} CENIZAS</b><small>Vida máxima: ${player.maxhp} · Frascos: ${player.maxflasks}</small></div>`,`<div class="item"><b>INSCRIPCIONES</b><small>${[
   tabletsRead.includes('tablet')?'Los muertos no temen a la noche. Temen a la campana. La pared agrietada queda al norte del altar.':'',
   tabletsRead.includes('tablet2')?'El Vigía selló la puerta desde el otro lado.':'',
-].filter(Boolean).join(' · ')||'Aún no has descifrado ninguna.'}</small></div>`,`<div class="item"><b>CAMPANA SUMERGIDA</b><small>${bellRung?'La campana ha vuelto a sonar.':'Busca una nave inundada al este de las catacumbas.'}</small></div>`,...additionalJournal()].join('');$('inventory-close').focus();}else{inv.classList.add('hidden');paused=false;lockPointer();}}
+].filter(Boolean).join(' · ')||'Aún no has descifrado ninguna.'}</small></div>`,`<div class="item"><b>CAMPANA SUMERGIDA</b><small>${bellRung?'La campana ha vuelto a sonar.':'Busca una nave inundada al este de las catacumbas.'}</small></div>`,...additionalJournal()].join('');$('items').focus();}else{inv.classList.add('hidden');paused=false;lockPointer();}}
 $('play').addEventListener('click',begin);$('again').addEventListener('click',restart);screen.addEventListener('click',()=>{VeilAudio.begin();if(!playing||paused)return;if(document.pointerLockElement!==screen)lockPointer();attack();});screen.addEventListener('contextmenu',e=>e.preventDefault());screen.addEventListener('mousedown',e=>{if(e.button===2)keys.MouseRight=true;});window.addEventListener('mouseup',e=>{if(e.button===2)keys.MouseRight=false;});document.addEventListener('mousemove',e=>{if(document.pointerLockElement===screen&&playing&&!paused)player.ang+=e.movementX*.0029;});
 window.addEventListener('keydown',e=>{if(playing&&!player.won&&['Space','Tab','ArrowLeft','ArrowRight'].includes(e.code)&&(!paused||!$('inventory').classList.contains('hidden')))e.preventDefault();if(e.repeat)return;keys[e.code]=true;if(!playing&&e.code!=='Enter')return;if(e.code==='Escape'){if(!$('inventory').classList.contains('hidden'))toggleInventory();else togglePause();return;}if(e.code==='Tab'&&playing&&$('menu').classList.contains('hidden')&&!player.won){toggleInventory();return;}if(!playing||paused){if(e.code==='Enter'&&!playing&&!['BUTTON','INPUT','SUMMARY'].includes(e.target.tagName))begin();return;}if(e.code==='Space')dodge();if(e.code==='KeyE')interact();if(e.code==='KeyF')heal();if(e.code==='KeyL')levelUp();if(e.code==='KeyQ')spell();if(e.code==='KeyJ')attack(true);if(e.code==='KeyH')attack();if(e.code==='KeyM')toggleMap();if(e.code==='KeyC')equipNext();if(e.code==='KeyR'&&nearObject()?.kind==='altar')interact();if(e.code==='KeyK')manualSave();if(e.code==='KeyU')toggleMute();});window.addEventListener('keyup',e=>{keys[e.code]=false;});window.addEventListener('blur',()=>{for(let k of Object.keys(keys))keys[k]=false;});document.addEventListener('pointerlockchange',()=>{
   if(!document.pointerLockElement)keys.MouseRight=false;
@@ -1260,5 +1551,5 @@ function safeSavePresent(){return saveReady;}
 if(saveWarning)$('save-status').textContent=saveWarning;
 if(saveReady)$('play').textContent=player.won?'VER EL DESENLACE':'CONTINUAR EL DESCENSO';
 // Read-only diagnostics for reproducible browser tests; no game-state mutation hooks.
-window.__ashenDiagnostics=()=>({version:'3.5.0',ownedWeapons:[...ownedWeapons],equippedWeapon,playing,paused,discoveries:[...discoveries],archiveChoice,mirrorPositions:{...mirrorPositions},awakening:enemies.filter(e=>e.alive&&e.waking>0).map(e=>e.id),objective:objectiveText(),bossDefeated,won:player.won,position:[+player.x.toFixed(2),+player.y.toFixed(2)],heading:player.ang,ending:player.won?(restoredEnding()?'restored':'first-light'):null, bellRung,shortcutOpen, hp:player.hp,stamina:+player.st.toFixed(1),mana:+player.mp.toFixed(1),zone:getZone(),enemiesAlive:enemies.filter(e=>e.alive).length,key:player.key,relic:player.relic,gate:player.gate,secret:player.secret,renderSize:[W,H],sceneryCount:scenery.length,echoes:echoesCollected.length,echoReward,sealsBroken:sealsBroken.length,sealsRemaining:objects.filter(o=>o.kind==='seal'&&o.active).length,zonesVisited:zonesVisited.length,echoLocations:objects.filter(o=>o.kind==='echo'&&o.active).length,textureCount:Object.values(textures).reduce((n,v)=>n+Object.keys(v).length,0)+Object.keys(awakeWall).length,region:regionAt(player.x,player.y),themedProps:scenery.filter(o=>['coffin','bonepile','fungus','roots','stainedglass','brazier'].includes(o.type)).length,animationFrames:[...Object.values(enemyFrames),watcherAwake].reduce((n,v)=>n+Object.values(v).reduce((m,a)=>m+a.length,0),0),enemyWindups:enemies.filter(e=>e.windup>0).length,enemyAttackPatterns:enemies.filter(e=>e.alive).map(e=>({id:e.id,kind:e.attackKind,attacks:e.attacksMade})),activeParticles:bladeSparks.filter(p=>p.life>0).length,trapCount:traps.length,activeTraps:traps.filter(t=>trapPhase(t)==='active').length,leverUsed,cacheOpened,tabletsRead:tabletsRead.length,artStyle:'retro-raycast-pixel',mapVisible:mapOn,savePresent:safeSavePresent()});
+window.__ashenDiagnostics=()=>({version:VERSION,ownedWeapons:[...ownedWeapons],equippedWeapon,playing,paused,discoveries:[...discoveries],archiveChoice,mirrorPositions:{...mirrorPositions},awakening:enemies.filter(e=>e.alive&&e.waking>0).map(e=>e.id),objective:objectiveText(),bossDefeated,won:player.won,position:[+player.x.toFixed(2),+player.y.toFixed(2)],heading:player.ang,ending:player.won?(restoredEnding()?'restored':'first-light'):null, bellRung,shortcutOpen, hp:player.hp,stamina:+player.st.toFixed(1),mana:+player.mp.toFixed(1),zone:getZone(),enemiesAlive:enemies.filter(e=>e.alive).length,key:player.key,relic:player.relic,gate:player.gate,secret:player.secret,renderSize:[W,H],sceneryCount:scenery.length,echoes:echoesCollected.length,echoReward,sealsBroken:sealsBroken.length,sealsRemaining:objects.filter(o=>o.kind==='seal'&&o.active).length,zonesVisited:zonesVisited.length,echoLocations:objects.filter(o=>o.kind==='echo'&&o.active).length,textureCount:Object.values(textures).reduce((n,v)=>n+Object.keys(v).length,0)+Object.keys(awakeWall).length,region:regionAt(player.x,player.y),themedProps:scenery.filter(o=>['coffin','bonepile','fungus','roots','stainedglass','brazier'].includes(o.type)).length,animationFrames:[...Object.values(enemyFrames),watcherAwake].reduce((n,v)=>n+Object.values(v).reduce((m,a)=>m+a.length,0),0),enemyWindups:enemies.filter(e=>e.windup>0).length,enemyAttackPatterns:enemies.filter(e=>e.alive).map(e=>({id:e.id,kind:e.attackKind,attacks:e.attacksMade})),activeParticles:bladeSparks.filter(p=>p.life>0).length,trapCount:traps.length,activeTraps:traps.filter(t=>trapPhase(t)==='active').length,leverUsed,cacheOpened,tabletsRead:tabletsRead.length,artStyle:'retro-raycast-pixel',mapVisible:mapOn,savePresent:safeSavePresent()});
 })();

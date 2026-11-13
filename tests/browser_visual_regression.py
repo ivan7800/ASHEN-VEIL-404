@@ -11,7 +11,7 @@ with sync_playwright() as p:
     page.locator('#play').click()
     page.wait_for_timeout(250)
     d=page.evaluate('window.__ashenDiagnostics()')
-    assert d['version']=='3.5.0' and d['sceneryCount']==42 and d['enemiesAlive']==9,d
+    assert d['version']=='3.6.0' and d['sceneryCount']==42 and d['enemiesAlive']==9,d
     # Verify that a 2D frame actually differs between different view headings.
     a=page.locator('#screen').evaluate('(el)=>el.toDataURL()')
     page.keyboard.down('ArrowRight')
@@ -28,5 +28,5 @@ with sync_playwright() as p:
     page.wait_for_timeout(350)
     assert not errors,errors
     page.screenshot(path=str(root/'tests/captura_rebirth_v22.png'))
-    print('PASS: 23 props, 6 enemies, frame changes on rotation, inventory, pause/resume, no JS errors')
+    print('PASS: 42 props, 9 encounters, frame changes on rotation, inventory, pause/resume, no JS errors')
     browser.close()

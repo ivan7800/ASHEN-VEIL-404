@@ -1,6 +1,6 @@
-# ASHEN VEIL 404 — La voz del umbral v3.5.0
+# ASHEN VEIL 404 — La piedra y el umbral v3.6.0
 
-Mazmorra de horror cósmico medieval en primera persona. Cinco zonas originales, cinco ramales de exploración, nueve encuentros y dos finales. La campana sumergida, los Ecos del Velo y los sellos alteran el desenlace.
+Mazmorra de horror cósmico medieval en primera persona. [Jugar en el navegador](https://ivan7800.github.io/ASHEN-VEIL-404/). Cinco zonas originales, cinco ramales de exploración, nueve encuentros y dos finales. La campana sumergida, los Ecos del Velo y los sellos alteran el desenlace.
 
 ## Jugar
 
@@ -25,13 +25,19 @@ Pulsa **K** para guardar o usa el botón de pausa. El navegador asigna almacenes
 | Pausa | Esc | Start |
 | Guardar y silenciar | K / U | Menú de pausa |
 
-En **Ajustes** puedes regular el volumen, reducir destellos y sacudidas, y activar un modo ligero con un límite de 30 imágenes por segundo.
+En **Ajustes** puedes regular el volumen, reducir destellos y sacudidas, y activar un modo ligero con un límite de 30 imágenes por segundo. Reducir efectos fija el agua y el emblema del menú y oculta las partículas ambientales. Los avisos del Vigía y del Campanero siguen visibles.
 
 ## Cartografía de los Ausentes
 
 Busca los pasadizos en la cripta, las catacumbas, la capilla, la nave y el santuario. En cada ramal, el mapa muestra su propio plano. El diario conserva las pistas que ya has escuchado y los objetos que has investigado. Puedes regresar por el mismo umbral. En pantallas táctiles, usa las flechas para desplazarte y los botones curvos para girar.
 
-Consulta [CAMBIOS.md](CAMBIOS.md) y [QA-v3.5.md](QA-v3.5.md). La duración de cuatro horas y el ritmo de una primera partida siguen pendientes.
+## La piedra y el umbral · v3.6
+
+La pasarela y la línea de marea distinguen la Nave. El Patio de la Sal deja ver la grúa desde el camino. Los mecanismos de Sondas, la silla del Huerto y los espejos del observatorio se reconocen al acercarse. El dibujo de los suelos y muros conserva el trazado 2.5D.
+
+La postura del enemigo distingue el despertar, la preparación y el ataque. Las marcas en el suelo avisan de las ondas. Las cuatro armas muestran su propio golpe, y la retícula distingue el contacto normal, la guardia y la resonancia de la Aguja de Marea. En móvil, las barras quedan por encima de los botones en vertical y entre los dos grupos de controles en horizontal.
+
+Consulta [CAMBIOS.md](CAMBIOS.md) y [QA-v3.6.md](QA-v3.6.md). Quedan por medir la duración y el ritmo de una primera partida humana.
 
 ## Cambios de v3.1.1
 
@@ -48,7 +54,7 @@ Consulta [CAMBIOS.md](CAMBIOS.md) y [QA-v3.5.md](QA-v3.5.md). La duración de cu
 
 `src/game.js` contiene la campaña, guardados, controles y raycasting. `src/art.js` dibuja relieves y criaturas originales. `src/lighting.js` prepara paletas, iluminación y superficies. `src/audio.js` sintetiza el audio. Todo el arte y el audio añadidos se generan localmente.
 
-GitHub Pages sirve `index.html` con rutas relativas. Ejecuta `python3 tools/build_singlefile.py` para regenerar el HTML autónomo. Ejecuta `node tests/campaign.mjs` y consulta `VALIDACION.md` para ver el alcance de las comprobaciones.
+GitHub Pages sirve `index.html` con rutas relativas. Ejecuta `python3 tools/build_singlefile.py` para regenerar el HTML autónomo. Consulta [QA-v3.6.md](QA-v3.6.md) para reproducir las comprobaciones y capturas actuales. Ejecuta `node tests/campaign.mjs` para recorrer ambos finales en el arnés.
 
 ## Historial de v2.2 a v2.8
 

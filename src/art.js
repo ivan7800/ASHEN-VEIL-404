@@ -168,11 +168,14 @@ const VeilArt = (() => {
       path([[36,12],[35,87],[43,91]],edge,2);
       rect(metal,32,29,7,3);
     } else if (kind === 'crane') {
-      rect(dark,9,91,43,9);
-      path([[14,95],[18,23],[26,17],[34,93]],stone);
-      path([[22,26],[57,12],[66,15],[64,21],[23,33]],edge);
-      path([[19,76],[43,24]],metal,3);
-      path([[57,19],[57,52],[52,56],[56,58]],metal,2);
+      path([[6,98],[13,89],[38,89],[45,98]],dark);
+      path([[15,94],[17,21],[24,17],[30,92]],stone);
+      path([[19,91],[20,24],[24,23],[24,92]],edge,2);
+      path([[19,24],[58,13],[66,16],[63,21],[21,31]],edge);
+      path([[23,53],[41,26],[50,22]],metal,2);
+      path([[58,19],[58,56],[51,62],[53,67],[58,67]],metal,2);
+      rect(dark,16,58,15,10);
+      rect(metal,21,59,3,6);
     } else if (kind === 'basin') {
       path([[8,71],[57,71],[66,80],[57,95],[14,95],[5,81]],stone);
       path([[10,74],[56,74],[60,79],[53,83],[14,83]],dark);
@@ -184,32 +187,114 @@ const VeilArt = (() => {
       path([[20,52],[35,45],[49,51],[47,57],[34,52],[23,58]],metal);
       rect(stone,19,94,34,6);
     } else if (kind === 'chair') {
-      for (const x of [21,49]) rect(edge,x,51,4,49);
-      rect(stone,21,55,32,4);
-      for (const x of [29,39]) rect(metal,x,58,3,12);
-      path([[22,72],[52,72],[58,78],[52,84],[17,84],[13,79]],edge);
+      path([[17,96],[21,79],[18,39],[24,35],[29,71],[46,72],[48,35],[54,38],[54,82],[56,98]],dark);
+      for (const x of [21,49]) rect(edge,x,39,4,53);
+      rect(stone,21,41,32,7);
+      rect(metal,26,41,20,1);
+      for (const x of [29,39]) rect(edge,x,45,3,24);
+      path([[22,69],[51,69],[58,78],[51,84],[17,84],[13,79]],edge);
+      path([[22,71],[48,71],[45,76],[18,77]],metal,1);
       rect(stone,15,82,4,18); rect(stone,49,82,4,18);
     } else if (kind === 'hollowTree') {
-      path([[15,100],[29,85],[28,63],[23,49],[15,44],[10,15],[19,33],[31,44],
-        [32,16],[44,3],[39,42],[55,29],[63,12],[60,38],[46,56],[43,85],[57,100]],stone);
-      path([[33,85],[31,66],[39,56],[40,78]],dark);
-      path([[29,96],[34,87],[40,93],[48,99]],edge,3);
+      path([[5,99],[24,88],[28,65],[22,52],[11,48],[3,31],[10,35],[18,43],
+        [17,24],[11,8],[23,16],[27,40],[35,48],[36,20],[32,11],[40,2],[45,13],
+        [42,40],[52,34],[55,18],[66,9],[63,26],[58,43],[48,53],[45,72],[49,89],[65,99]],stone);
+      path([[25,93],[31,76],[31,62],[39,54],[43,61],[39,78],[37,90]],dark);
+      path([[37,55],[43,61],[39,78],[39,89],[48,98]],edge,2);
+      path([[11,97],[27,89],[33,80],[28,65],[25,52],[17,44]],edge,2);
+      path([[39,24],[38,44],[47,46],[58,29]],metal,1);
+      rect(metal,42,80,2,3);
     } else if (kind === 'weight') {
-      rect(metal,33,3,4,49);
-      for (let y=8; y<51; y+=7) rect(edge,31,y,8,2);
-      path([[19,50],[53,50],[57,61],[51,72],[21,72],[15,61]],stone);
-      rect(edge,22,54,28,3);
-      rect(mortar,17,92,36,8);
-      rect(dark,24,87,24,7);
-    } else if (kind === 'mirror') {
+      rect(dark,10,22,9,73); rect(edge,12,25,3,69);
+      rect(dark,54,22,9,73); rect(edge,57,25,3,69);
+      rect(stone,10,22,53,7); rect(metal,12,22,48,2);
+      rect(metal,35,27,3,40);
+      for (let y=30; y<61; y+=6) rect(edge,33,y,7,2);
+      path([[23,55],[48,55],[53,62],[47,75],[24,75],[19,63]],stone);
+      rect(edge,25,59,23,3);
+      rect(metal,35,66,3,3);
+      rect(mortar,10,92,53,8); rect(dark,24,91,24,6);
+    } else if (kind.startsWith('mirror')) {
       rect(stone,29,81,14,13);
       rect(edge,22,94,28,6);
       path([[16,43],[35,28],[56,43],[53,70],[36,82],[19,70]],edge);
-      path([[20,44],[35,33],[51,44],[48,67],[35,76],[23,66]],dark);
-      path([[24,66],[44,40],[48,44],[28,70]],metal);
-      rect(light,41,43,3,2);
+      path([[20,44],[35,33],[51,44],[48,67],[35,76],[23,66]],kind.includes('light')?stone:dark);
+      const direction=Number(kind.at(-1));
+      const streaks=[
+        [[24,55],[28,47],[33,42],[29,54],[24,60]],
+        [[28,68],[37,45],[43,40],[41,50],[36,67]],
+        [[31,69],[42,51],[47,50],[43,60],[35,73]],
+      ];
+      path(streaks[direction],metal);
+      const [gx,gy]=streaks[direction][1];
+      rect(light,gx,gy,2,2);
+    } else if (kind === 'gauge') {
+      rect(mortar,30,52,12,48); rect(edge,31,53,3,41);
+      path([[13,33],[21,23],[50,23],[59,33],[59,58],[49,67],[22,67],[13,57]],stone);
+      path([[17,35],[24,28],[47,28],[55,35],[55,55],[47,62],[24,62],[17,55]],dark);
+      for(const [x,y] of [[21,39],[26,33],[35,31],[44,33],[50,39]])rect(light,x,y,2,3);
+      path([[27,50],[35,47],[45,36]],metal,2);
+      rect(light,34,45,4,4); rect(edge,25,94,23,6);
     }
     return canvas;
+  }
+
+  function materialWall(region, rect, path) {
+    const [dark, mortar, mid, rim, gold, light] = walls[region];
+    if(region==='nave'){
+      for(const x of [2,49]){
+        rect(mortar,x,0,13,64);rect(mid,x+2,0,4,64);rect(rim,x+2,0,1,43);
+      }
+      rect(dark,0,47,64,16);
+      for(const [y,c] of [[42,rim],[44,gold],[49,mid],[56,mortar]])rect(c,0,y,64,1);
+      return true;
+    }
+    if(region==='salt'){
+      for(const [x,y] of [[6,42],[25,54],[40,36],[54,48],[36,57]]){
+        path([[x-4,y+7],[x+2,y-7],[x+7,y+1],[x+10,y+7]],mid);
+        path([[x-2,y+4],[x+2,y-4],[x+6,y+2]],gold,1);
+      }
+      rect(mortar,0,60,64,4);rect(rim,1,60,57,1);
+      return true;
+    }
+    if(region==='archive'){
+      rect(dark,6,6,52,52);
+      for(const y of [8,24,40]){
+        for(let x=10;x<54;x+=5){
+          const offset=(x*3+y)%5;
+          rect(offset>2?rim:mid,x,y+offset+3,4,11-offset);
+          if(offset<2)rect(gold,x,y+7,3,1);
+        }
+        rect(rim,6,y+14,52,2);rect(mortar,6,y+16,52,1);
+      }
+      for(const x of [4,56])rect(mid,x,5,4,54);
+      return true;
+    }
+    if(region==='garden'){
+      for(const x of [6,52]){rect(dark,x,5,5,59);rect(mid,x+1,8,2,49);}
+      path([[0,53],[14,39],[28,42],[39,26],[55,20],[64,14]],dark,7);
+      path([[0,51],[14,37],[28,40],[39,24],[55,18],[64,12]],rim,2);
+      path([[17,38],[15,27],[24,21],[22,10]],mid,3);
+      path([[37,27],[46,31],[53,39],[59,40]],gold,1);
+      return true;
+    }
+    if(region==='soundings'){
+      for(const y of [16,34,49]){
+        rect(dark,0,y,64,8);rect(mid,0,y,64,5);rect(rim,0,y,64,1);
+        for(const x of [10,44]){rect(rim,x,y-2,5,9);rect(gold,x+1,y-1,2,1);}
+      }
+      return true;
+    }
+    if(region==='sky'){
+      rect(dark,5,5,54,50);rect(mid,5,5,54,1);rect(mortar,6,55,52,2);
+      for(const [x,y] of [[14,23],[20,39],[23,14],[31,28],[42,24],[51,41],[47,15]]){
+        rect(gold,x,y,1,1);
+      }
+      path([[19,39],[28,34],[31,28],[42,24],[47,15]],mid,1);
+      rect(light,31,28,2,1);
+      return true;
+    }
+    return false;
   }
 
   function wall(region, kind = 'wall', awake = false) {
@@ -234,6 +319,7 @@ const VeilArt = (() => {
       }
       return canvas;
     }
+    if(kind==='wall'&&materialWall(region, rect, path))return canvas;
     path(arch,rim);
     path([[13,55],[13,27],[16,21],[32,9],[48,21],[51,27],[51,55]],dark);
     path(arch,gold,1);
@@ -259,48 +345,17 @@ const VeilArt = (() => {
         }
       }
       path([[18,49],[27,52],[36,48],[45,51]],rim,2);
-    } else if (region === 'catacomb' || region === 'nave') {
+    } else if (region === 'catacomb') {
       for (let i=0;i<7;i++) {
         const x=15+i*6;
         path([[x,25+i%3],[x-3,37],[x+2,48],[x-1,56]],i%3?mid:rim,1+i%2);
         rect(gold,x-1,39+i%4*3,1,3);
-      }
-      if (region==='nave') {
-        for (const y of [43,47,52,56]) rect(y===52?gold:rim,0,y,64,1);
-        rect(light,27,49,10,1);
       }
     } else if (region === 'chapel') {
       for (const x of [16,23,28,37,43,49]) {
         path([[x,0],[x-8,19],[x+5,35],[x-4,48],[x+2,62]],mortar,5);
         path([[x,0],[x-8,19],[x+5,35],[x-4,48],[x+2,62]],rim,1);
       }
-    } else if (region==='salt') {
-      for(let i=0;i<26;i++){
-        const x=14+(i*19)%37,y=33+(i*7)%22;
-        rect(i%4?mid:light,x,y,1+i%3,1);
-      }
-      path([[14,43],[25,39],[35,45],[49,40]],rim,2);
-    } else if (region==='archive') {
-      for(const y of [23,35,47]){
-        rect(rim,16,y+7,32,2);
-        for(let i=0;i<7;i++)rect(i%3?gold:mid,17+i*4,y+(i%2),3,6);
-      }
-    } else if (region==='garden') {
-      for(const x of [21,31,42]){
-        path([[x,20],[x+3,32],[x-4,39],[x+1,56]],rim,2);
-        path([[x-4,39],[x-9,45],[x-11,49]],gold,1);
-      }
-    } else if (region==='soundings') {
-      for(const x of [20,29,38]){
-        rect(mid,x,20,4,35);rect(gold,x+1,23,1,30);
-      }
-      for(const y of [33,43,53])rect(rim,15,y,34,3);
-    } else if (region==='sky') {
-      for(let i=0;i<23;i++){
-        const x=16+(i*17)%32,y=19+(i*23)%35;
-        rect(i%5?gold:light,x,y,1+i%2,1);
-      }
-      path([[20,42],[26,34],[36,37],[43,25]],rim,1);
     } else {
       for (let i=0;i<4;i++) {
         path([[32,13+i*4],[45-i*3,33],[32,51-i*4],[19+i*3,33]],i%2?rim:gold,1);
@@ -326,77 +381,164 @@ const VeilArt = (() => {
     return canvas;
   }
 
-  function creature(type, pose, frame, phase = 1) {
+  function creature(type, pose, frame, phase = 1, kind = '') {
     const { canvas, rect, path } = painter(72,100);
-    const winding=pose==='windup', striking=pose==='strike';
-    const gait=pose==='walk'?frame-1:0;
-    const lean=pose==='hurt'?4:striking?-3:0;
-    const polygon = (points,color) => path(points.map(([x,y])=>[x+lean,y]),color);
-    const box = (color,x,y,w,h) => rect(color,x+lean,y,w,h);
-    const eye = winding?'#ffd3ab':'#bc9189';
+    const wake=pose==='wake', winding=pose==='windup', striking=pose==='strike';
+    const fall=pose==='fall', hurt=pose==='hurt', guarding=pose==='guard';
+    const gait=pose==='walk' ? frame-1 : 0;
+    const lean=hurt?4 : striking?-3 : 0;
+    const bodyFall=fall ? [10,24,40][frame] : 0;
+    const bend=(x,y)=>[36+(x-36)*(fall?1.14:1)+lean, y+bodyFall*(100-y)/100];
+    const polygon=(points,color,width)=>path(points.map(([x,y])=>bend(x,y)),color,width);
+    const box=(color,x,y,w,h)=>{
+      const [left,top]=bend(x,y);
+      rect(color,Math.round(left),Math.round(top),w,h);
+    };
+    const eye=winding||wake&&frame>0?'#ffe1b7':'#bc9189';
 
     if(type==='hollow') {
-      const head=winding?10:25+gait*2;
+      const neck=kind==='neck';
+      const head=wake ? 29-frame*8 : winding ? (neck?14-frame*6:30+frame*3) :
+        striking&&neck ? 10+frame*5 : 25+gait*2;
       polygon([[23,43],[48,44],[52,72],[43,87],[25,85],[18,71]],'#211923');
       polygon([[24,45],[36,41],[48,45],[44,70],[26,77],[20,56]],'#655054');
-      for(let i=0;i<6;i++)path([[24,48+i*4],[34,51+i*4],[46,47+i*4]],i%2?'#a38376':'#473743',2);
+      for(let i=0;i<6;i++)polygon([[24,48+i*4],[34,51+i*4],[46,47+i*4]],i%2?'#a38376':'#473743',2);
       polygon([[31,45],[32,head+11],[39,head+10],[41,44]],'#a28274');
-      box('#654e53',36,head+12,2,32-head);
+      box('#654e53',36,head+12,2,32-head>0?32-head:1);
       polygon([[27,head],[34,head-5],[44,head],[45,head+11],[37,head+18],[28,head+11]],'#bea291');
-      box('#382830',30,head+5,5,3);box(eye,39,head+5,4,2);
+      box('#382830',30,head+5,5,3);box(eye,39,head+5,striking&&neck?6:4,2);
       box('#30212b',34,head+11,6,3);
       polygon([[23,46],[15,53],[8,76],[14,83],[20,70],[30,53]],'#9b716a');
-      polygon([[46,45],[54,52],[59,striking?39:74],[65,striking?34:84],[66,69],[53,45]],'#79565a');
-      box('#9d8278',24,78,7,17+gait);box('#74575a',40,77,7,17-gait);
+      const arm=striking&&!neck ? [[45,46],[56,32],[70-frame*9,26],[67-frame*9,38],[50,58]] :
+        winding&&!neck ? [[46,45],[54,39],[64,44+frame*6],[62,52+frame*6],[48,57]] :
+        [[46,45],[54,52],[59,74-gait*2],[65,84],[66,69],[53,45]];
+      polygon(arm,'#79565a');
+      box('#9d8278',24,79,7,20+gait);box('#74575a',40,78,7,21-gait);
     } else if(type==='knight') {
       polygon([[15,48],[22,36],[50,35],[58,46],[55,85],[45,95],[24,98],[15,83]],'#17242b');
       polygon([[20,46],[29,37],[44,37],[50,44],[47,66],[25,69]],'#648182');
-      for (const [x,y] of [[22,45],[28,49],[30,57],[44,46],[26,71],[41,73]])box('#a0a99a',x,y,6,3);
-      polygon([[24,37],[22,25],[33,8],[48,22],[51,34],[38,44]],'#3a5258');
-      polygon([[25,28],[34,12],[45,23],[42,29],[30,33]],'#819791');
-      box(eye,30,32,14,2);
-      polygon([[8,48],[19,38],[30,46],[30,68],[16,84],[7,70]],'#23353e');
-      polygon([[10,50],[19,43],[26,50],[25,66],[16,77],[10,67]],'#536b70');
-      box('#a3a08b',16,51,3,16);
-      polygon(winding?[[47,62],[55,12],[60,3],[62,19],[54,64]]:[[47,69],[64,39],[70,34],[69,46],[54,74]],'#b4a695');
+      for(const [x,y] of [[22,45],[28,49],[30,57],[44,46],[26,71],[41,73]])box('#a0a99a',x,y,6,3);
+      box('#80908a',24+gait*2,82,9,14);box('#4a656a',41-gait*2,81,10,18);
+      const helm=wake?8-frame*4:0;
+      polygon([[24,37+helm],[22,25+helm],[33,8+helm],[48,22+helm],[51,34+helm],[38,44+helm]],'#3a5258');
+      polygon([[25,28+helm],[34,12+helm],[45,23+helm],[42,29+helm],[30,33+helm]],'#819791');
+      box(eye,30,32+helm,14,2);
+      const shield=guarding?10:wake?8-frame*4:0;
+      polygon([[8+shield,48],[19+shield,38],[30+shield,46],[30+shield,68],[16+shield,84],[7+shield,70]],'#23353e');
+      polygon([[10+shield,50],[19+shield,43],[26+shield,50],[25+shield,66],[16+shield,77],[10+shield,67]],'#536b70');
+      box(guarding?'#e2cca9':'#a3a08b',16+shield,51,3,16);
+      const blade=winding&&kind==='thrust' ? [[46,59],[66,48-frame*4],[70,53-frame*4],[51,65]] :
+        winding ? [[47,62],[55-frame*5,13],[60-frame*5,3],[63-frame*5,20],[54,64]] :
+        striking&&kind==='thrust' ? [[36,60],[15+frame*7,49],[28+frame*5,44],[54,61],[51,66]] :
+        striking ? [[46,64],[15+frame*10,71],[3+frame*12,67],[26+frame*9,58],[54,57]] :
+        [[47,69],[63,43-gait*4],[69,35-gait*4],[69,46-gait*4],[54,74]];
+      polygon(blade,'#b4a695');
+      if(winding||striking)polygon([blade[0],blade[1],blade[2]],'#e3cabc',1);
       box('#996c5e',46,66,13,4);
     } else if(type==='wraith') {
-      polygon([[35,8],[47,17],[53,35],[62,56],[59,86],[46,77],[39,96],[31,78],[12,85],[17,54],[24,35],[25,19]],'#241730');
-      polygon([[35,12],[43,20],[48,42],[57,63],[48,80],[43,69],[36,85],[26,70],[18,78],[21,54],[28,36],[29,20]],'#745a87');
-      polygon([[35,18],[43,28],[48,46],[42,61],[32,64],[26,49],[27,31]],'#a37c9f');
+      const fold=wake ? 8-frame*4 : winding&&kind==='feint' ? 5+frame*2 : striking ? -5+frame*3 : 0;
+      polygon([[35,8+fold],[47,17+fold],[53-fold,35],[62-fold,56],[59,86],[46,77],[39,98],
+        [31,78],[12,85],[17+fold,54],[24+fold,35],[25,19+fold]],'#241730');
+      polygon([[35,12+fold],[43,20+fold],[48-fold,42],[57-fold,63],[48,80],[43,69],[36,88],
+        [26,70],[18,78],[21+fold,54],[28+fold,36],[29,20+fold]],'#745a87');
+      polygon([[35,18+fold],[43,28+fold],[48-fold,46],[42,61],[32,64],[26+fold,49],[27+fold,31]],'#a37c9f');
       for(const [x,y,w] of [[32,31,8],[28,39,6],[39,39,7],[32,49,10],[23,57,5],[44,57,6]]) {
-        box('#2c1e35',x,y,w,winding?5:2);
-        if(winding)box(eye,x+2,y+1,2,2);
+        const open=wake?frame>0&&y<44:winding&&kind!=='feint'||striking;
+        box('#2c1e35',x,y+(fold>>1),w,open?5:2);
+        if(open)box(eye,x+2,y+1+(fold>>1),2,2);
       }
-      for(const x of [20,28,40,48])path([[x,61],[x-5,75],[x+gait,89]],'#a0789f',2);
+      for(const x of [20,28,40,48])polygon([[x,61],[x-5-gait,75],[x+gait*4,91]],
+        '#a0789f',2);
+      if(striking)polygon([[45,41],[61,39],[67,53],[63,57],[53,47]],'#c297b6');
     } else if(type==='drowned') {
-      path([[36,1],[30,24],[39,39],[29,59],[37,78]],'#719d8e',3);
-      polygon([[32,26],[45,33],[49,51],[54,71],[48,91],[33,84],[21,93],[19,75],[23,51]],'#20494c');
-      polygon([[26,40],[40,36],[48,47],[51,58],[60,69],[15,69],[22,57]],'#6d9e8d');
-      polygon([[31,42],[36,42],[32,62],[20,66],[28,56]],'#b4c6a8');
-      box('#172f36',12,69,51,6);box('#9ac3a5',16,68,44,2);
-      box(winding?'#ecdbaf':'#a28b79',34,72,6,10);
-      for(const x of [17,24,43,48])path([[x,74],[x+2,84],[x-2,97-gait*3]],'#537e7c',2);
-      box(eye,32,33,10,3);
+      const lift=wake?11-frame*6:winding? -4-frame*3:striking?-11+frame*6:0;
+      const pull=winding&&kind==='lunge'?7:striking&&kind==='lunge'?-8:0;
+      const chain=wake&&frame===0 ? [[39,6],[26,29],[41,49],[30,60]] :
+        [[36,3],[34+pull,23],[38+pull,40+lift],[35+pull,58+lift]];
+      polygon(chain,'#719d8e',3);
+      polygon([[32,26+lift],[45,33+lift],[49,51],[54,71],[48,91],[33,84],[21,97],[19,75],[23,51]],'#20494c');
+      polygon([[26+pull,40+lift],[40+pull,36+lift],[48+pull,47+lift],[51+pull,58+lift],
+        [60+pull,69+lift],[15+pull,69+lift],[22+pull,57+lift]],'#6d9e8d');
+      polygon([[31+pull,42+lift],[36+pull,42+lift],[32+pull,62+lift],
+        [20+pull,66+lift],[28+pull,56+lift]],'#b4c6a8');
+      box('#172f36',12+pull,69+lift,51,6);box('#9ac3a5',16+pull,68+lift,44,2);
+      box(winding||striking?'#ecdbaf':'#a28b79',34+pull+(striking?frame*3:0),72+lift,6,10);
+      for(const x of [17,24,43,48])polygon([[x+pull,74+lift],[x+2,84],[x-2,98-gait*3]],'#537e7c',2);
+      box(eye,32+pull,33+lift,10,3);
     } else {
-      const opened=phase===2 || striking;
-      polygon([[35,12],[12,6],[18,24],[8,33],[11,68],[3,91],[22,88],[32,96],[44,92],[65,96],[59,68],[68,36],[53,24],[61,7]],'#251923');
-      polygon([[35,18],[20,12],[27,29],[15,39],[17,62],[10,86],[26,78],[35,86],[47,80],[57,87],[53,62],[61,40],[47,29],[54,13]],'#7c4b58');
-      polygon([[35,25],[26,16],[30,32],[19,43],[26,62],[34,67],[47,62],[53,43],[42,32],[46,17]],'#c29686');
+      const opened=phase===2||striking||wake&&frame>0||winding;
+      const rise=wake?9-frame*4:0;
+      polygon([[35,12+rise],[12,6+rise],[18,24],[8,33],[11,68],[3,91],[22,88],[32,97],
+        [44,92],[65,97],[59,68],[68,36],[53,24],[61,7+rise]],'#251923');
+      polygon([[35,18+rise],[20,12+rise],[27,29],[15,39],[17,62],[10,86],[26,78],[35,86],
+        [47,80],[57,87],[53,62],[61,40],[47,29],[54,13+rise]],'#7c4b58');
+      polygon([[35,25],[26,16+rise],[30,32],[19,43],[26,62],[34,67],[47,62],
+        [53,43],[42,32],[46,17+rise]],'#c29686');
       for(let i=0;i<5;i++){
         box('#50303d',16+i*2,51+i*6,14,2);
         box('#50303d',43-i*2,51+i*6,11,2);
       }
       polygon([[21,46],[30,39],[36,38],[47,42],[52,47],[44,53],[36,55],[28,52]],'#372130');
-      if(opened || winding) {
-        polygon([[23,46],[36,40],[49,46],[36,52]],winding?'#ffe3b6':'#ecaa8e');
-        box('#3a2235',34,41,4,10);
-      } else box(eye,29,47,15,2);
-      polygon(winding?[[53,63],[62,12],[67,3],[69,18],[59,67]]:[[52,65],[67,68],[68,78],[50,74]],'#d6ac9a');
-      if(opened)for(const x of [14,24,44,56])path([[x,56],[x-6,71],[x+4,96]],'#d78979',2);
+      if(opened){
+        const open=winding&&kind==='ring'?7+frame*2:6;
+        polygon([[23,46],[36,46-open],[49,46],[36,46+open]],winding?'#ffe3b6':'#ecaa8e');
+        box('#3a2235',34,46-open+1,4,2*open-2);
+      }else box(eye,29,47,15,2);
+      const weapon=kind==='ring' ? [[53,66],[62,54],[69,45],[66,61],[58,73]] :
+        winding&&kind==='lunge' ? [[52,64],[66,44],[70,45],[69,53],[57,69]] :
+        winding ? [[53,63],[60-frame*4,13],[66-frame*4,3],[69-frame*4,18],[59,67]] :
+        striking&&kind==='lunge' ? [[51,68],[25+frame*6,53],[18+frame*7,46],[42,51],[61,65]] :
+        striking ? [[50,68],[20+frame*9,75],[4+frame*12,74],[35,62],[60,61]] :
+        [[52,65],[67,68+gait*4],[68,78+gait*4],[50,74]];
+      polygon(weapon,'#d6ac9a');
+      if(opened)for(const x of [14,24,44,56])polygon([[x,56],[x-6-gait*2,71],[x+4,96]],'#d78979',2);
     }
     return canvas;
   }
 
-  return { wall, creature, masonry, landmark };
+  const weaponProfiles={
+    sword:{edge:'#e7d8ce',mid:'#8d8495',dark:'#4a3f53',strap:'#a78992'},
+    spear:{edge:'#e4d4b0',mid:'#a29378',dark:'#50444c',strap:'#c7a583'},
+    axe:{edge:'#d1b4a0',mid:'#a18278',dark:'#51414f',strap:'#815d5a'},
+    needle:{edge:'#cfeded',mid:'#87adae',dark:'#3a5058',strap:'#98c2c0'},
+  };
+  function firstPersonWeapon(id){
+    const {canvas,rect,path}=painter(116,220);
+    const {edge,mid,dark,strap}=weaponProfiles[id];
+    const grip='#4c3944', seam='#6f5662';
+    rect(grip,53,56,12,144);
+    rect(dark,61,63,4,135);
+    for(let y=87;y<174;y+=10)rect(strap,54,y,4,2);
+    if(id==='sword'){
+      path([[52,163],[51,49],[58,21],[65,46],[67,163]],dark);
+      path([[52,157],[52,49],[58,23],[57,157]],edge);
+      path([[58,29],[65,49],[66,157],[60,156]],mid);
+      rect(strap,57,49,2,100);
+      path([[42,157],[73,159],[78,155],[77,164],[70,170],[42,165]],grip);
+      rect(mid,45,158,25,2);
+    }else if(id==='spear'){
+      path([[59,14],[71,47],[60,69],[48,47]],mid);
+      path([[59,15],[53,46],[59,64],[48,47]],edge);
+      path([[59,24],[62,49],[60,63],[58,48]],dark);
+      for(let y=67;y<84;y+=5){rect(dark,51,y,17,4);rect(edge,53,y,4,1);}
+    }else if(id==='axe'){
+      path([[62,51],[36,29],[18,32],[10,49],[8,65],[19,77],[36,74],[62,68]],dark);
+      path([[57,54],[35,33],[20,36],[14,51],[12,65],[20,73],[37,70],[57,64]],mid);
+      path([[20,34],[14,48],[10,65],[20,75],[29,72],[16,66],[16,54],[24,35]],edge);
+      path([[29,38],[39,50],[48,52],[54,66],[58,92]],strap,3);
+      rect(edge,44,55,5,2);
+    }else{
+      path([[59,13],[64,43],[60,62],[55,44]],edge);
+      rect(mid,58,32,2,33);
+      path([[59,42],[72,52],[68,61],[53,63],[46,55],[59,42]],mid,2);
+      rect(strap,51,67,16,4);rect(edge,54,69,4,1);
+      path([[53,77],[62,78],[64,83],[55,85],[53,88],[61,91]],mid,2);
+    }
+    path([[47,184],[50,173],[65,169],[72,173],[73,181],[61,187]],'#3f303e');
+    path([[51,176],[61,173],[69,175]],seam,2);
+    rect('#17202a',62,176,4,12);
+    return canvas;
+  }
+
+  return { wall, creature, masonry, landmark, firstPersonWeapon };
 })();

@@ -1,5 +1,14 @@
 # Cambios
 
+## 3.6.0 · La piedra y el umbral
+
+- Suelos y muros con materiales propios de cada ramal. Pasarela de la Nave, grúa del Patio y cabecera de la Capilla más visibles.
+- Silla, manómetro, contrapeso y espejos situados en la interacción que representan. Los reflejos de los espejos responden a su orientación.
+- Sombras de contacto, partículas ambientales localizadas y pequeñas ondulaciones de agua.
+- Despertar, ataques, daño y caída de las cinco criaturas. Avisos de onda sobre el suelo para el Campanero y el Vigía.
+- Cuatro armas con arte y trayectorias propias. El contacto normal, la guardia y la resonancia tienen formas distintas en la retícula.
+- Menú, HUD, mapa y diario revisados. Corrección de las barras cubiertas por los controles en vertical y del espacio del mapa en horizontal. Reducción de efectos aplicada al menú y al escenario.
+
 ## 3.5.0 · La voz del umbral
 
 - Cuatro armas con contacto diferido, trayectorias y sonidos propios, y ventajas tácticas diferentes.

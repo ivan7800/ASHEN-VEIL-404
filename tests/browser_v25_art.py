@@ -12,7 +12,7 @@ with sync_playwright() as p:
     page.locator('#play').click()
     page.wait_for_timeout(500)
     d=page.evaluate('window.__ashenDiagnostics()')
-    assert d['version']=='3.5.0',d
+    assert d['version']=='3.6.0',d
     assert d['textureCount']==42,d
     assert d['sceneryCount']==42 and d['themedProps']==16,d
     assert d['region']=='crypt',d
@@ -24,5 +24,5 @@ with sync_playwright() as p:
     page.keyboard.press('KeyM')
     page.screenshot(path=str(root/'tests/captura_v25.png'))
     assert not errors,errors
-    print('PASS v2.5 art: 4 new wall families, 12 themed props, original raycaster, map and 6 enemies; no JS errors')
+    print('PASS v2.5 art: 42 wall textures, themed props, original raycaster, map and 9 encounters; no JS errors')
     browser.close()

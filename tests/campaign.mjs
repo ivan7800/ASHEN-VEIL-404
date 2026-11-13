@@ -2,15 +2,20 @@ import assert from 'node:assert/strict';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import vm from 'node:vm';
 import { createRequire } from 'node:module';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { performance } from 'node:perf_hooks';
 
 const read = file => readFileSync(new URL('../' + file, import.meta.url), 'utf8');
-const scripts = ['art', 'lighting', 'audio', 'expedition', 'game'].map(name => read('src/' + name + '.js'));
+const scriptNames = ['art','lighting','audio','expedition','game'];
+const scripts = scriptNames.map(name => read('src/' + name + '.js'));
+const baseline = process.env.ASHEN_BASELINE;
 const standalone=read('JUGAR-SIN-INSTALAR.html');
 const inline=[...standalone.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(match=>match[1]);
 assert.deepEqual(inline,scripts,'Regenerate the standalone build after changing source');
 assert(!/<script\s+src|<link[^>]+rel="stylesheet"/.test(standalone));
+const currentScripts=baseline
+  ? scriptNames.map(name=>readFileSync(resolve(baseline,'src',name+'.js'),'utf8'))
+  : scripts;
 const saveKey = 'ashen-veil-rebirth-v2';
 const stub = new Proxy({}, { get: () => () => ({ addColorStop() {} }) });
 const mockCanvas = () => ({ getContext: () => ({
@@ -45,7 +50,9 @@ function game(storage = new Map(), canvasFactory = mockCanvas, isolated = false)
   const isolatedHook=isolated?`
     window.probe={advanceSwing,cancelSwing,weaponPose,weaponTiming,grid,architecture:VeilLighting.architecture,architectureScenery,player,enemies,objects,los,canMove,attack,spell,trapPhase,startEnemyAttack,
       resolvesEnemyAttack,damagePlayer,interact,settings,swordPose,
-      setTick:value=>{tick=value},stats:()=>({dropped,saveBlocked})};
+      setTick:value=>{tick=value},stats:()=>({dropped,saveBlocked}),
+      hit, encounterSigns, strikeTime:typeof strikeTime==='number'?strikeTime:.34,
+      visual:typeof enemyCel==='function'?{enemyCel,objectArt,bladeSparks:()=>bladeSparks}:null};
   `:'';
   const context = vm.createContext({
     console, document: {getElementById:node, createElement:()=>make('canvas'),
@@ -57,9 +64,9 @@ function game(storage = new Map(), canvasFactory = mockCanvas, isolated = false)
     addEventListener:add,
   });
   context.window=context;
-  for (const source of scripts.slice(0, -1)) vm.runInContext(source,context);
+  for (const source of currentScripts.slice(0, -1)) vm.runInContext(source,context);
   // The harness reads private encounter data to steer its player. It never sets game state.
-  vm.runInContext(scripts.at(-1).replace('window.__ashenDiagnostics=',
+  vm.runInContext(currentScripts.at(-1).replace('window.__ashenDiagnostics=',
     isolatedHook+'window.observe=()=>({enemies:enemies.map(({id,x,y,hp,alive})=>({id,x,y,hp,alive})),render,grid,objects});window.__ashenDiagnostics=')
     .replace('    render();',''),context);
   const regionSeconds=new Map();
@@ -415,20 +422,92 @@ if(process.env.ASHEN_CAPTURE){
   capture(approach,'penitente-reposo');
   approach.step(.2);capture(approach,'penitente-aviso');
   approach.step(1.35);capture(approach,'penitente-despierto');
-  const view=makeGame(new Map(),true);
-  view.start();
-  for(const low of [false,true]){
-    view.probe.settings.low=low;
-    for(let i=0;i<16;i++)view.draw();
-    const times=[];
-    for(let i=0;i<120;i++){
-      view.aim(5.3+Math.sin(i*.14)*5,16+Math.cos(i*.14)*3);
-      const start=performance.now();view.draw();times.push(performance.now()-start);
-    }
-    times.sort((a,b)=>a-b);
-    console.log(`Canvas nativo (${low?'ligero':'normal'}, 120 imágenes) mediana ${times[60].toFixed(2)} ms, p95 ${times[113].toFixed(2)} ms`);
-  }
   console.log('Capturas del Canvas nativo durante el recorrido completo: '+directory);
+}
+
+if(process.env.ASHEN_RENDER_BENCH){
+  const require=createRequire(import.meta.url);
+  const {createCanvas}=require(join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES,'@napi-rs/canvas'));
+  const cases=[
+    ['cripta',5.4,19,-Math.PI/2],
+    ['nave',27.35,19.2,-Math.PI/2],
+    ['vigia-onda',19.5,7.55,-Math.PI/2],
+  ];
+  for(const [scenario,x,y,angle] of cases){
+    const view=game(new Map(),()=>createCanvas(480,270),true);
+    const {player,enemies,settings,setTick,startEnemyAttack}=view.probe;
+    view.start();
+    Object.assign(player,{x,y});
+    if(scenario==='vigia-onda'){
+      const boss=enemies.find(enemy=>enemy.type==='boss');
+      Object.assign(boss,{phase:2,alert:true,attacksMade:2});
+      startEnemyAttack(boss,0,1);
+    }
+    for(const low of [false,true]){
+      settings.low=low;
+      for(let i=0;i<24;i++)view.draw();
+      const times=[];
+      for(let i=0;i<100;i++){
+        setTick(i*.043);
+        player.ang=angle+Math.sin(i*.13)*.64;
+        const start=performance.now();
+        view.draw();
+        times.push(performance.now()-start);
+      }
+      times.sort((a,b)=>a-b);
+      console.log(`BENCH ${scenario} ${low?'ligero':'normal'} ${times[50].toFixed(2)} ${times[94].toFixed(2)} ms`);
+    }
+  }
+}
+
+if(process.env.ASHEN_ENEMY_CAPTURE){
+  const require=createRequire(import.meta.url);
+  const {createCanvas}=require(join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES,'@napi-rs/canvas'));
+  const directory=process.env.ASHEN_ENEMY_CAPTURE;
+  mkdirSync(directory,{recursive:true});
+  const scenarios=[
+    ['w1',9.55,17.7], ['w2',19.55,16.4], ['w3',20,15.5],
+    ['w4',19.5,15.05], ['w5',5.52,9.85], ['ambush1',18.6,21.25],
+    ['ambush2',9,10.4], ['bellKeeper',27.9,19.1], ['boss',19.5,7.55],
+  ];
+  const makeGame=()=>game(new Map(),()=>createCanvas(480,270),true);
+  for(const [id,x,y] of scenarios){
+    const view=makeGame();
+    view.start();
+    const {player,enemies,encounterSigns,setTick,hit,startEnemyAttack,strikeTime}=view.probe;
+    const enemy=enemies.find(enemy=>enemy.id===id);
+    for(const other of enemies)if(other!==enemy)other.alive=false;
+    Object.assign(player,{x,y});
+    setTick(3.04);
+    view.aim(enemy.x,enemy.y);
+    assert(view.probe.canMove(x,y)&&view.probe.los(x,y,enemy.x,enemy.y),id+' visible desde la cámara');
+    const saveFrame=label=>writeFileSync(join(directory,id+'-'+label+'.png'),view.draw().toBuffer('image/png'));
+    saveFrame('reposo');
+    enemy.waking=encounterSigns[id][1]*.72;saveFrame('despertar-1');
+    enemy.waking*=.45;saveFrame('despertar-2');
+    enemy.waking=0;enemy.alert=true;
+    const dx=x-enemy.x,dy=y-enemy.y;
+    if(id==='boss'){
+      startEnemyAttack(enemy,dx,dy);
+      enemy.windup*=.55;saveFrame('fase1-prepara');
+      enemy.windup=0;enemy.attackPose=strikeTime;
+      saveFrame('fase1-golpe');
+      enemy.attackPose=0;enemy.attacksMade=0;enemy.phase=2;
+    }
+    const patterns=id==='boss'?3:2;
+    for(let i=0;i<patterns;i++){
+      startEnemyAttack(enemy,dx,dy);
+      enemy.windup*=.55;
+      saveFrame(enemy.attackKind+'-prepara');
+      enemy.windup=0;enemy.attackPose=strikeTime;
+      saveFrame(enemy.attackKind+'-golpe');
+      enemy.attackPose=0;
+    }
+    hit(enemy,3);saveFrame('herido');
+    hit(enemy,enemy.hp+1,true);saveFrame('caida');
+    setTick(3.39);saveFrame('caida-2');
+  }
+  console.log('Capturas de los nueve encuentros, despertar, patrones de ataque, daño y caída: '+directory);
 }
 
 if(process.env.ASHEN_SWING_CAPTURE){
@@ -441,6 +520,11 @@ if(process.env.ASHEN_SWING_CAPTURE){
       const save=new Map([[saveKey,JSON.stringify({version:2,x:5.4,y:19,ownedWeapons:[id],equippedWeapon:id})]]);
       const view=game(save,()=>createCanvas(480,270),true);
       view.start();
+      if(process.env.ASHEN_SWING_CONTACT){
+        const {player,enemies}=view.probe;
+        for(const enemy of enemies)enemy.alive=false;
+        Object.assign(enemies[0],{x:player.x,y:player.y-(id==='sword'||id==='axe'?1.57:2.68),alive:true,hp:200,waking:45});
+      }
       view.key(key,true);
       const [contact,duration]=view.probe.weaponTiming[id][name==='fuerte'?'heavy':'light'];
       for(const [label, delay] of [['inicio',0],['preparacion',contact-.045],['contacto',.065],['recuperacion',(duration-contact)*.55]]){
@@ -516,3 +600,63 @@ for(const id of ['sword','spear','axe','needle']){
   if(id==='needle')assert(target.hp<=162,'la Aguja aprovecha la preparación del ataque');
 }
 console.log('Cuatro armas: preparación, contacto, resonancia y selección de blancos: OK');
+
+if(!baseline){
+  const view=game(new Map(),mockCanvas,true);
+  view.start();
+  const {enemies,encounterSigns,setTick,startEnemyAttack,strikeTime,hit,visual}=view.probe;
+  for(const enemy of enemies){
+    const idle=visual.enemyCel(enemy);
+    enemy.waking=encounterSigns[enemy.id][1]*.7;
+    const wake=visual.enemyCel(enemy);
+    assert.notEqual(wake,idle,enemy.id+' necesita un fotograma al despertar');
+    enemy.waking=0;enemy.alert=true;
+    startEnemyAttack(enemy,1,0);
+    const prep=visual.enemyCel(enemy);
+    assert.notEqual(prep,wake,enemy.id+' distingue despertar y aviso de ataque');
+    enemy.windup*=.22;
+    assert.notEqual(visual.enemyCel(enemy),prep,enemy.id+' cambia la preparación según el tiempo');
+    enemy.windup=0;enemy.attackPose=strikeTime;
+    assert.notEqual(visual.enemyCel(enemy),prep,enemy.id+' muestra el golpe');
+    enemy.attackPose=0;
+    hit(enemy,enemy.hp+1,true);
+    assert(!enemy.alive);
+    assert(visual.enemyCel(enemy),enemy.id+' conserva la breve animación de caída');
+    setTick(1.7);
+    assert.equal(visual.enemyCel(enemy),null,enemy.id+' se oculta al terminar');
+    setTick(0);
+  }
+  const pool=game(new Map([[saveKey,JSON.stringify({version:2,x:27.55,y:19.4})]]),mockCanvas,true);
+  pool.start();
+  assert.equal(pool.probe.visual.objectArt(pool.probe.objects.find(o=>o.id==='soundingsWeight')).type,'station-weight');
+  const dark=pool.probe.objects.find(o=>o.id==='skyDark');
+  const initial=pool.probe.visual.objectArt(dark).type;
+  Object.assign(pool.probe.player,{x:dark.x,y:dark.y});
+  pool.probe.interact();
+  assert.notEqual(pool.probe.visual.objectArt(dark).type,initial);
+  for(const id of ['sword','spear','axe','needle']){
+    const {weaponPose}=view.probe;
+    const a=weaponPose(id,.52,false);
+    const b=weaponPose(id,1,false);
+    assert(a.x<0,'El arma avanza hacia el contacto: '+id);
+    assert.equal(Math.abs(b.x),0,'El arma vuelve a su pose sin saltos: '+id);
+    assert.equal(b.rotation,-.18);
+    for(const heavy of [false,true]){
+      const pose=weaponPose(id,.52,heavy);
+      const grip=480*.76+pose.x+17*Math.cos(pose.rotation);
+      assert(grip>=240&&grip<=350,'La empuñadura permite leer el golpe frontal: '+id);
+    }
+  }
+  const visible=game(new Map(),mockCanvas,true);visible.start();
+  const {attack,advanceSwing,weaponTiming}=visible.probe;
+  const [target]=visible.probe.enemies;
+  Object.assign(visible.probe.player,{x:6.5,y:18.5,ang:0});
+  Object.assign(target,{x:7.85,y:18.5,hp:100});
+  attack();
+  const [contact]=weaponTiming.sword.light;
+  advanceSwing(contact-.01);
+  assert.equal(visible.state().activeParticles,0);
+  advanceSwing(.02);
+  assert(visible.probe.visual.bladeSparks().some(p=>p.style==='sword'));
+  console.log('Avisos y golpes con fotogramas propios, caída, espejos y efecto al contacto: OK');
+}

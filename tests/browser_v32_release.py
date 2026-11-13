@@ -24,7 +24,7 @@ with sync_playwright() as playwright:
     desktop.route(site + "**", serve)
     desktop.goto(site)
     desktop.locator("#play").click()
-    assert desktop.evaluate("window.__ashenDiagnostics().version") == "3.5.0"
+    assert desktop.evaluate("window.__ashenDiagnostics().version") == "3.6.0"
     desktop.keyboard.press("KeyK")
     assert desktop.evaluate("window.__ashenDiagnostics().savePresent")
     desktop.reload()
