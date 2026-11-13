@@ -41,7 +41,7 @@ with sync_playwright() as p:
     page.keyboard.press('Tab')
     assert not page.locator('#inventory').is_visible()
     assert not errors,errors
-    print('PASS: startup, 6 enemies, movement, spell, stamina, map, inventory, no JS errors')
+    print('PASS: startup, 9 enemies, movement, spell, stamina, map, inventory, no JS errors')
     print('state:',afterspell)
     print('screenshot:',root/'tests/captura_rebirth.png')
     browser.close()

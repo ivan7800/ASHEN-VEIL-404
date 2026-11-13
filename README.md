@@ -1,27 +1,44 @@
-# ASHEN VEIL 404 — REBIRTH v2.9.0
+# ASHEN VEIL 404 — Cosmic Horror Remaster v3.1.0
 
-Dungeon crawler original de fantasía oscura en primera persona. Motor retro raycasting 2.5D, sprites y texturas pixeladas hechos por código. **No es una copia de Lunacid ni contiene recursos de ese juego.**
+Mazmorra de horror cósmico medieval en primera persona. Cinco zonas conectadas, nueve encuentros y dos finales. La campana sumergida, los Ecos del Velo y los sellos alteran el desenlace.
 
-## v2.9 — La campana sumergida
+## Jugar
 
-La mazmorra original se amplía con una nave inundada al este, un guardián que protege la campana, un atajo entre la capilla y la cripta y un altar antes del santuario. Puedes vencer al Vigía siguiendo la ruta principal o cambiar el desenlace al completar los ritos, reunir los ecos y tocar la campana.
+1. Extrae el ZIP completo en una carpeta.
+2. En Windows, abre `INICIAR-WINDOWS.cmd`. En Linux Mint, ejecuta `bash INICIAR-LINUX.sh` en esa carpeta.
+3. También puedes abrir `JUGAR-SIN-INSTALAR.html` directamente en un navegador moderno, incluso sin conexión.
 
-La dirección visual conserva el raycasting 2.5D. La Cripta del Despertar sirvió para prototipar relieves góticos, luz local y materiales nuevos. El mismo sistema se aplica a las cuatro regiones con paletas propias. También se renovó la espada y se añadieron avisos sonoros para ataques enemigos.
-
-La lógica del juego permanece en `src/game.js`. `src/lighting.js` genera materiales y prepara la iluminación del mapa. Ambos se empaquetan en un HTML autónomo. El formato del guardado v2 conserva su clave y añade los estados nuevos.
-
-**Guardar y continuar.** Usa **K** o el botón de pausa. El juego también guarda al registrar hitos de la partida. La versión web y el archivo local guardan en espacios separados del navegador.
-
-**Mando estándar.** Stick izquierdo para moverte y derecho para girar. A interactúa, B esquiva, X ejecuta el ataque fuerte, Y cura, RT ataca, LT bloquea y RB lanza magia. Start pausa, Select abre el diario, ↑ abre el mapa y ↓ sube de nivel junto al altar. La entrada estándar se ha simulado en las pruebas. Steam Deck físico queda pendiente.
-
-## Jugar (sin instalar herramientas)
-- **Windows:** descomprime el ZIP completo y abre `INICIAR-WINDOWS.cmd`.
-- **Linux:** abre `JUGAR-SIN-INSTALAR.html` o ejecuta `bash INICIAR-LINUX.sh`.
-- **Ambos:** abrir `JUGAR-SIN-INSTALAR.html` en un navegador moderno compatible con Canvas 2D.
-- Funciona sin conexión y sin CDN; el HTML autónomo incluye CSS y JavaScript.
+Pulsa **K** para guardar o usa el botón de pausa. El navegador asigna almacenes distintos al sitio web y al archivo local. Para continuar desde el HTML local, conserva la ruta desde la que jugabas.
 
 ## Controles
-WASD movimiento; ratón para mirar (clic para capturarlo); flechas izquierda/derecha como alternativa; clic izquierdo ataque ligero; J ataque fuerte (38 de aguante); clic derecho bloqueo; Shift correr; Espacio esquivar; Q conjuro; E interactuar; F curación; L subir nivel junto al altar; M mapa; Tab inventario; Esc pausa.
+
+| Acción | Teclado y ratón | Mando estándar |
+| --- | --- | --- |
+| Moverse y mirar | WASD y ratón o flechas izquierda/derecha | Sticks |
+| Correr | Mayús | Pulsar stick izquierdo |
+| Ataque ligero o fuerte | Clic izquierdo o H / J | RT / X |
+| Bloqueo frontal | Clic derecho | LT |
+| Esquivar e interactuar | Espacio / E | B / A |
+| Curar o lanzar magia | F / Q | Y / RB |
+| Inventario y diario | Tab | Select |
+| Mapa y subida de nivel en altar | M / L | Cruceta arriba / abajo |
+| Pausa | Esc | Start |
+| Guardar y silenciar | K / U | Menú de pausa |
+
+En **Ajustes** puedes regular el volumen, reducir destellos y sacudidas, y activar un modo ligero con un límite de 30 imágenes por segundo.
+
+## Cambios de v3.1
+
+- Relieves funerarios, raíces, piedra húmeda, hierro ritual y agua en la nave. Luz cálida en la cripta, verde mineral en el osario, violeta en la capilla y carmesí en el santuario.
+- Penitente Hueco, Carcelero del Osario, Testigo Ciego y Campanero Ahogado con siluetas y señales propias. El Vigía abre su ojo al cambiar de fase y alterna barrido, estocada y onda anular.
+- La reliquia abre ojos en la capilla y cambia una estatua de posición. El repique modifica el santuario. El ambiente de la nave y sus pasos usan síntesis propia.
+- Bloqueo frontal, línea de visión compartida, aviso de trampas antes del daño, IA alrededor de recodos, diario de inscripciones y pantalla de muerte.
+
+## Desarrollo
+
+`src/game.js` contiene la campaña, guardados, controles y raycasting. `src/art.js` dibuja relieves y criaturas originales. `src/lighting.js` prepara paletas, iluminación y superficies. `src/audio.js` sintetiza el audio. Todo el arte y el audio añadidos se generan localmente.
+
+GitHub Pages sirve `index.html` con rutas relativas. Ejecuta `python3 tools/build_singlefile.py` para regenerar el HTML autónomo. Ejecuta `node tests/campaign.mjs` y consulta `VALIDACION.md` para ver el alcance de las comprobaciones.
 
 ## Historial de v2.2 a v2.8
 

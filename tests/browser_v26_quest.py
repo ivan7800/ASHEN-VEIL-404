@@ -15,7 +15,7 @@ with sync_playwright() as p:
  page.locator('#play').click()
  page.wait_for_timeout(250)
  d=page.evaluate('window.__ashenDiagnostics()')
- assert d['version']=='2.9.0' and d['enemiesAlive']==9 and d['echoLocations']==3,d
+ assert d['version']=='3.1.0' and d['enemiesAlive']==9 and d['echoLocations']==3,d
  assert d['sceneryCount']==42,d
  page.keyboard.press('KeyM');assert page.locator('#map').is_visible();page.keyboard.press('KeyM')
  page.keyboard.press('Tab');assert page.locator('#inventory').is_visible();assert 'ECOS DEL VELO (0/3)' in page.locator('#items').inner_text();page.keyboard.press('Tab')

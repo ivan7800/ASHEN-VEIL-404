@@ -17,3 +17,52 @@
 #inventory .item { padding:.75rem; }
 #inventory-close { margin-top:1rem; }
 button:focus-visible { outline:2px solid #ead0a7; outline-offset:4px; }
+
+/* Cosmic Horror Remaster */
+:root { --parchment:#f0dfc4; --brass:#bfa17b; --violet:#c28d9d; }
+#game { height:100dvh; }
+#screen { object-fit:contain; }
+.overlay { padding:14px; background:radial-gradient(ellipse at 50% 43%,rgba(35,18,35,.91),rgba(5,7,12,.98) 74%); }
+.menu-content { width:min(100%,740px); }
+.crest { width:clamp(42px,10vh,91px); height:auto; stroke:var(--brass); stroke-width:1.6; fill:none; filter:drop-shadow(0 0 14px #a05881); }
+.crest-eye { fill:#d395a3; }
+.pause-heading { display:none; }
+.is-paused .crest,.is-paused h1,.is-paused .edition,.is-paused .edition + p { display:none; }
+.is-paused .pause-heading,#death h2 { display:block; color:var(--parchment); font-weight:normal; font-size:clamp(1.8rem,7vw,3rem); margin:0 0 .65rem; }
+.menu-content h1 { font-size:clamp(2rem,8vw,6.2rem); margin:.1rem 0 .45rem; letter-spacing:.1em; color:var(--parchment); }
+.menu-content h1 em { color:var(--violet); }
+.edition { font:600 .72rem/1.5 system-ui,sans-serif; letter-spacing:.22em; color:var(--brass); }
+.menu-content button,.panel button { color:var(--parchment); border-color:#a17f81; }
+#play,#respawn,#again { background:linear-gradient(145deg,#502b3e,#261c31); max-width:100%; }
+#play:hover,#respawn:hover,#again:hover { background:#63384d; }
+.settings,.help { max-width:40rem; margin:.8rem auto 0; padding:.55rem .75rem; border-top:1px solid #57414d; color:var(--parchment); }
+summary { cursor:pointer; font:600 .8rem system-ui,sans-serif; }
+.settings-fields { margin-top:.8rem; display:flex; flex-wrap:wrap; justify-content:center; gap:.65rem 1rem; }
+.settings-fields label { display:flex; gap:.45rem; align-items:center; font: .79rem/1.35 system-ui,sans-serif; }
+.settings-fields input { accent-color:#cf98a4; }
+#volume { width:clamp(65px,17vw,112px); }
+#inventory .panel { overscroll-behavior:contain; background:#151220; }
+#inventory h2 { letter-spacing:.08em; }
+#inventory .item small { color:#c5b8c6; }
+#hud .hud-top,#hud .hud-bottom { color:var(--parchment); }
+#target { top:clamp(79px,13vh,106px); }
+#map { width:min(36vw,240px); height:auto; aspect-ratio:6/5; top:clamp(83px,14vh,113px); }
+#game[data-effects="reduced"] #scanlines { display:none; }
+#game[data-effects="reduced"] .meter i,#game[data-effects="reduced"] #toast { transition:none; }
+@media(max-width:500px) {
+  #location { letter-spacing:.12em; }
+  #hud .hud-top { letter-spacing:.12em; }
+  #target { top:104px; }
+  #map { top:126px; }
+  #bossbar { left:14%; right:14%; bottom:78px; }
+  #bossname { font-size:10px; letter-spacing:.1em; }
+  #toast { font-size:12px; top:24%; }
+  #interact { font-size:11px; max-width:80%; width:max-content; text-align:center; }
+}
+#map { display:flex; flex-direction:column-reverse; }
+#map[hidden] { display:none; }
+#map canvas { height:auto; aspect-ratio:6/5; }
+.map-legend { display:flex; justify-content:center; flex-wrap:wrap; gap:3px 8px; padding:3px; background:#0c0e16; font:9px system-ui,sans-serif; }
+.map-legend span::before { content:""; display:inline-block; width:5px; height:5px; margin-right:3px; vertical-align:1px; background:#e5c78e; }
+.map-legend span:first-child::before { background:#9ad3b2; }
+.map-legend span:nth-child(2)::before { background:#ce97dc; }

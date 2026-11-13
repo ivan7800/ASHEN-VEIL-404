@@ -1,9 +1,14 @@
 @echo off
 setlocal
-cd /d "%~dp0"
-if not exist "JUGAR-SIN-INSTALAR.html" (
-  echo No se ha encontrado el juego. Descomprima el ZIP completo.
+if not exist "%~dp0JUGAR-SIN-INSTALAR.html" (
+  echo No se ha encontrado el juego. Descomprime el ZIP completo.
   pause
   exit /b 1
 )
 start "" "%~dp0JUGAR-SIN-INSTALAR.html"
+if errorlevel 1 (
+  echo No se pudo abrir el navegador predeterminado.
+  echo Abre JUGAR-SIN-INSTALAR.html manualmente en tu navegador.
+  pause
+  exit /b 1
+)
