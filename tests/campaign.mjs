@@ -44,7 +44,7 @@ function game(storage = new Map(), canvasFactory = mockCanvas, isolated = false)
   let frame, elapsed=0, pad;
   const isolatedHook=isolated?`
     window.probe={player,enemies,objects,los,canMove,attack,spell,trapPhase,startEnemyAttack,
-      resolvesEnemyAttack,damagePlayer,interact,settings,
+      resolvesEnemyAttack,damagePlayer,interact,settings,swordPose,
       setTick:value=>{tick=value},stats:()=>({dropped,saveBlocked})};
   `:'';
   const context = vm.createContext({
@@ -207,7 +207,17 @@ console.log('Guardados parciales, inválidos y recuperación con copia: OK');
 const check=game(new Map(),mockCanvas,true);
 check.start();
 const {player:p,enemies,los,canMove,attack,spell,trapPhase,startEnemyAttack,resolvesEnemyAttack,
-  damagePlayer,interact,settings,setTick,stats}=check.probe;
+  damagePlayer,interact,settings,setTick,stats,swordPose}=check.probe;
+for(const heavy of [false,true]){
+  const approach=[0,.2,.4,.52].map(progress=>swordPose(progress,heavy));
+  assert(approach[0].x>approach[1].x&&approach[1].x>approach[2].x&&approach[2].x>approach[3].x,
+    `El tajo ${heavy?'fuerte':'ligero'} debe avanzar en un solo sentido`);
+  const recovery=[.52,.7,.9,1].map(progress=>swordPose(progress,heavy));
+  assert(recovery[0].y<recovery[1].y&&recovery[1].y<recovery[2].y&&recovery[2].y<recovery[3].y,
+    `La recuperación ${heavy?'fuerte':'ligera'} debe seguir otro arco`);
+  assert(recovery[3].x>recovery[0].x&&recovery[3].rotation>recovery[0].rotation);
+}
+console.log('Trayectoria del tajo ligero y fuerte, con recuperación independiente: OK');
 const place=(x,y,ang=0)=>Object.assign(p,{x,y,ang,st:100,mp:60,attackCd:0,spellCd:0,hurt:0,roll:0,block:false,hp:100});
 assert(!canMove(19.5,10.5));
 assert(!los(19.5,9.7,19.5,11.3));
@@ -281,4 +291,22 @@ if(process.env.ASHEN_CAPTURE){
     console.log(`Canvas nativo (${low?'ligero':'normal'}, 120 imágenes) mediana ${times[60].toFixed(2)} ms, p95 ${times[113].toFixed(2)} ms`);
   }
   console.log('Capturas del Canvas nativo durante el recorrido completo: '+directory);
+}
+
+if(process.env.ASHEN_SWING_CAPTURE){
+  const require=createRequire(import.meta.url);
+  const {createCanvas}=require(join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES,'@napi-rs/canvas'));
+  const directory=process.env.ASHEN_SWING_CAPTURE;
+  mkdirSync(directory,{recursive:true});
+  for(const [name,key] of [['ligero','KeyH'],['fuerte','KeyJ']]){
+    const view=game(new Map(),()=>createCanvas(480,270));
+    view.start();
+    view.key(key,true);
+    for(let frame=0;frame<=12;frame++){
+      if(frame)view.step(.035);
+      writeFileSync(join(directory,`${name}-${String(frame).padStart(2,'0')}.png`),view.draw().toBuffer('image/png'));
+    }
+    view.key(key,false);
+  }
+  console.log('Light and heavy sword swing frames captured.');
 }

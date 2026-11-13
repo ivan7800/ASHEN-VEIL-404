@@ -624,12 +624,19 @@ function drawThreatIndicator(){
   ctx.stroke();
   ctx.fillStyle='rgba(250,181,151,.8)';ctx.fillRect(W/2-1,H/2-20,2,5);
 }
+function swordPose(progress,heavy){
+  const strike=clamp(progress/.52,0,1),recovery=clamp((progress-.52)/.48,0,1);
+  const cut=strike*strike*(3-2*strike),reset=recovery*recovery*(3-2*recovery);
+  const reach=heavy?136:101;
+  return {x:-reach*cut+reach*.9*reset,y:10*cut+38*reset,
+    rotation:-.18-(heavy?.82:.68)*cut+(heavy?1.04:.9)*reset};
+}
 function drawEffects(){let bob=settings.quiet?0:Math.sin(walkTime*11)*Math.min(3.8,player.step*10);
 const progress=1-attackAnim/.46;
-const swing=attackAnim>0?Math.sin(progress*PI)*(heavySwing?1.18:1):0;
-const slash=swing*(settings.quiet?.22:.47);
-ctx.save();ctx.translate(W*.76-swing*(heavySwing?134:98),H*.81+bob+swing*10);
-ctx.rotate(-.18-swing*(heavySwing?.9:.71));ctx.fillStyle='#14121e';ctx.beginPath();ctx.ellipse(30,75,80,61,0,0,TAU);ctx.fill();ctx.fillStyle='#4a3b4b';ctx.fillRect(8,15,28,55);ctx.fillStyle='#8c7180';ctx.fillRect(17,12,12,47);ctx.beginPath();ctx.moveTo(10,5);ctx.lineTo(10,-126);ctx.lineTo(18,-153);
+const pose=attackAnim>0?swordPose(progress,heavySwing):{x:0,y:0,rotation:-.18};
+const slash=attackAnim>0?Math.sin(progress*PI)*(settings.quiet?.22:.47):0;
+ctx.save();ctx.translate(W*.76+pose.x,H*.81+bob+pose.y);
+ctx.rotate(pose.rotation);ctx.fillStyle='#14121e';ctx.beginPath();ctx.ellipse(30,75,80,61,0,0,TAU);ctx.fill();ctx.fillStyle='#4a3b4b';ctx.fillRect(8,15,28,55);ctx.fillStyle='#8c7180';ctx.fillRect(17,12,12,47);ctx.beginPath();ctx.moveTo(10,5);ctx.lineTo(10,-126);ctx.lineTo(18,-153);
 ctx.lineTo(25,-126);ctx.lineTo(25,5);ctx.closePath();
 const steel=ctx.createLinearGradient(10,0,25,0);
 steel.addColorStop(0,'#e7d8ce');steel.addColorStop(.28,'#8d8495');

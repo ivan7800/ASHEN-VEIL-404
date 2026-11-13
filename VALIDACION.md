@@ -1,11 +1,12 @@
-# Validación de la candidata Cosmic Horror Remaster v3.1.0
+# Validación de la versión Cosmic Horror Remaster v3.1.1
 
-Base de GitHub `main` en `6d76e26df98be7dd1c587113147380aed9029933`. Rama `codex/cosmic-horror-remaster`. Se mantuvieron el trazado, los mecanismos y las condiciones de ambos finales de v2.9.
+Corrección de animación sobre la versión v3.1.0. Se mantienen el trazado, los mecanismos y las condiciones de ambos finales de v2.9.
 
 | Ámbito | Resultado |
 | --- | --- |
 | Campaña automatizada | Dos recorridos desde la cripta por teclado y ratón con el bucle normal. El arnés lee posiciones para apuntar. Los recorridos no cambian posición, vida ni progresión directamente. |
 | Exploración y finales | Llave, puerta, altar, capilla, reliquia, atajo, dos ritos, tres ecos, campana y jefe. Se reanuda antes del Vigía y se vuelven a abrir ambos finales desde el guardado. |
+| Espada | Trayectoria muestreada para ataques ligero y fuerte: el tajo avanza en una dirección y la recuperación cambia de arco; sin retorno inverso por la misma trayectoria. |
 | Pruebas aisladas | Paredes y esquinas, alcance, magia obstruida, aguante, bloqueo frontal y por detrás, esquiva, patrones del Penitente y el Campanero, onda de la fase 2 del Vigía, trampas, osario, diario, muerte y recuperación única de cenizas. Estas pruebas preparan estados concretos. |
 | Guardados simulados | Carga de v2 anterior, progreso parcial, posición inaccesible con copia, archivo corrupto conservado e importe inválido de cenizas descartado. Ajustes y partida en claves distintas. |
 | Controles y arranque | Arranque, pausa, mapa, diario y entrada Gamepad estándar simulada. Sintaxis JS, Bash y Python. Se verificaron los recursos y elementos DOM de ambas ediciones y la correspondencia de los bloques JS del HTML autónomo con el código fuente. |
@@ -39,6 +40,7 @@ La medición de CPU excluye DOM, GPU y temporización del navegador. Los objetiv
 4. Las cenizas podían recuperarse a través de paredes y un importe inválido podía propagarse al saldo. Se comprueban visibilidad, formato y rango.
 5. El autoguardado podía sobrescribir un archivo ilegible. La escritura queda suspendida y el menú indica el motivo.
 6. El lanzador Linux se detenía al fallar `xdg-open`. Ahora prueba otros navegadores y muestra la ruta del HTML si no puede abrirlo.
+7. La animación del arma repetía hacia atrás el arco del golpe. El tajo y la recuperación ahora tienen trayectorias separadas, comprobadas con muestras para ambos tipos de ataque.
 
 ## Pendiente antes de fusionar
 
