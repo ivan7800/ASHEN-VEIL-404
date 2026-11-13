@@ -1,5 +1,14 @@
 # Cambios
 
+## 3.3.0 · El peso del hierro
+
+- Tres armas opcionales con alcance, coste, velocidad, daño y arco propios; hallazgos persistentes en Patio, Huerto y Sondas.
+- Cambio de arma con teclado, táctil y mando; inventario y HUD muestran el equipo. La hacha rompe la guardia de los carceleros.
+- Efecto visual de impacto y siluetas de lanza, hacha y aguja en primera persona.
+- Menú grimdark con hierro ennegrecido, marco ritual y animación reducida cuando el sistema lo solicita.
+- Prueba de recogida, equipo y migración del guardado antiguo.
+
+
 ## 3.2.0 · Cartografía de los Ausentes
 
 - Cinco ramales conectados a la mazmorra original. Las salinas y las sondas cambian de recorrido al operar sus instalaciones. El Archivo ofrece dos copias excluyentes del acta. El Huerto guarda una semilla que acelera la recuperación de éter. La Cámara exige orientar dos espejos e interpretar una carta recuperada en Sondas.
