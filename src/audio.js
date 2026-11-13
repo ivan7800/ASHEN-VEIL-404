@@ -1,6 +1,8 @@
 /* Synthesis is local. The first gesture unlocks audio; it is safe to play without it. */
 const VeilAudio = (() => {
   const ambience = {
+    salt:[46,71,.035], archive:[52,104,.021], garden:[44,66,.035],
+    soundings:[38,57,.065], sky:[57,86,.026],
     crypt: [53, 81, .07], catacomb: [47, 67, .1], chapel: [61, 92, .045],
     nave: [41, 62, .12], sanctuary: [37, 58, .065], watcher: [32, 49, .11],
   };
@@ -62,7 +64,7 @@ const VeilAudio = (() => {
     room.frequency.setTargetAtTime(low*3,t,.4);
   }
 
-  function tone(freq=230, duration=.12, type='sine', level=.02, endScale=.6) {
+  function tone(freq=230, duration=.12, type='sine', level=.02, endScale=.6, pan=0) {
     if(!audio||audio.state!=='running'||muted)return;
     const t=audio.currentTime;
     const oscillator=audio.createOscillator();
@@ -73,7 +75,12 @@ const VeilAudio = (() => {
     gain.gain.setValueAtTime(.0001,t);
     gain.gain.exponentialRampToValueAtTime(level,t+Math.min(.024,duration/4));
     gain.gain.exponentialRampToValueAtTime(.0001,t+duration);
-    oscillator.connect(gain).connect(output);
+    oscillator.connect(gain);
+    if(pan&&audio.createStereoPanner){
+      const stereo=audio.createStereoPanner();
+      stereo.pan.value=pan;
+      gain.connect(stereo).connect(output);
+    }else gain.connect(output);
     oscillator.start(t);oscillator.stop(t+duration);
   }
 
@@ -106,8 +113,18 @@ const VeilAudio = (() => {
       case 'wetStep': texture(740,.18,.34);tone(99,.09,'sine',.029);break;
       case 'step': texture(370,.13,.30);break;
       case 'drip': tone(550,.16,'sine',.035,1.5);tone(157,.28,'sine',.016);break;
+      case 'threshold': tone(168,.9,'sine',.035,.82);tone(251,.65,'triangle',.019);break;
+      case 'salt': texture(1150,.31,.095);break;
+      case 'paper': texture(1400,.65,.063);break;
+      case 'branch': texture(610,.8,.065);tone(105,.92,'sine',.012);break;
+      case 'star': tone(419,1.2,'sine',.018,1.01);break;
       case 'whisper': texture(910,.95,.18);tone(127,.88,'sine',.014,1.2);break;
     }
   }
-  return { begin, preferences, region, tone, cue };
+  const warningPitch={hollow:112,knight:248,wraith:305,drowned:91,boss:69};
+  function warning(name,pan){
+    const pitch=warningPitch[name]??140;
+    tone(pitch,.65,name==='knight'?'triangle':'sine',.038,1.28,pan);
+  }
+  return { begin, preferences, region, tone, cue, warning };
 })();

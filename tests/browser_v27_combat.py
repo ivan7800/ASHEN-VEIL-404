@@ -1,13 +1,14 @@
 """Focused browser tests: enemy telegraph direction, distinct patterns and heavy attack."""
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from browser_runtime import launch
 root=Path(__file__).resolve().parent.parent
 html=(root/'JUGAR-SIN-INSTALAR.html').read_text()
 hook='window.__test27={player,enemies,startEnemyAttack,resolvesEnemyAttack,attack,hit,resetEnemies,los,damagePlayer};'
 assert 'window.__ashenDiagnostics=()=>(' in html
 html=html.replace('window.__ashenDiagnostics=()=>(',hook+'\nwindow.__ashenDiagnostics=()=>(')
 with sync_playwright() as p:
-    browser=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox','--disable-gpu'])
+    browser=launch(p.chromium)
     page=browser.new_page(viewport={'width':1280,'height':720})
     errors=[]
     page.on('pageerror',lambda e:errors.append(str(e)))

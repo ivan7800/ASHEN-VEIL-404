@@ -1,6 +1,11 @@
 /* Room palettes, tile patterns and baked fixture weights. */
 const VeilLighting = (() => {
   const materials = {
+    salt: {floor:[133,118,106],fog:[38,33,38]},
+    archive: {floor:[101,74,61],fog:[24,13,17]},
+    garden: {floor:[53,84,68],fog:[9,22,19]},
+    soundings: {floor:[65,88,96],fog:[8,20,30]},
+    sky: {floor:[72,78,118],fog:[13,15,33]},
     crypt: { floor:[95,81,94], fog:[15,10,20] },
     catacomb: { floor:[49,84,83], fog:[5,20,26] },
     chapel: { floor:[94,61,108], fog:[18,8,28] },

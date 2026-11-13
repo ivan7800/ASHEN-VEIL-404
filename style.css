@@ -66,3 +66,33 @@ summary { cursor:pointer; font:600 .8rem system-ui,sans-serif; }
 .map-legend span::before { content:""; display:inline-block; width:5px; height:5px; margin-right:3px; vertical-align:1px; background:#e5c78e; }
 .map-legend span:first-child::before { background:#9ad3b2; }
 .map-legend span:nth-child(2)::before { background:#ce97dc; }
+
+#encounter-warning {
+  position:absolute; top:clamp(120px,26%,195px); left:50%; transform:translateX(-50%);
+  max-width:85%; width:max-content; text-align:center; padding:.4em .7em;
+  color:#ffe0b9; background:#17121fe8; font: .83rem/1.3 system-ui,sans-serif;
+}
+#touch-controls[hidden] { display:none }
+#touch-controls {
+  position:absolute; inset:auto 0 0; pointer-events:none;
+  z-index:6; display:flex; align-items:end; justify-content:space-between;
+  padding:5px max(6px,env(safe-area-inset-right)) max(5px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left));
+}
+.touch-grid { display:grid; grid-template-columns:repeat(3,minmax(44px,1fr)); gap:3px }
+.touch-grid button {
+  pointer-events:auto; touch-action:none; min-height:44px; min-width:44px;
+  margin:0; padding:0 .3em; font:600 .69rem system-ui,sans-serif;
+  color:#f4dfd9; background:#211629ec; border:1px solid #826675; border-radius:4px;
+}
+#game:has(.overlay:not(.hidden)) #touch-controls { display:none }
+@media (pointer:coarse) {
+  #hud .hud-bottom { bottom:186px }
+  #bossbar { bottom:236px }
+  #interact { bottom:245px }
+}
+
+@media (pointer:coarse) and (orientation:landscape) {
+  #hud .hud-bottom { bottom:13px; left:18%; right:24% }
+  #bossbar { bottom:62px; left:25%; right:25% }
+  #interact { bottom:76px; max-width:48% }
+}

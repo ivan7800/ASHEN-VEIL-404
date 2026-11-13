@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import { performance } from 'node:perf_hooks';
 
 const read = file => readFileSync(new URL('../' + file, import.meta.url), 'utf8');
-const scripts = ['art', 'lighting', 'audio', 'game'].map(name => read('src/' + name + '.js'));
+const scripts = ['art', 'lighting', 'audio', 'expedition', 'game'].map(name => read('src/' + name + '.js'));
 const standalone=read('JUGAR-SIN-INSTALAR.html');
 const inline=[...standalone.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(match=>match[1]);
 assert.deepEqual(inline,scripts,'Regenerate the standalone build after changing source');
@@ -60,7 +60,7 @@ function game(storage = new Map(), canvasFactory = mockCanvas, isolated = false)
   for (const source of scripts.slice(0, -1)) vm.runInContext(source,context);
   // The harness reads private encounter data to steer its player. It never sets game state.
   vm.runInContext(scripts.at(-1).replace('window.__ashenDiagnostics=',
-    isolatedHook+'window.observe=()=>({enemies:enemies.map(({id,x,y,hp,alive})=>({id,x,y,hp,alive})),render});window.__ashenDiagnostics=')
+    isolatedHook+'window.observe=()=>({enemies:enemies.map(({id,x,y,hp,alive})=>({id,x,y,hp,alive})),render,grid,objects});window.__ashenDiagnostics=')
     .replace('    render();',''),context);
   const step=(seconds=.02)=>{
     for(let i=0;i<Math.max(1,Math.round(seconds/.02));i++){elapsed+=20;frame(elapsed);}
@@ -81,6 +81,33 @@ function game(storage = new Map(), canvasFactory = mockCanvas, isolated = false)
     }
     assert.fail('Bloqueado al caminar hacia '+[x,y]+' desde '+state().position);
   };
+  // Discover a walkable route using the current map and normal movement events.
+  const navigate=(x,y)=>{
+    const grid=context.observe().grid;
+    const [px,py]=state().position;
+    const start=[Math.floor(px),Math.floor(py)],goal=[Math.floor(x),Math.floor(y)];
+    const id=([x,y])=>x+','+y;
+    const previous=new Map([[id(start),null]]), queue=[start];
+    for(let i=0;i<queue.length&&!previous.has(id(goal));i++){
+      const [cx,cy]=queue[i];
+      for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
+        const next=[cx+dx,cy+dy];
+        if(grid[next[1]]?.[next[0]]!==0||previous.has(id(next)))continue;
+        previous.set(id(next),queue[i]);queue.push(next);
+      }
+    }
+    assert(previous.has(id(goal)),'Destino inaccesible: '+goal);
+    const path=[];
+    for(let at=goal;id(at)!==id(start);at=previous.get(id(at)))path.push(at);
+    for(const [cx,cy] of path.reverse())walk(cx+.5,cy+.5);
+    walk(x,y);
+  };
+  const use=id=>{
+    const object=context.observe().objects.find(object=>object.id===id);
+    assert(object,'Falta el objeto '+id);
+    navigate(object.x,object.y);
+    tap('KeyE');
+  };
   const interact=(x,y)=>{walk(x,y);tap('KeyE');};
   const enemies=()=>context.observe().enemies;
   const fight=(id,approach)=>{
@@ -96,13 +123,29 @@ function game(storage = new Map(), canvasFactory = mockCanvas, isolated = false)
   };
   const start=()=>{emit('play:click');step();};
   const draw=()=>{context.observe().render();return node('screen');};
-  return {start,step,key,tap,walk,interact,fight,state,storage,node,draw,emit,aim,probe:context.probe,setPad:value=>{pad=value;}};
+  return {elapsed:()=>elapsed/1000,start,step,key,tap,walk,navigate,use,interact,fight,state,storage,node,draw,emit,aim,probe:context.probe,setPad:value=>{pad=value;}};
 }
 
-function route(restored, capture=()=>{}, makeGame=game) {
+function annex(g,id,actions,capture){
+  g.use(id+'In');
+  if(id==='sky'){g.use('skyLens');assert(!g.state().discoveries.includes('skyLens'));}
+  for(const action of actions)g.use(action);
+  assert(g.state().discoveries.includes(actions.at(-1)));
+  const aimPoints={salt:[46.1,14.4],archive:[58.5,9.5],garden:[39.45,27.7],soundings:[68.25,27.6],sky:[42.3,53.45]};
+  g.aim(...aimPoints[id]);
+  capture(g,id);
+  g.tap('KeyM');
+  assert(g.state().mapVisible);
+  g.tap('KeyM');
+  g.use(id+'Out');
+}
+
+function route(restored, capture=()=>{}, makeGame=game, expanded=false) {
   let g=makeGame();g.start();
+  let beforeReload=0;
   capture(g,'cripta');
   g.interact(4.8,17.3);
+  if(expanded)annex(g,'salt',['saltMason','saltEye','saltLow','saltCrane','saltPrint'],capture);
   if(restored){
     g.interact(3.3,21.4);
     g.interact(7.4,20.4);
@@ -113,6 +156,10 @@ function route(restored, capture=()=>{}, makeGame=game) {
     g.interact(5.2,8.8);
     g.interact(8,8.4);
     g.aim(12,8.35);capture(g,'capilla');
+    if(expanded){
+      annex(g,'garden',['gardenKeeper','gardenWhite','gardenHollow','gardenChair','gardenFruit'],capture);
+      g.navigate(8,8.4);
+    }
     g.interact(9,7.7);
     g.interact(10.5,12.5);
     assert(g.state().shortcutOpen);
@@ -136,6 +183,11 @@ function route(restored, capture=()=>{}, makeGame=game) {
   if(restored){
     g.fight('ambush1',[21.2,19.7]);
     g.interact(22.6,21);
+    if(expanded){
+      annex(g,'archive',['archiveClerk','archiveName','archiveBody','archiveKeep','archiveSeal'],capture);
+      assert.equal(g.state().archiveChoice,'archiveKeep');
+      g.navigate(22.6,21);
+    }
     assert.equal(g.state().echoes,3);
     g.interact(17.4,19.3);
     assert.equal(JSON.parse(g.storage.get(saveKey)).maxflasks,5);
@@ -145,6 +197,7 @@ function route(restored, capture=()=>{}, makeGame=game) {
     g.fight('bellKeeper',[27.7,17.3]);
     g.interact(28.35,14.4);
     assert(g.state().bellRung);
+    if(expanded)annex(g,'soundings',['soundingsGauge','soundingsIntake','soundingsBell','soundingsWeight','soundingsChart'],capture);
     g.walk(27.5,17.5);g.walk(25.5,17.5);
   }
   g.walk(19.5,14);
@@ -154,21 +207,35 @@ function route(restored, capture=()=>{}, makeGame=game) {
   g.interact(19.5,9.5);
   for(let i=0;i<3;i++)g.tap('KeyL');
   g.tap('KeyK');
+  beforeReload=g.elapsed();
   g=makeGame(g.storage);g.start();
   assert(g.state().gate&&g.state().key);
   if(restored)assert(g.state().bellRung&&g.state().shortcutOpen);
   if(restored){g.walk(19.5,7.45);g.aim(19.5,5.3);capture(g,'santuario');}
   g.fight('boss',[19.5,7.45]);
   assert(g.state().bossDefeated);
+  if(expanded){
+    annex(g,'sky',['skyWatcher','skyDark','skyDark','skyLight','skyStar','skyLens'],capture);
+    g.navigate(19.5,3.2);
+  }
   g.interact(19.5,3.2);
   assert.equal(g.state().ending,restored?'restored':'first-light');
   const reload=makeGame(g.storage);reload.start();
   assert.equal(reload.state().ending,g.state().ending);
   assert.equal(reload.node('ending-title').textContent,g.node('ending-title').textContent);
+  if(expanded){
+    assert.equal(reload.state().discoveries.length,25);
+    assert.equal(reload.state().archiveChoice,'archiveKeep');
+    assert.match(reload.node('ending-story').textContent,/estrella sigue clavada/);
+    assert.equal(reload.state().mirrorPositions.skyDark,2);
+    assert.equal(reload.state().mirrorPositions.skyLight,1);
+    console.log('Campaña ampliada: 25 hallazgos, cinco ramales, regreso y restauración del guardado');
+  }
+  console.log('Tiempo simulado de la ruta '+g.state().ending+': '+(beforeReload+g.elapsed()).toFixed(1)+' s');
   return g.state().ending;
 }
 
-console.log('Recorridos completos por teclado y ratón:',route(false),route(true));
+console.log('Recorridos completos por teclado y ratón:',route(false),route(true,undefined,game,true));
 const legacy=new Map([[saveKey,JSON.stringify({version:2,x:5.4,y:19,lv:5,hp:130,maxflasks:4,echoReward:true})]]);
 const migrated=game(legacy);migrated.start();
 assert.equal(migrated.state().hp,130);
@@ -240,6 +307,41 @@ place(19.5,11.3,Math.PI/2);p.roll=.25;
 assert(resolvesEnemyAttack(e));assert.equal(p.hp,100);
 startEnemyAttack(drowned,0,1);assert.equal(drowned.attackKind,'chime');
 startEnemyAttack(drowned,0,1);assert.equal(drowned.attackKind,'lunge');
+const awaken=game(new Map(),mockCanvas,true);awaken.start();
+Object.assign(awaken.probe.player,{x:9.7,y:17.65});awaken.step();
+const approaching=awaken.probe.enemies.find(enemy=>enemy.id==='w1');
+assert(approaching.waking>0&&!approaching.alert);
+assert.match(awaken.node('encounter-warning').textContent,/levanta/);
+const startX=approaching.x;
+awaken.step(.3);
+assert.equal(approaching.x,startX);
+assert.equal(approaching.windup,0);
+awaken.step(1.4);
+assert(approaching.alert);
+approaching.alive=false;
+const anchor=awaken.probe.enemies.find(enemy=>enemy.id==='w2');
+anchor.hp=27;
+awaken.navigate(4.8,17.2);awaken.tap('KeyE');
+assert(!approaching.alive&&anchor.hp===27,'El altar conserva bajas y daño de enemigos vivos');
+console.log('Aviso previo, periodo de despertar y descanso sin reaparición: OK');
+
+const archive=game(new Map(),mockCanvas,true);
+archive.start();
+Object.assign(archive.probe.player,{x:24.6,y:12.55});archive.tap('KeyE');
+archive.use('archiveErase');
+assert.equal(archive.state().archiveChoice,null);
+archive.use('archiveName');archive.use('archiveBody');archive.use('archiveErase');
+assert.equal(archive.state().archiveChoice,'archiveErase');
+archive.use('archiveKeep');
+assert.equal(archive.state().archiveChoice,'archiveErase');
+assert(!archive.state().discoveries.includes('archiveKeep'));
+const archiveReload=game(archive.storage);archiveReload.start();
+assert.equal(archiveReload.state().archiveChoice,'archiveErase');
+assert.equal(archiveReload.state().zone,'ARCHIVO DE LOS AUSENTES');
+archiveReload.use('archiveOut');
+assert.equal(archiveReload.state().zone,'CATACUMBAS DE LOS OLVIDADOS');
+console.log('Decisión del archivo, bloqueo previo y guardado dentro del ramal: OK');
+
 boss.phase=2;
 for(const kind of ['cleave','lunge','ring']){
   startEnemyAttack(boss,0,1);assert.equal(boss.attackKind,kind);
@@ -276,7 +378,14 @@ if(process.env.ASHEN_CAPTURE){
   mkdirSync(directory,{recursive:true});
   const makeGame=(storage=new Map(),isolated=false)=>game(storage,()=>createCanvas(480,270),isolated);
   const capture=(g,name)=>writeFileSync(join(directory,name+'.png'),g.draw().toBuffer('image/png'));
-  route(true,capture,makeGame);
+  route(true,capture,makeGame,true);
+  const approach=makeGame(new Map(),true);
+  approach.start();
+  Object.assign(approach.probe.player,{x:9.7,y:17.65});
+  approach.aim(11.7,17.7);
+  capture(approach,'penitente-reposo');
+  approach.step(.2);capture(approach,'penitente-aviso');
+  approach.step(1.35);capture(approach,'penitente-despierto');
   const view=makeGame(new Map(),true);
   view.start();
   for(const low of [false,true]){

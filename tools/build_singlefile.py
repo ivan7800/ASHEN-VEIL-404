@@ -6,7 +6,7 @@ root = Path(__file__).resolve().parent.parent
 html = (root / "index.html").read_text(encoding="utf-8")
 css = (root / "style.css").read_text(encoding="utf-8")
 html = html.replace('<link rel="stylesheet" href="style.css">', f"<style>{css}</style>")
-for name in ("art", "lighting", "audio", "game"):
+for name in ("art", "lighting", "audio", "expedition", "game"):
     tag = f'<script src="src/{name}.js"></script>'
     if html.count(tag) != 1:
         raise SystemExit(f"Expected one asset tag for {name}.js")

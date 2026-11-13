@@ -1,8 +1,9 @@
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from browser_runtime import launch
 root=Path(__file__).resolve().parent.parent
 with sync_playwright() as p:
-    browser=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox','--disable-gpu'])
+    browser=launch(p.chromium)
     page=browser.new_page(viewport={'width':1280,'height':720})
     errors=[]
     page.on('pageerror',lambda e:errors.append(str(e)))
@@ -10,7 +11,7 @@ with sync_playwright() as p:
     page.locator('#play').click()
     page.wait_for_timeout(250)
     d=page.evaluate('window.__ashenDiagnostics()')
-    assert d['version']=='3.1.1' and d['sceneryCount']==42 and d['enemiesAlive']==9,d
+    assert d['version']=='3.2.0' and d['sceneryCount']==42 and d['enemiesAlive']==9,d
     # Verify that a 2D frame actually differs between different view headings.
     a=page.locator('#screen').evaluate('(el)=>el.toDataURL()')
     page.keyboard.down('ArrowRight')

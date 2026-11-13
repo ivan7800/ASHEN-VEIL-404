@@ -1,13 +1,14 @@
 """Test optional rituals, reward uniqueness, boss damage mitigation, journal and save state."""
 from pathlib import Path
 from playwright.sync_api import sync_playwright
+from browser_runtime import launch
 root=Path(__file__).resolve().parent.parent
 html=(root/'JUGAR-SIN-INSTALAR.html').read_text(encoding='utf-8')
 hook="window.__test28={player,objects,enemies,interact,resolvesEnemyAttack,save,load,getSeals:()=>sealsBroken.slice(),getZones:()=>zonesVisited.slice()};"
 assert 'window.__ashenDiagnostics=()=>(' in html
 html=html.replace('window.__ashenDiagnostics=()=>(',hook+'\nwindow.__ashenDiagnostics=()=>(')
 with sync_playwright() as p:
- browser=p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox','--disable-gpu'])
+ browser=launch(p.chromium)
  page=browser.new_page(viewport={'width':1280,'height':720})
  errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
  page.set_content(html,wait_until='load');page.locator('#play').click();page.wait_for_timeout(120)
