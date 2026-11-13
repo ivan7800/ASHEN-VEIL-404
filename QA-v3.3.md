@@ -9,3 +9,5 @@ Base: `main` 6e11eb09e86ba454e6900455b6e9a740652d1976.
 - Windows, Linux Mint, Safari, mando físico, audio en altavoces y duración humana cercana a cuatro horas: pendientes de revisión directa.
 
 La campaña automatizada usa navegación dirigida y sus tiempos no estiman duración de una partida humana.
+
+Pages: las URLs de recursos llevan versión 3.3.1 para invalidar cachés anteriores.

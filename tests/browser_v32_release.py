@@ -8,7 +8,7 @@ site = "https://ashen-veil.test/ASHEN-VEIL-404/"
 mime = {".html":"text/html", ".js":"text/javascript", ".css":"text/css"}
 
 def serve(route):
-    name = route.request.url.removeprefix(site) or "index.html"
+    name = route.request.url.removeprefix(site).split("?",1)[0] or "index.html"
     file = (root / name).resolve()
     if root not in file.parents or file.suffix not in mime or not file.is_file():
         route.fulfill(status=404)
