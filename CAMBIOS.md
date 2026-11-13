@@ -1,5 +1,12 @@
 # Cambios
 
+## 3.4.0 · Arquitectura del Velo
+
+- Relieves orientados por cara de muro, losas e iluminación local en las diez zonas. El pórtico funerario de la Cripta marca el eje de entrada.
+- Osario empotrado, piedra invadida por raíces, cabecera ceremonial y marcas de inundación en la campaña principal.
+- Grúa y pila de sal, estanterías funerarias, árbol hueco y silla, contrapeso y espejos en los cinco ramales.
+- Pruebas de ubicación de hitos, recorridos completos y comparativa visual de las diez zonas.
+
 ## 3.3.0 · El peso del hierro
 
 - Tres armas opcionales con alcance, coste, velocidad, daño y arco propios; hallazgos persistentes en Patio, Huerto y Sondas.

@@ -12,7 +12,7 @@ with sync_playwright() as p:
     page.locator('#play').click()
     page.wait_for_timeout(500)
     d=page.evaluate('window.__ashenDiagnostics()')
-    assert d['version']=='3.2.0',d
+    assert d['version']=='3.4.0',d
     assert d['textureCount']==42,d
     assert d['sceneryCount']==42 and d['themedProps']==16,d
     assert d['region']=='crypt',d

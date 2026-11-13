@@ -5,7 +5,7 @@ const VeilExpedition = (() => {
       id:'salt', name:'PATIO DE LA SAL', material:'salt', x:32, y:2, entry:[6.5,22.45], title:'Bajar al Patio de la Sal',
       rooms:[[8,14,10,17],[2,10,7,15],[2,5,5,10],[2,1,7,5],[7,2,13,3],[13,2,17,7],[11,7,16,9],[11,9,17,14],[7,13,11,14]],
       barriers:[['saltLow',10,2],['saltLow',10,3],['saltCrane',13,7],['saltCrane',14,7],['saltCrane',15,7],['saltCrane',16,7],['saltCrane',17,7],['saltCrane',10,13],['saltCrane',10,14]],
-      props:[[9,15,'arch',1.5],[3,12,'coffin',1.15],[5,9,'brazier',.8],[4,2,'urn',.8],[16,5,'chains',1.3],[14.1,12.4,'saltPillar',1.28]],
+      props:[[9,15,'arch',1.5],[3,12,'coffin',1.15],[5,9,'brazier',.8],[4,2,'urn',.8],[16,5,'chains',1.3],[16.9,13.4,'saltPillar',.72]],
       stations:[
         ['saltMason',4.5,12.5,'El Cantero sentado','Lavábamos la sal con agua dulce. Luego hubo un día en que el agua recordó el mar. Empieza por la pila baja. La segunda está junto a la grúa.'],
         ['saltLow',4.5,3.5,'Lavar la pila baja','La sal se desprende en láminas. Debajo hay una huella de seis dedos.'],
@@ -32,7 +32,7 @@ const VeilExpedition = (() => {
     {
       id:'garden', name:'HUERTO DE LAS VOCES', material:'garden', x:32, y:24, entry:[3.5,5.5], title:'Cruzar al Huerto de las Voces',
       rooms:[[8,14,10,17],[2,12,16,14],[2,5,5,12],[2,2,9,5],[9,4,15,6],[14,5,17,11],[9,10,17,11],[8,8,10,11]],
-      props:[[9,15,'roots',1.65],[3,9,'fungus',1.25],[7.45,3.7,'tree',1.6],[16,7,'roots',1.45],[9,9,'stainedglass',1.4]],
+      props:[[9,15,'roots',1.65],[3,9,'fungus',1.25],[7.7,3.25,'tree',1.75],[16,7,'roots',1.45],[9,9,'stainedglass',1.4]],
       stations:[
         ['gardenKeeper',4.5,12.5,'La Jardinera de espaldas','No sé cuánto tiempo llevo sentada. El árbol blanco y el árbol hueco recuerdan voces distintas. Escúchalos de cerca.'],
         ['gardenWhite',6.5,3.5,'Escuchar al árbol blanco','Se oye una canción de cuna pronunciada al revés. La última palabra es «aquí».'],
@@ -45,7 +45,7 @@ const VeilExpedition = (() => {
       id:'soundings', name:'ESTACIÓN DE SONDAS', material:'soundings', x:52, y:24, entry:[28.45,21.45], title:'Descender a la Estación de Sondas',
       rooms:[[8,14,10,17],[2,11,16,14],[2,4,5,11],[2,2,9,4],[8,4,10,9],[10,7,16,9],[14,2,17,7]],
       barriers:[['soundingsIntake',8,5],['soundingsIntake',9,5],['soundingsIntake',10,5],['soundingsWeight',14,6],['soundingsWeight',15,6],['soundingsWeight',16,6],['soundingsWeight',17,6]],
-      props:[[9,15,'chains',1.65],[3,10,'urn',.85],[4,3,'brazier',1],[9,6,'arch',1.4],[16.25,3.6,'gauge',1.35]],
+      props:[[9,15,'chains',1.65],[3,10,'urn',.85],[4,3,'brazier',1],[9,6,'arch',1.4],[17.5,3.55,'gauge',.82]],
       stations:[
         ['soundingsGauge',4.5,12.5,'Leer el manómetro','La aguja se hunde cada vez que la miras. Abre la toma de poniente antes de equilibrar el contrapeso.'],
         ['soundingsIntake',4.5,3.5,'Abrir la toma de poniente','Las tuberías dejan de palpitar. El ruido baja hacia el contrapeso.'],
@@ -57,7 +57,7 @@ const VeilExpedition = (() => {
     {
       id:'sky', name:'CÁMARA DEL CIELO INMÓVIL', material:'sky', x:32, y:46, entry:[25.5,8.45], title:'Entrar en la Cámara del Cielo',
       rooms:[[8,14,10,17],[2,10,16,14],[2,3,5,10],[2,2,15,4],[14,4,17,10],[7,6,11,9],[8,9,10,10]],
-      props:[[9,15,'arch',1.5],[3,8,'brazier',.8],[8,3,'stainedglass',1.65],[16,8,'chains',1.5],[10.3,7.45,'orrery',1.55]],
+      props:[[9,15,'arch',1.5],[3,8,'brazier',.8],[8,3,'stainedglass',1.65],[16,8,'chains',1.5],[10.75,6.85,'orrery',1.05]],
       stations:[
         ['skyWatcher',5.5,12.5,'El Astrónomo de yeso','El espejo oscuro ha de mirar al fondo. El claro, hacia arriba. La lente también necesita la carta de mareas de la Estación de Sondas.'],
         ['skyDark',3.5,5.5,'Girar el espejo oscuro','Solo refleja la sala cuando le das la espalda.'],

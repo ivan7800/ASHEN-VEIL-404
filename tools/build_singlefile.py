@@ -5,9 +5,9 @@ from pathlib import Path
 root = Path(__file__).resolve().parent.parent
 html = (root / "index.html").read_text(encoding="utf-8")
 css = (root / "style.css").read_text(encoding="utf-8")
-html = html.replace('<link rel="stylesheet" href="style.css?v=3.3.1">', f"<style>{css}</style>")
+html = html.replace('<link rel="stylesheet" href="style.css?v=3.4.0">', f"<style>{css}</style>")
 for name in ("art", "lighting", "audio", "expedition", "game"):
-    tag = f'<script src="src/{name}.js?v=3.3.1"></script>'
+    tag = f'<script src="src/{name}.js?v=3.4.0"></script>'
     if html.count(tag) != 1:
         raise SystemExit(f"Expected one asset tag for {name}.js")
     source = (root / "src" / f"{name}.js").read_text(encoding="utf-8")

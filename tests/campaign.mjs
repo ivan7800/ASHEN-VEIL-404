@@ -43,7 +43,7 @@ function game(storage = new Map(), canvasFactory = mockCanvas, isolated = false)
   };
   let frame, elapsed=0, pad;
   const isolatedHook=isolated?`
-    window.probe={player,enemies,objects,los,canMove,attack,spell,trapPhase,startEnemyAttack,
+    window.probe={grid,architecture:VeilLighting.architecture,architectureScenery,player,enemies,objects,los,canMove,attack,spell,trapPhase,startEnemyAttack,
       resolvesEnemyAttack,damagePlayer,interact,settings,swordPose,
       setTick:value=>{tick=value},stats:()=>({dropped,saveBlocked})};
   `:'';
@@ -379,6 +379,22 @@ if(process.env.ASHEN_CAPTURE){
   const makeGame=(storage=new Map(),isolated=false)=>game(storage,()=>createCanvas(480,270),isolated);
   const capture=(g,name)=>writeFileSync(join(directory,name+'.png'),g.draw().toBuffer('image/png'));
   route(true,capture,makeGame,true);
+  // Fixed camera comparisons from traversable cells, separate from the playthrough.
+  const architectureViews = {
+    cripta:[5.4,19,5.5,13.4], catacumbas:[21.5,18.8,22.6,22.8],
+    capilla:[6.5,6.6,11.8,6.8], santuario:[19.5,7.45,19.5,2.3],
+    nave:[27.5,19.2,28,13.5], salt:[47.5,7.9,46.6,6.2],
+    archive:[61.5,12.6,61.5,8.5], garden:[46.5,34.5,49,33.55],
+    soundings:[65.5,32.4,69.5,32], sky:[41.5,55.1,42.75,52.85],
+  };
+  const architectureView=makeGame(new Map(),true);
+  architectureView.start();
+  for (const [name,[x,y,targetX,targetY]] of Object.entries(architectureViews)) {
+    assert(architectureView.probe.canMove(x,y), 'Cámara fuera del paso: '+name);
+    Object.assign(architectureView.probe.player,{x,y});
+    architectureView.aim(targetX,targetY);
+    capture(architectureView,'vista-'+name);
+  }
   const approach=makeGame(new Map(),true);
   approach.start();
   Object.assign(approach.probe.player,{x:9.7,y:17.65});
@@ -434,3 +450,26 @@ assert.deepEqual(Array.from(arsenalReload.state().ownedWeapons),['sword','spear'
 assert.equal(arsenalReload.state().equippedWeapon,'needle');
 arsenalReload.tap('KeyC');assert.equal(arsenalReload.state().equippedWeapon,'sword');
 console.log('Armas: hallazgos accesibles, recogida, equipado, ciclo y persistencia: OK');
+
+{
+const architectureCheck = game(new Map(), mockCanvas, true);
+const {grid, architecture, architectureScenery, canMove} = architectureCheck.probe;
+const directions = {n:[0,-1], s:[0,1], e:[1,0], w:[-1,0]};
+assert.equal(Object.keys(architecture).length, 10);
+for (const [region, design] of Object.entries(architecture)) {
+  const faces = new Set();
+  for (const [x,y,side] of design.faces) {
+    const [dx,dy] = directions[side];
+    const key = [x,y,side].join(',');
+    assert(!faces.has(key), `${region}: cara duplicada ${key}`);
+    faces.add(key);
+    assert.equal(grid[y][x], 1, `${region}: el relieve debe estar en muro fijo ${key}`);
+    assert.equal(grid[y+dy][x+dx], 0, `${region}: el relieve debe mirar hacia un paso abierto ${key}`);
+  }
+}
+for (const {x,y,type} of architectureScenery) {
+  assert(canMove(x,y,.02), `${type}: hito fuera del espacio transitable: ${x},${y}`);
+}
+assert(canMove(5.4,19) && canMove(4.8,17.2), 'Losas y pórtico conservan el paso de la Cripta');
+console.log('Arquitectura: caras visibles, hitos en suelo y acceso al altar: OK');
+}

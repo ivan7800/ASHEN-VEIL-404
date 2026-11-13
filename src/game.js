@@ -598,7 +598,28 @@ function tileType(ix,iy){
   return value===2?'pillar':value===3||value===5?'gate':value===4?'secret':'wall';
 }
 const renderRegions=grid.map((row,y)=>row.map((_,x)=>regionAt(x,y)));
+const architecturalFaces = new Map();
+const floorDetails = grid.map(row => row.map(() => null));
+for (const [area, design] of Object.entries(VeilLighting.architecture)) {
+  const palettes = new Map();
+  const reliefs = new Map();
+  for (const [x, y, face, feature] of design.faces) {
+    if (!reliefs.has(feature)) {
+      const canvas = VeilArt.masonry(area, feature);
+      reliefs.set(feature, canvas.getContext('2d').getImageData(0,0,64,64).data);
+    }
+    architecturalFaces.set(`${x},${y},${face}`, reliefs.get(feature));
+  }
+  for (const [left, top, right, bottom, style] of design.strips) {
+    if (!palettes.has(style)) palettes.set(style, VeilLighting.architecturalFloor(area, style));
+    for (let y = top; y <= bottom; y++) {
+      for (let x = left; x <= right; x++) floorDetails[y][x] = palettes.get(style);
+    }
+  }
+}
+
 const areaLights = [
+  ...Object.values(VeilLighting.architecture).flatMap(design => design.lights),
   ...VeilExpedition.wings.flatMap(wing=>wing.props
     .filter(([, ,kind])=>kind==='brazier'||kind==='stainedglass'||kind==='fungus')
     .map(([x,y])=>[wing.x+x,wing.y+y,4.8,1.08])),
@@ -634,7 +655,7 @@ for(let y=0;y<H;y+=planeStride){
   for(let x=0;x<W;x+=planeStride){
     const ix=Math.floor(worldX), iy=Math.floor(worldY);
     const area=renderRegions[iy]?.[ix]??'crypt';
-    const layer=VeilLighting.surfaceColors[area][floor?0:1];
+    const layer=(floor && floorDetails[iy]?.[ix]) || VeilLighting.surfaceColors[area][floor?0:1];
     const texel=((Math.floor(worldY*32)&31)*32+(Math.floor(worldX*32)&31))*3;
     const light=distanceLight*(.57+(bakedLight[iy]?.[ix]||0)*.58);
     const r=layer[texel]*light, g=layer[texel+1]*light, b=layer[texel+2]*light;
@@ -663,7 +684,9 @@ for(let x=0;x<W;x+=stride){
   const area=renderRegions[my]?.[mx]??regionAt(mx,my), kind=tileType(mx,my);
   const eyeOpen=kind==='wall'&&watcherWalls.has(mx+','+my)&&
     (area==='chapel'&&player.relic||area==='sanctuary'&&(watching||bellRung));
-  const tex=eyeOpen?openedPixels[area]:wallPixels[area][kind];
+  const face=side===0?(rx>0?'w':'e'):(ry>0?'n':'s');
+  const relief=kind==='wall'&&architecturalFaces.get(`${mx},${my},${face}`);
+  const tex=eyeOpen?openedPixels[area]:relief||wallPixels[area][kind];
   let texX=(wallX*64)|0;
   if(side===0&&rx>0||side===1&&ry<0)texX=63-texX;
   const fixture=bakedLight[my-(side===1?Math.sign(ry):0)]?.[mx-(side===0?Math.sign(rx):0)]||0;
@@ -729,6 +752,11 @@ for(const [kind,color] of Object.entries({
   }
   sprite[kind]=canvas;
 }
+const architectureScenery = VeilLighting.landmarks.map(([x, y, region, kind, scale]) => {
+  const type = `architecture-${region}-${kind}`;
+  if (!sprite[type]) sprite[type] = VeilArt.landmark(region, kind);
+  return {x, y, type, scale};
+});
 sprite.bell=document.createElement('canvas');
 sprite.bell.width=72;sprite.bell.height=100;
 {
@@ -778,7 +806,7 @@ function worldSprite(x,y,type,scale=1,flash=0,frameImage=null){
   if(glow)ctx.filter='none';
 }
 const cryptWitness={x:3.05,y:16.2,type:'idol',scale:1.08};
-function drawSprites(){let v=[...scenery,...routeLandmarks,...annexScenery,player.relic?{...cryptWitness,x:5.9,y:17.15}:cryptWitness];
+function drawSprites(){let v=[...scenery,...routeLandmarks,...annexScenery,...architectureScenery,player.relic?{...cryptWitness,x:5.9,y:17.15}:cryptWitness];
 if(bellRung)v.push({x:28.35,y:14.4,type:'bell',scale:.7});for(const t of traps){const phase=trapPhase(t);if(phase!=='idle')v.push({...t,type:phase==='warning'?'trapWarning':'trapActive',scale:.28});}for(let e of enemies)if(e.alive)v.push({x:e.x,y:e.y,type:e.type,scale:e.type==='boss'?1.83:1.12,flash:e.flash,enemy:e});for(let o of objects)if(o.active&&!((o.kind==='key'&&player.key)||(o.kind==='relic'&&player.relic)||(o.kind==='loot'&&crimsonTaken)))v.push({...o,type:o.kind==='weapon'?'relic':o.kind,scale:o.kind==='passage'?1.42:o.kind==='exit'?1.35:.7});if(dropped)v.push({...dropped,type:'relic',scale:.5});v=v.filter(s=>Math.abs(s.x-player.x)<24&&Math.abs(s.y-player.y)<24);v.sort((a,b)=>dist(player,b)-dist(player,a));for(let s of v){let wobble=s.enemy?Math.sin(tick*(s.enemy.type==='wraith'?5.3:2.4)+s.enemy.x)*.033:0;
   let bob=s.enemy?(s.enemy.windup>0?-.09:Math.sin(tick*5+s.enemy.y)*.016):s.type==='torch'?Math.sin(tick*7+s.x)*.03:0;
   const art=s.enemy?.phase===2?watcherAwake:enemyFrames[s.type];
@@ -1123,5 +1151,5 @@ function safeSavePresent(){return saveReady;}
 if(saveWarning)$('save-status').textContent=saveWarning;
 if(saveReady)$('play').textContent=player.won?'VER EL DESENLACE':'CONTINUAR EL DESCENSO';
 // Read-only diagnostics for reproducible browser tests; no game-state mutation hooks.
-window.__ashenDiagnostics=()=>({version:'3.3.0',ownedWeapons:[...ownedWeapons],equippedWeapon,playing,paused,discoveries:[...discoveries],archiveChoice,mirrorPositions:{...mirrorPositions},awakening:enemies.filter(e=>e.alive&&e.waking>0).map(e=>e.id),objective:objectiveText(),bossDefeated,won:player.won,position:[+player.x.toFixed(2),+player.y.toFixed(2)],heading:player.ang,ending:player.won?(restoredEnding()?'restored':'first-light'):null, bellRung,shortcutOpen, hp:player.hp,stamina:+player.st.toFixed(1),mana:+player.mp.toFixed(1),zone:getZone(),enemiesAlive:enemies.filter(e=>e.alive).length,key:player.key,relic:player.relic,gate:player.gate,secret:player.secret,renderSize:[W,H],sceneryCount:scenery.length,echoes:echoesCollected.length,echoReward,sealsBroken:sealsBroken.length,sealsRemaining:objects.filter(o=>o.kind==='seal'&&o.active).length,zonesVisited:zonesVisited.length,echoLocations:objects.filter(o=>o.kind==='echo'&&o.active).length,textureCount:Object.values(textures).reduce((n,v)=>n+Object.keys(v).length,0)+Object.keys(awakeWall).length,region:regionAt(player.x,player.y),themedProps:scenery.filter(o=>['coffin','bonepile','fungus','roots','stainedglass','brazier'].includes(o.type)).length,animationFrames:[...Object.values(enemyFrames),watcherAwake].reduce((n,v)=>n+Object.values(v).reduce((m,a)=>m+a.length,0),0),enemyWindups:enemies.filter(e=>e.windup>0).length,enemyAttackPatterns:enemies.filter(e=>e.alive).map(e=>({id:e.id,kind:e.attackKind,attacks:e.attacksMade})),activeParticles:bladeSparks.filter(p=>p.life>0).length,trapCount:traps.length,activeTraps:traps.filter(t=>trapPhase(t)==='active').length,leverUsed,cacheOpened,tabletsRead:tabletsRead.length,artStyle:'retro-raycast-pixel',mapVisible:mapOn,savePresent:safeSavePresent()});
+window.__ashenDiagnostics=()=>({version:'3.4.0',ownedWeapons:[...ownedWeapons],equippedWeapon,playing,paused,discoveries:[...discoveries],archiveChoice,mirrorPositions:{...mirrorPositions},awakening:enemies.filter(e=>e.alive&&e.waking>0).map(e=>e.id),objective:objectiveText(),bossDefeated,won:player.won,position:[+player.x.toFixed(2),+player.y.toFixed(2)],heading:player.ang,ending:player.won?(restoredEnding()?'restored':'first-light'):null, bellRung,shortcutOpen, hp:player.hp,stamina:+player.st.toFixed(1),mana:+player.mp.toFixed(1),zone:getZone(),enemiesAlive:enemies.filter(e=>e.alive).length,key:player.key,relic:player.relic,gate:player.gate,secret:player.secret,renderSize:[W,H],sceneryCount:scenery.length,echoes:echoesCollected.length,echoReward,sealsBroken:sealsBroken.length,sealsRemaining:objects.filter(o=>o.kind==='seal'&&o.active).length,zonesVisited:zonesVisited.length,echoLocations:objects.filter(o=>o.kind==='echo'&&o.active).length,textureCount:Object.values(textures).reduce((n,v)=>n+Object.keys(v).length,0)+Object.keys(awakeWall).length,region:regionAt(player.x,player.y),themedProps:scenery.filter(o=>['coffin','bonepile','fungus','roots','stainedglass','brazier'].includes(o.type)).length,animationFrames:[...Object.values(enemyFrames),watcherAwake].reduce((n,v)=>n+Object.values(v).reduce((m,a)=>m+a.length,0),0),enemyWindups:enemies.filter(e=>e.windup>0).length,enemyAttackPatterns:enemies.filter(e=>e.alive).map(e=>({id:e.id,kind:e.attackKind,attacks:e.attacksMade})),activeParticles:bladeSparks.filter(p=>p.life>0).length,trapCount:traps.length,activeTraps:traps.filter(t=>trapPhase(t)==='active').length,leverUsed,cacheOpened,tabletsRead:tabletsRead.length,artStyle:'retro-raycast-pixel',mapVisible:mapOn,savePresent:safeSavePresent()});
 })();

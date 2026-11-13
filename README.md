@@ -1,4 +1,4 @@
-# ASHEN VEIL 404 — El peso del hierro v3.3.0
+# ASHEN VEIL 404 — Arquitectura del Velo v3.4.0
 
 Mazmorra de horror cósmico medieval en primera persona. Cinco zonas originales, cinco ramales de exploración, nueve encuentros y dos finales. La campana sumergida, los Ecos del Velo y los sellos alteran el desenlace.
 
@@ -31,7 +31,7 @@ En **Ajustes** puedes regular el volumen, reducir destellos y sacudidas, y activ
 
 Busca los pasadizos en la cripta, las catacumbas, la capilla, la nave y el santuario. En cada ramal, el mapa muestra su propio plano. El diario conserva las pistas que ya has escuchado y los objetos que has investigado. Puedes regresar por el mismo umbral. En pantallas táctiles, usa las flechas para desplazarte y los botones curvos para girar.
 
-Consulta [CAMBIOS.md](CAMBIOS.md) y [QA-v3.3.md](QA-v3.3.md). La duración de cuatro horas y el ritmo de una primera partida siguen pendientes.
+Consulta [CAMBIOS.md](CAMBIOS.md) y [QA-v3.4.md](QA-v3.4.md). La duración de cuatro horas y el ritmo de una primera partida siguen pendientes.
 
 ## Cambios de v3.1.1
 
@@ -135,3 +135,9 @@ Consulta `VALIDACION.md`. Para ejecutar pruebas de navegador necesitas Python, P
 - Cambia entre armas encontradas con **C**, el botón **Arma** en pantalla táctil o la **cruceta derecha** del mando. El arma equipada y las adquiridas se conservan en el guardado v2.
 
 El menú inicial adopta hierro ennegrecido, ceniza y un marco ritual. Los hallazgos se ubican en ramales que ya forman parte del recorrido.
+
+## Arquitectura del Velo · v3.4
+
+Desde la Cripta, sigue las losas hacia el pórtico funerario. En los ramales, la grúa de sal, el atril del Archivo, el árbol hueco, el contrapeso de Sondas y los espejos del observatorio funcionan como referencias visuales. Las marcas de altura son parte del dibujo del escenario; el motor usa un plano transitable.
+
+Las caras de muro, franjas de suelo, hitos y focos se configuran en `src/lighting.js`. Los relieves y siluetas se generan en `src/art.js` y se dibujan desde `src/game.js`.
