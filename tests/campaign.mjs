@@ -43,7 +43,7 @@ function game(storage = new Map(), canvasFactory = mockCanvas, isolated = false)
   };
   let frame, elapsed=0, pad;
   const isolatedHook=isolated?`
-    window.probe={grid,architecture:VeilLighting.architecture,architectureScenery,player,enemies,objects,los,canMove,attack,spell,trapPhase,startEnemyAttack,
+    window.probe={advanceSwing,cancelSwing,weaponPose,weaponTiming,grid,architecture:VeilLighting.architecture,architectureScenery,player,enemies,objects,los,canMove,attack,spell,trapPhase,startEnemyAttack,
       resolvesEnemyAttack,damagePlayer,interact,settings,swordPose,
       setTick:value=>{tick=value},stats:()=>({dropped,saveBlocked})};
   `:'';
@@ -62,8 +62,9 @@ function game(storage = new Map(), canvasFactory = mockCanvas, isolated = false)
   vm.runInContext(scripts.at(-1).replace('window.__ashenDiagnostics=',
     isolatedHook+'window.observe=()=>({enemies:enemies.map(({id,x,y,hp,alive})=>({id,x,y,hp,alive})),render,grid,objects});window.__ashenDiagnostics=')
     .replace('    render();',''),context);
+  const regionSeconds=new Map();
   const step=(seconds=.02)=>{
-    for(let i=0;i<Math.max(1,Math.round(seconds/.02));i++){elapsed+=20;frame(elapsed);}
+    for(let i=0;i<Math.max(1,Math.round(seconds/.02));i++){elapsed+=20;frame(elapsed);const {zone,paused}=context.__ashenDiagnostics();if(!paused)regionSeconds.set(zone,(regionSeconds.get(zone)||0)+.02);}
   };
   const key=(code, down)=>emit(down?'keydown':'keyup',{code,target:{tagName:'BODY'},preventDefault(){}});
   const tap=code=>{key(code,true);key(code,false);step();};
@@ -123,7 +124,7 @@ function game(storage = new Map(), canvasFactory = mockCanvas, isolated = false)
   };
   const start=()=>{emit('play:click');step();};
   const draw=()=>{context.observe().render();return node('screen');};
-  return {elapsed:()=>elapsed/1000,start,step,key,tap,walk,navigate,use,interact,fight,state,storage,node,draw,emit,aim,probe:context.probe,setPad:value=>{pad=value;}};
+  return {regionSeconds,elapsed:()=>elapsed/1000,start,step,key,tap,walk,navigate,use,interact,fight,state,storage,node,draw,emit,aim,probe:context.probe,setPad:value=>{pad=value;}};
 }
 
 function annex(g,id,actions,capture){
@@ -145,7 +146,7 @@ function route(restored, capture=()=>{}, makeGame=game, expanded=false) {
   let beforeReload=0;
   capture(g,'cripta');
   g.interact(4.8,17.3);
-  if(expanded)annex(g,'salt',['saltMason','saltEye','saltLow','saltCrane','saltPrint'],capture);
+  if(expanded)annex(g,'salt',['saltMason','saltEye','saltLow','saltCrane','saltPrint','saltReturn'],capture);
   if(restored){
     g.interact(3.3,21.4);
     g.interact(7.4,20.4);
@@ -186,6 +187,10 @@ function route(restored, capture=()=>{}, makeGame=game, expanded=false) {
     if(expanded){
       annex(g,'archive',['archiveClerk','archiveName','archiveBody','archiveKeep','archiveSeal'],capture);
       assert.equal(g.state().archiveChoice,'archiveKeep');
+      g.use('gardenIn');
+      g.use('gardenTestimony');
+      assert(g.state().discoveries.includes('gardenTestimony'));
+      g.use('gardenOut');
       g.navigate(22.6,21);
     }
     assert.equal(g.state().echoes,3);
@@ -197,7 +202,7 @@ function route(restored, capture=()=>{}, makeGame=game, expanded=false) {
     g.fight('bellKeeper',[27.7,17.3]);
     g.interact(28.35,14.4);
     assert(g.state().bellRung);
-    if(expanded)annex(g,'soundings',['soundingsGauge','soundingsIntake','soundingsBell','soundingsWeight','soundingsChart'],capture);
+    if(expanded)annex(g,'soundings',['soundingsGauge','soundingsIntake','soundingsBell','soundingsWeight','soundingsChart','soundingsSignal'],capture);
     g.walk(27.5,17.5);g.walk(25.5,17.5);
   }
   g.walk(19.5,14);
@@ -208,28 +213,35 @@ function route(restored, capture=()=>{}, makeGame=game, expanded=false) {
   for(let i=0;i<3;i++)g.tap('KeyL');
   g.tap('KeyK');
   beforeReload=g.elapsed();
+  const regions=new Map(g.regionSeconds);
   g=makeGame(g.storage);g.start();
   assert(g.state().gate&&g.state().key);
   if(restored)assert(g.state().bellRung&&g.state().shortcutOpen);
   if(restored){g.walk(19.5,7.45);g.aim(19.5,5.3);capture(g,'santuario');}
-  g.fight('boss',[19.5,7.45]);
-  assert(g.state().bossDefeated);
   if(expanded){
-    annex(g,'sky',['skyWatcher','skyDark','skyDark','skyLight','skyStar','skyLens'],capture);
+    annex(g,'sky',['skyWatcher','skyDark','skyDark','skyLight','skyStar','skyLens','skyWitness'],capture);
     g.navigate(19.5,3.2);
   }
+  g.navigate(19.5,7.45);
+  g.fight('boss',[19.5,7.45]);
+  assert(g.state().bossDefeated);
   g.interact(19.5,3.2);
   assert.equal(g.state().ending,restored?'restored':'first-light');
   const reload=makeGame(g.storage);reload.start();
   assert.equal(reload.state().ending,g.state().ending);
   assert.equal(reload.node('ending-title').textContent,g.node('ending-title').textContent);
   if(expanded){
-    assert.equal(reload.state().discoveries.length,25);
+    assert.equal(reload.state().discoveries.length,29);
     assert.equal(reload.state().archiveChoice,'archiveKeep');
+    assert.match(reload.node('ending-story').textContent,/La Jardinera oye/);
     assert.match(reload.node('ending-story').textContent,/estrella sigue clavada/);
     assert.equal(reload.state().mirrorPositions.skyDark,2);
     assert.equal(reload.state().mirrorPositions.skyLight,1);
-    console.log('Campaña ampliada: 25 hallazgos, cinco ramales, regreso y restauración del guardado');
+    console.log('Campaña ampliada: 29 hallazgos, cinco ramales, regreso y restauración del guardado');
+  }
+  if(expanded){
+    for(const [zone,seconds] of g.regionSeconds)regions.set(zone,(regions.get(zone)||0)+seconds);
+    console.log('Tiempo activo automatizado por zona: '+[...regions].map(([zone,t])=>zone+' '+t.toFixed(1)+' s').join(' | '));
   }
   console.log('Tiempo simulado de la ruta '+g.state().ending+': '+(beforeReload+g.elapsed()).toFixed(1)+' s');
   return g.state().ending;
@@ -293,10 +305,11 @@ assert(los(19.5,13,19.5,11.3));
 const e=enemies.find(e=>e.id==='w1'),boss=enemies.find(e=>e.id==='boss');
 const drowned=enemies.find(e=>e.id==='bellKeeper');
 Object.assign(e,{x:19.5,y:11.3});
-place(19.5,9.7,Math.PI/2);const opaqueHp=e.hp;attack(true);spell();
+place(19.5,9.7,Math.PI/2);const opaqueHp=e.hp;attack(true);check.probe.advanceSwing(.7);spell();
 assert.equal(e.hp,opaqueHp);
 Object.assign(e,{x:19.5,y:12.5});place(19.5,11.3,Math.PI/2);
-attack(true);assert.equal(p.st,62);assert(e.hp<opaqueHp);assert(e.stun>=.6);
+attack(true);assert.equal(p.st,62);assert.equal(e.hp,opaqueHp);
+check.probe.advanceSwing(.25);assert(e.hp<opaqueHp);assert(e.stun>=.6);
 startEnemyAttack(e,0,-1);assert.equal(e.attackKind,'slash');
 startEnemyAttack(e,0,-1);assert.equal(e.attackKind,'neck');
 place(19.5,11.3,Math.PI/2);p.block=true;
@@ -423,17 +436,21 @@ if(process.env.ASHEN_SWING_CAPTURE){
   const {createCanvas}=require(join(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES,'@napi-rs/canvas'));
   const directory=process.env.ASHEN_SWING_CAPTURE;
   mkdirSync(directory,{recursive:true});
-  for(const [name,key] of [['ligero','KeyH'],['fuerte','KeyJ']]){
-    const view=game(new Map(),()=>createCanvas(480,270));
-    view.start();
-    view.key(key,true);
-    for(let frame=0;frame<=12;frame++){
-      if(frame)view.step(.035);
-      writeFileSync(join(directory,`${name}-${String(frame).padStart(2,'0')}.png`),view.draw().toBuffer('image/png'));
+  for(const id of ['sword','spear','axe','needle']){
+    for(const [name,key] of [['ligero','KeyH'],['fuerte','KeyJ']]){
+      const save=new Map([[saveKey,JSON.stringify({version:2,x:5.4,y:19,ownedWeapons:[id],equippedWeapon:id})]]);
+      const view=game(save,()=>createCanvas(480,270),true);
+      view.start();
+      view.key(key,true);
+      const [contact,duration]=view.probe.weaponTiming[id][name==='fuerte'?'heavy':'light'];
+      for(const [label, delay] of [['inicio',0],['preparacion',contact-.045],['contacto',.065],['recuperacion',(duration-contact)*.55]]){
+        if(delay)view.step(delay);
+        writeFileSync(join(directory,`${id}-${name}-${label}.png`),view.draw().toBuffer('image/png'));
+      }
+      view.key(key,false);
     }
-    view.key(key,false);
   }
-  console.log('Light and heavy sword swing frames captured.');
+  console.log('Tajos y estocadas ligeros y fuertes de las cuatro armas capturados.');
 }
 
 const arsenal=game(new Map(),mockCanvas,true);arsenal.start();
@@ -473,3 +490,29 @@ for (const {x,y,type} of architectureScenery) {
 assert(canMove(5.4,19) && canMove(4.8,17.2), 'Losas y pórtico conservan el paso de la Cripta');
 console.log('Arquitectura: caras visibles, hitos en suelo y acceso al altar: OK');
 }
+
+const passageSave={version:2,x:41.5,y:13.5,discoveries:['saltReturn','saltPrint','saltCrane','saltLow'],
+  dropped:{x:41.5,y:13.5,amount:11}};
+const passage=game(new Map([[saveKey,JSON.stringify(passageSave)]]),mockCanvas,true);
+assert.deepEqual(Array.from(passage.state().position),[41.5,13.5]);
+assert.equal(passage.probe.stats().dropped.amount,11);
+console.log('Guardado y cenizas en compuerta abierta: OK');
+
+for(const id of ['sword','spear','axe','needle']){
+  const scenario=game(new Map([[saveKey,JSON.stringify({version:2,x:6.5,y:18.5,ownedWeapons:[id],equippedWeapon:id})]]),mockCanvas,true);
+  scenario.start();
+  const {player,enemies,attack,advanceSwing,weaponTiming}=scenario.probe;
+  const [target,second]=enemies;
+  for(const enemy of enemies)enemy.alive=false;
+  Object.assign(player,{ang:0,hurt:0});
+  for(const [enemy,x] of [[target,7.7],[second,8.05]])Object.assign(enemy,{x,y:18.5,alive:true,hp:200,windup:.52});
+  const [contact]=weaponTiming[id].light;
+  attack();
+  advanceSwing(contact-.01);
+  assert.equal(target.hp,200,id+' anticipa el impacto');
+  advanceSwing(.02);
+  assert(target.hp<200,id+' impacta');
+  assert.equal(second.hp<200,id==='sword'||id==='axe',id+' acierta los blancos previstos');
+  if(id==='needle')assert(target.hp<=162,'la Aguja aprovecha la preparación del ataque');
+}
+console.log('Cuatro armas: preparación, contacto, resonancia y selección de blancos: OK');

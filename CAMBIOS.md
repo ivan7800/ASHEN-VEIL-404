@@ -1,5 +1,13 @@
 # Cambios
 
+## 3.5.0 · La voz del umbral
+
+- Cuatro armas con contacto diferido, trayectorias y sonidos propios, y ventajas tácticas diferentes.
+- Defensa frontal del Carcelero, amago del Testigo y pista que amplía el aviso de onda del Vigía.
+- Nuevo atajo de Sal, rito opcional entre ramales, pistas locales y epílogos para las dos decisiones del Archivo.
+- Las compuertas se abren al restaurar el guardado antes de validar la posición y las cenizas.
+
+
 ## 3.4.0 · Arquitectura del Velo
 
 - Relieves orientados por cara de muro, losas e iluminación local en las diez zonas. El pórtico funerario de la Cripta marca el eje de entrada.

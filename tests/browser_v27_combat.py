@@ -4,7 +4,7 @@ from playwright.sync_api import sync_playwright
 from browser_runtime import launch
 root=Path(__file__).resolve().parent.parent
 html=(root/'JUGAR-SIN-INSTALAR.html').read_text()
-hook='window.__test27={player,enemies,startEnemyAttack,resolvesEnemyAttack,attack,hit,resetEnemies,los,damagePlayer};'
+hook='window.__test27={player,enemies,startEnemyAttack,resolvesEnemyAttack,attack,advanceSwing,hit,resetEnemies,los,damagePlayer};'
 assert 'window.__ashenDiagnostics=()=>(' in html
 html=html.replace('window.__ashenDiagnostics=()=>(',hook+'\nwindow.__ashenDiagnostics=()=>(')
 with sync_playwright() as p:
@@ -34,6 +34,8 @@ with sync_playwright() as p:
       // Avoid test collision with other enemies.
       for(const other of t.enemies)if(other!==e&&other!==boss)other.alive=false;
       t.attack(true);
+      if(e.hp!==e.maxhp)throw Error("El daño precede al contacto");
+      t.advanceSwing(.25);
       return {avoided,connected,type1,type2,bossFirst,bossSecond,stamina:p.st,stun:e.stun,hp:e.hp};
     }''')
     print(result)

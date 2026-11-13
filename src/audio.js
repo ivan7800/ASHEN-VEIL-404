@@ -121,10 +121,16 @@ const VeilAudio = (() => {
       case 'whisper': texture(910,.95,.18);tone(127,.88,'sine',.014,1.2);break;
     }
   }
+  const weaponTimbre={sword:[1780,196],spear:[2320,342],axe:[580,94],needle:[1280,473]};
+  function weapon(id,heavy,impact=false){
+    const [air,pitch]=weaponTimbre[id];
+    texture(impact?air*.39:air,heavy?.22:.12,impact?.25:.16);
+    if(impact||heavy||id==='needle')tone(pitch,impact?.19:.14,id==='needle'?'sine':'triangle',.036,impact?.54:1.28);
+  }
   const warningPitch={hollow:112,knight:248,wraith:305,drowned:91,boss:69};
   function warning(name,pan){
     const pitch=warningPitch[name]??140;
     tone(pitch,.65,name==='knight'?'triangle':'sine',.038,1.28,pan);
   }
-  return { begin, preferences, region, tone, cue, warning };
+  return { begin, preferences, region, tone, cue, warning, weapon };
 })();

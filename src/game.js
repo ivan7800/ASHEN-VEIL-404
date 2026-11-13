@@ -2,7 +2,7 @@
 const W=480,H=270,PI=Math.PI,TAU=PI*2,FOV=.73,SAVE='ashen-veil-rebirth-v2';
 const $=id=>document.getElementById(id),screen=$('screen'),ctx=screen.getContext('2d',{alpha:false});ctx.imageSmoothingEnabled=false;
 let warningUntil=0,hitFlashUntil=0;
-let tick=0,last=0,playing=false,paused=true,toastUntil=0,shake=0,attackAnim=0,spellAnim=0,injury=0,walkTime=0,mapOn=false;
+let tick=0,last=0,playing=false,paused=true,toastUntil=0,shake=0,spellAnim=0,injury=0,walkTime=0,mapOn=false;
 const keys=Object.create(null),rand=(x,y,s=0)=>{let n=Math.sin(x*127.1+y*311.7+s*81.3)*43758.5453;return n-Math.floor(n)},clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 const MAP_WIDTH=72, MAP_HEIGHT=66;
 const grid=Array.from({length:MAP_HEIGHT},()=>Array(MAP_WIDTH).fill(1));const carve=(x1,y1,x2,y2)=>{for(let y=y1;y<=y2;y++)for(let x=x1;x<=x2;x++)grid[y][x]=0};
@@ -49,7 +49,7 @@ const weaponFinds=[
 ];
 objects.push(...weaponFinds);
 let ownedWeapons=['sword'],equippedWeapon='sword';
-function equipNext(){if(!playing||paused)return;const i=ownedWeapons.indexOf(equippedWeapon);equippedWeapon=ownedWeapons[(i+1)%ownedWeapons.length];note('EQUIPADA: '+weapons[equippedWeapon].name,2.5);updateWeaponHud();save();}
+function equipNext(){if(!playing||paused||swing)return;const i=ownedWeapons.indexOf(equippedWeapon);equippedWeapon=ownedWeapons[(i+1)%ownedWeapons.length];note('EQUIPADA: '+weapons[equippedWeapon].name,2.5);updateWeaponHud();save();}
 function updateWeaponHud(){const slot=$('weapon-slot');if(slot)slot.textContent=weapons[equippedWeapon].short;}
 
 const encounterSigns={
@@ -292,6 +292,17 @@ function load(){
   if(shortcutOpen)grid[13][10]=0;
   if(player.gate)grid[10][19]=0;
   if(player.secret)grid[13][6]=0;
+  discoveries=uniqueIds(d.discoveries,VeilExpedition.stations.map(station=>station.id));
+  ownedWeapons=['sword',...uniqueIds(d.ownedWeapons,Object.keys(weapons)).filter(id=>id!=='sword')];
+  equippedWeapon=ownedWeapons.includes(d.equippedWeapon)?d.equippedWeapon:'sword';
+  updateWeaponHud();
+  for(const id of Object.keys(mirrorPositions)){
+    const direction=d.mirrorPositions?.[id];
+    mirrorPositions[id]=Number.isInteger(direction)&&direction>=0&&direction<mirrorDirections.length?direction:0;
+  }
+  archiveChoice=['archiveKeep','archiveErase'].find(id=>discoveries.includes(id))??null;
+  discoveries=discoveries.filter(id=>id!==(archiveChoice==='archiveKeep'?'archiveErase':'archiveKeep'));
+  updateAnnexBarriers();
   if(pairsAreValid(d.checkpoint))player.checkpoint=d.checkpoint;
   if(canMove(d.x,d.y)){
     player.x=d.x;player.y=d.y;
@@ -323,17 +334,6 @@ function load(){
   crimsonTaken=typeof d.crimsonTaken==='boolean'?d.crimsonTaken:player.maxflasks>(echoReward?4:3);
   sealsBroken=uniqueIds(d.sealsBroken,['seal1','seal2']);
   zonesVisited=uniqueIds(d.zonesVisited,zones);
-  discoveries=uniqueIds(d.discoveries,VeilExpedition.stations.map(station=>station.id));
-  ownedWeapons=['sword',...uniqueIds(d.ownedWeapons,Object.keys(weapons)).filter(id=>id!=='sword')];
-  equippedWeapon=ownedWeapons.includes(d.equippedWeapon)?d.equippedWeapon:'sword';
-  updateWeaponHud();
-  for(const id of Object.keys(mirrorPositions)){
-    const direction=d.mirrorPositions?.[id];
-    mirrorPositions[id]=Number.isInteger(direction)&&direction>=0&&direction<mirrorDirections.length?direction:0;
-  }
-  archiveChoice=['archiveKeep','archiveErase'].find(id=>discoveries.includes(id))??null;
-  discoveries=discoveries.filter(id=>id!==(archiveChoice==='archiveKeep'?'archiveErase':'archiveKeep'));
-  updateAnnexBarriers();
   const spent={
     chapelShortcut:shortcutOpen,floodBell:bellRung,lever:leverUsed,
     cache:!leverUsed||cacheOpened,key:player.key,relic:player.relic,flask:crimsonTaken,
@@ -353,23 +353,64 @@ load();
 function damagePlayer(d,source=null){if(player.roll>0||player.hurt>0)return;const facing=source&&Math.abs(turnDelta(Math.atan2(source.y-player.y,source.x-player.x)-player.ang))<1.19;
 let block=player.block&&facing&&player.st>=15;if(block){d=Math.ceil(d*.22);player.st=Math.max(0,player.st-15);note('BLOQUEO');VeilAudio.cue('block');}player.hp=Math.max(0,player.hp-d);player.hurt=.65;injury=.9;shake=.12;sparkBurst(player.x,player.y,'#bd5775',12);beep(96,.18,'sawtooth',.04);if(player.hp<=0){showDeath();dropped={x:player.x,y:player.y,amount:player.ashes};player.ashes=0;player.hp=player.maxhp;player.st=100;player.mp=60;player.flasks=player.maxflasks;player.x=player.checkpoint[0];player.y=player.checkpoint[1];player.ang=-PI/2;restoreAfterDeath();note('HAS MUERTO — LAS CENIZAS ESPERAN EN TU TUMBA',5);save();}}
 const beep=VeilAudio.tone;
-let heavySwing=false;
+// Impact time is shared by the damage check, the pose and the contact sound.
+const weaponTiming={
+ sword:{light:[.13,.39],heavy:[.25,.66]},
+ spear:{light:[.19,.48],heavy:[.29,.67]},
+ axe:{light:[.28,.61],heavy:[.43,.88]},
+ needle:{light:[.22,.51],heavy:[.34,.76]},
+};
+let swing=null;
 function attack(heavy=false){
- const w=weapons[equippedWeapon],cost=heavy?w.heavyStamina:w.stamina;
- if(!playing||paused||player.attackCd>0||player.st<cost||player.roll>0)return;
- player.st-=cost;player.attackCd=heavy?w.heavyCool:w.cool;attackAnim=.46;heavySwing=heavy;shake=.025;
- VeilAudio.cue(heavy?'heavy':'light');let hits=0;
- for(const e of enemies){if(!e.alive)continue;
-   const d=dist(player,e),a=Math.atan2(e.y-player.y,e.x-player.x)-player.ang;
-   const delta=Math.atan2(Math.sin(a),Math.cos(a));
-   if(d<(heavy?w.heavyReach:w.reach)&&Math.abs(delta)<(heavy?w.heavyArc:w.arc)&&los(player.x,player.y,e.x,e.y)){
-     hit(e,(heavy?w.heavyDamage:w.damage)+player.lv*(heavy?8:6),heavy||equippedWeapon==='axe');hits++;
-   }
- }
- if(hits){VeilAudio.cue('impact');hitFlashUntil=tick+.17;}
+ const id=equippedWeapon,w=weapons[id],cost=heavy?w.heavyStamina:w.stamina;
+ if(!playing||paused||swing||player.attackCd>0||player.st<cost||player.roll>0)return;
+ player.st-=cost;
+ player.attackCd=heavy?w.heavyCool:w.cool;
+ const [contact,duration]=weaponTiming[id][heavy?'heavy':'light'];
+ swing={id,heavy,age:0,contact,duration};
+ VeilAudio.weapon(id,heavy);
 }
 
-function hit(e,damage,heavy=false,magic=false){if(!heavy&&e.type==='knight'&&e.guard>0){damage=Math.ceil(damage*.45);note('EL CABALLERO RESISTE TU GOLPE',1.1);}if(e.type==='wraith'&&magic){
+function advanceSwing(dt){
+ if(!swing)return;
+ const before=swing.age;
+ swing.age+=dt;
+ if(before<swing.contact&&swing.age>=swing.contact)resolveSwing(swing);
+ if(swing&&swing.age>=swing.duration)swing=null;
+}
+
+function cancelSwing(){
+ swing=null;
+}
+
+function resolveSwing({id,heavy}){
+ const w=weapons[id],reach=heavy?w.heavyReach:w.reach,arc=heavy?w.heavyArc:w.arc;
+ const targets=enemies.filter(e=>{
+   if(!e.alive||dist(player,e)>=reach)return false;
+   const direction=Math.atan2(e.y-player.y,e.x-player.x)-player.ang;
+   return Math.abs(turnDelta(direction))<arc&&los(player.x,player.y,e.x,e.y);
+ }).sort((a,b)=>dist(player,a)-dist(player,b));
+ // The thrust and the needle pick a single target. The axe commits to a broad sweep.
+ const cleaves=id==='axe'||id==='sword';
+ for(const [index,e] of (cleaves?targets:targets.slice(0,1)).entries()){
+   let damage=(heavy?w.heavyDamage:w.damage)+player.lv*(heavy?8:6);
+   const spearTip=id==='spear'&&dist(player,e)>reach*.68;
+   const resonance=id==='needle'&&e.windup>0;
+   if(spearTip)damage+=8;
+   if(resonance)damage+=12;
+   hit(e,Math.round(damage*(index>0?.72:1)),heavy||id==='axe'||spearTip,id==='needle');
+   if(resonance)note('LA AGUJA ENCUENTRA LA RESONANCIA',1.2);
+ }
+ if(targets.length){VeilAudio.weapon(id,heavy,true);hitFlashUntil=tick+.17;}
+}
+
+function hit(e,damage,heavy=false,magic=false){if(!heavy&&e.type==='knight'&&e.guard>0&&!magic&&Math.abs(turnDelta(Math.atan2(player.y-e.y,player.x-e.x)-e.facing))<1.05){
+  e.hp=Math.max(1,e.hp-Math.ceil(damage*.35));
+  e.flash=.12;
+  VeilAudio.cue('block');
+  note('EL CARCELERO AGUANTA · BUSCA SU COSTADO O ROMPE LA GUARDIA',1.5);
+  return;
+}if(e.type==='wraith'&&magic){
   const lit=(bakedLight[Math.floor(e.y)]?.[Math.floor(e.x)]||0)>.26;
   damage=Math.round(damage*(lit||e.windup>0?1.28:.82));
 }
@@ -396,6 +437,7 @@ function enterPassage(passage){
   [player.x,player.y]=passage.to;
   player.ang=passage.angle;
   player.roll=0;
+  cancelSwing();
   VeilAudio.cue('threshold');
   discoverZone();
   save();
@@ -421,6 +463,7 @@ function readDiscovery(station){
     return;
   }
   const missing=station.requires.find(id=>!discoveries.includes(id));
+  if(station.id==='gardenTestimony'&&!archiveChoice){note('La silla espera el acta del Archivo de los Ausentes.',6);return;}
   if(missing){
     const clue=VeilExpedition.stations.find(entry=>entry.id===missing);
     note('Queda algo por hacer cerca de «'+clue.label.toLowerCase()+'».',6);
@@ -430,11 +473,13 @@ function readDiscovery(station){
     note(archiveChoice==='archiveKeep'?'La Archivera saluda por tu nombre. El sello quedó en la sala de poniente.':'La silla está vacía. La copia sin nombre espera en la sala de levante.',8);
     return;
   }
-  note(station.text,8);
+  note(station.id==='skyWitness'&&archiveChoice==='archiveErase'?'La lente reconoce el hueco del acta. El Vigía tarda más en cerrar el ojo.':station.text,8);
   if(discoveries.includes(station.id))return;
   discoveries.push(station.id);
   updateAnnexBarriers();
   if(station.choice)archiveChoice=station.id;
+  if(station.id==='soundingsSignal')VeilAudio.cue('drowned');
+  if(station.id==='skyWitness')VeilAudio.cue('star');
   player.ashes+=station.reward;
   VeilAudio.cue(station.reward?'threshold':'whisper');
   save();
@@ -472,6 +517,10 @@ function startEnemyAttack(e,dx,dy){
     e.attackArc=e.attackKind==='ring'?PI:e.attackKind==='lunge'?.42:1.05;
     e.attackMin=e.attackKind==='ring'?1.35:0;
     e.attackDamage=e.damage*(e.phase===2?1.26:1);
+    if(e.attackKind==='ring'&&discoveries.includes('skyWitness')){
+      e.windup+=.28;
+      VeilAudio.cue('star');
+    }
     const warning={lunge:'EL VIGÍA FIJA SU ESTOCADA',cleave:'EL VIGÍA PREPARA UN BARRIDO',ring:'ONDA DEL UMBRAL · ACÉRCATE O RETROCEDE'};
     note(warning[e.attackKind],1.12);
   }else if(e.type==='knight'){
@@ -480,8 +529,9 @@ function startEnemyAttack(e,dx,dy){
     e.attackDamage=e.damage;e.guard=.52;
     note(odd?'EL CARCELERO ALZA SU ESPADA':'EL CARCELERO APUNTA UNA ESTOCADA',1);
   }else if(e.type==='wraith'){
-    e.attackKind='lunge';e.windup=.56;e.attackReach=1.83;e.attackArc=.58;e.attackDamage=e.damage;
-    note('EL TESTIGO ABRE SUS OJOS',.8);
+    e.attackKind=odd?'lunge':'feint';
+    e.windup=odd?.60:.91;e.attackReach=odd?1.83:2.36;e.attackArc=odd?.58:.34;e.attackDamage=e.damage;
+    note(odd?'EL TESTIGO ABRE SUS OJOS':'EL TESTIGO SE REPLIEGA ANTES DE LANZARSE',1);
   }else if(e.type==='drowned'){
     e.attackKind=odd?'chime':'lunge';e.windup=odd?1.09:.72;
     e.attackReach=odd?2.7:1.88;e.attackArc=odd?PI:.5;
@@ -560,6 +610,7 @@ function enemyLogic(dt){
     const speed=e.type==='wraith'?1.16:e.type==='boss'?(e.phase===2?1.02:.75):e.type==='knight'?.67:
       e.type==='drowned'?.87+Math.sin(tick*5)*.28:.82;
     if(e.windup<=0&&e.attackPose<=0&&d<9){
+      if(visible)e.facing=Math.atan2(dy,dx);
       if(!visible){
         if(e.type!=='boss'&&e.type!=='drowned')pursueAroundWall(e,dt,speed);
       }else if(e.type==='wraith'&&d<3.4){
@@ -840,24 +891,63 @@ function swordPose(progress,heavy){
   return {x:-reach*cut+reach*.9*reset,y:10*cut+38*reset,
     rotation:-.18-(heavy?.82:.68)*cut+(heavy?1.04:.9)*reset};
 }
+function weaponPose(id, progress, heavy){
+  const defaultPose=swordPose(progress,heavy);
+  const extension=Math.sin(progress*PI);
+  if(id==='spear')return {x:-72*extension,y:-33*extension,rotation:-.18-.62*extension};
+  if(id==='needle')return {x:-49*extension,y:23*extension,rotation:-.18-.31*extension};
+  if(id==='axe')return {x:defaultPose.x*.82,y:defaultPose.y-48*extension,rotation:defaultPose.rotation-.28*extension};
+  return defaultPose;
+}
+
 function drawEffects(){let bob=settings.quiet?0:Math.sin(walkTime*11)*Math.min(3.8,player.step*10);
-const progress=1-attackAnim/.46;
-const pose=attackAnim>0?swordPose(progress,heavySwing):{x:0,y:0,rotation:-.18};
-const slash=attackAnim>0?Math.sin(progress*PI)*(settings.quiet?.22:.47):0;
-const weapon=weapons[equippedWeapon];
+const progress=swing?(swing.age<swing.contact
+  ? .52*swing.age/swing.contact
+  : .52+.48*(swing.age-swing.contact)/(swing.duration-swing.contact)):0;
+const id=swing?.id??equippedWeapon,heavySwing=swing?.heavy??false;
+const pose=swing?weaponPose(id,progress,heavySwing):{x:0,y:0,rotation:-.18};
+const slash=swing?Math.max(0,1-Math.abs(progress-.52)*5)*(settings.quiet?.19:.47):0;
+const weapon=weapons[id];
 ctx.save();ctx.translate(W*.76+pose.x,H*.81+bob+pose.y);
-ctx.rotate(pose.rotation);ctx.fillStyle='#14121e';ctx.beginPath();ctx.ellipse(30,75,80,61,0,0,TAU);ctx.fill();ctx.fillStyle='#4a3b4b';ctx.fillRect(8,15,28,55);ctx.fillStyle='#8c7180';ctx.fillRect(17,12,12,47);ctx.beginPath();ctx.moveTo(10,5);ctx.lineTo(10,-126);ctx.lineTo(18,-153);
-ctx.lineTo(25,-126);ctx.lineTo(25,5);ctx.closePath();
-const steel=ctx.createLinearGradient(10,0,25,0);
-steel.addColorStop(0,'#e7d8ce');steel.addColorStop(.28,'#8d8495');
-steel.addColorStop(.58,'#50485e');steel.addColorStop(1,'#bdb2b9');
-ctx.fillStyle=steel;ctx.fill();
-if(equippedWeapon==='spear'||equippedWeapon==='needle'){ctx.fillStyle=weapon.color;ctx.fillRect(15,-158,5,205);ctx.fillRect(10,-158,15,11);}
-if(equippedWeapon==='axe'){ctx.fillStyle=weapon.color;ctx.fillRect(-20,-132,70,32);ctx.fillRect(-25,-122,12,20);}
-ctx.fillStyle='#a78992';ctx.fillRect(16,-126,2,115);
-ctx.fillStyle='#6e515f';ctx.fillRect(1,1,33,7);
-ctx.fillStyle='#c9a38a';ctx.fillRect(8,0,20,2);
-ctx.fillStyle='#887180';ctx.fillRect(15,8,7,40);ctx.restore();if(slash>0){ctx.strokeStyle=weapon.color;ctx.globalAlpha=slash;ctx.lineWidth=3;ctx.beginPath();ctx.arc(W*.53,H*.64,heavySwing?127:102,-2.83+progress*.9,-.65+progress*.65);ctx.stroke();ctx.globalAlpha=1;}if(player.block){ctx.fillStyle='rgba(32,29,42,.9)';ctx.beginPath();ctx.moveTo(0,H*.47);ctx.lineTo(85,H*.38);ctx.lineTo(126,H*.71);ctx.lineTo(65,H);ctx.lineTo(0,H);ctx.fill();ctx.strokeStyle='#8a7785';ctx.lineWidth=6;ctx.stroke();}if(spellAnim>0){let r=28+(1-spellAnim/.65)*55;ctx.strokeStyle=`rgba(176,131,244,${spellAnim/.65*.7})`;ctx.lineWidth=4;ctx.beginPath();ctx.arc(W*.5,H*.5,r,0,TAU);ctx.stroke();}if(injury>0){ctx.fillStyle=`rgba(105,15,31,${injury*(settings.quiet?.075:.24)})`;ctx.fillRect(0,0,W,H);} }
+ctx.rotate(pose.rotation);
+ctx.fillStyle='#14121e';ctx.beginPath();ctx.ellipse(30,75,80,61,0,0,TAU);ctx.fill();
+ctx.fillStyle='#4a3b4b';ctx.fillRect(11,12,22,56);
+ctx.fillStyle='#8c7180';ctx.fillRect(18,14,7,44);
+if(id==='sword'){
+  ctx.beginPath();ctx.moveTo(10,5);ctx.lineTo(10,-126);ctx.lineTo(18,-153);
+  ctx.lineTo(25,-126);ctx.lineTo(25,5);ctx.closePath();
+  const steel=ctx.createLinearGradient(10,0,25,0);
+  steel.addColorStop(0,'#e7d8ce');steel.addColorStop(.28,'#8d8495');
+  steel.addColorStop(.58,'#50485e');steel.addColorStop(1,'#bdb2b9');
+  ctx.fillStyle=steel;ctx.fill();
+  ctx.fillStyle='#a78992';ctx.fillRect(16,-126,2,115);
+  ctx.fillStyle='#6e515f';ctx.fillRect(1,1,33,7);
+}else{
+  ctx.fillStyle='#5b474f';ctx.fillRect(15,-126,9,151);
+  ctx.fillStyle=weapon.color;
+  ctx.beginPath();
+  if(id==='axe'){
+    ctx.moveTo(22,-127);ctx.lineTo(-8,-143);ctx.lineTo(-29,-135);
+    ctx.lineTo(-37,-102);ctx.lineTo(-22,-91);ctx.lineTo(22,-99);
+  }else{
+    const width=id==='spear'?10:4;
+    ctx.moveTo(19,-161);ctx.lineTo(19+width,-132);ctx.lineTo(19,-111);ctx.lineTo(19-width,-132);
+  }
+  ctx.closePath();ctx.fill();
+  ctx.fillStyle='#e7d8ce';ctx.fillRect(18,-131,2,16);
+  if(id==='needle'){ctx.strokeStyle=weapon.color;ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(19,-125,10,7,0,0,TAU);ctx.stroke();}
+}
+ctx.restore();
+if(slash>0){
+  ctx.strokeStyle=weapon.color;ctx.globalAlpha=slash;ctx.lineWidth=2;ctx.beginPath();
+  if(id==='spear'||id==='needle'){
+    ctx.moveTo(W*.62,H*.67);ctx.lineTo(W*.5,H*.51);
+  }else{
+    ctx.arc(W*.53,H*.64,heavySwing?127:102,-2.83+progress*.9,-.65+progress*.65);
+  }
+  ctx.stroke();ctx.globalAlpha=1;
+}
+if(player.block){ctx.fillStyle='rgba(32,29,42,.9)';ctx.beginPath();ctx.moveTo(0,H*.47);ctx.lineTo(85,H*.38);ctx.lineTo(126,H*.71);ctx.lineTo(65,H);ctx.lineTo(0,H);ctx.fill();ctx.strokeStyle='#8a7785';ctx.lineWidth=6;ctx.stroke();}if(spellAnim>0){let r=28+(1-spellAnim/.65)*55;ctx.strokeStyle=`rgba(176,131,244,${spellAnim/.65*.7})`;ctx.lineWidth=4;ctx.beginPath();ctx.arc(W*.5,H*.5,r,0,TAU);ctx.stroke();}if(injury>0){ctx.fillStyle=`rgba(105,15,31,${injury*(settings.quiet?.075:.24)})`;ctx.fillRect(0,0,W,H);} }
 const moteField=Array.from({length:65},(_,i)=>({x:rand(i,3)*W,y:rand(i,4)*H,s:.5+rand(i,6)*2.4,z:rand(i,8)}));
 function drawAtmosphere(){
   // A subtle animated veil: dust and drifting sparks, rendered below the weapon.
@@ -935,19 +1025,33 @@ function getZone(){
   if(x<12&&y<13)return zones[2];
   return x>14?zones[1]:zones[0];
 }
-function objectiveText(){if(player.won)return 'MAZMORRA COMPLETADA';if(!player.key)return 'OBJETIVO: ENCUENTRA LA LLAVE DE HUESO';if(!player.gate)return 'OBJETIVO: ABRE LA PUERTA DEL SANTUARIO';if(!bossDefeated)return `OBJETIVO: DERROTA AL VIGÍA · SELLOS ${sealsBroken.length}/2 (OPCIONALES)`;return 'OBJETIVO: ALCANZA EL SELLO DEL AMANECER · ECOS '+echoesCollected.length+'/3';}
+function objectiveText(){
+ const area=regionAt(player.x,player.y);
+ const trail={
+   salt:['saltPrint','Busca la impronta. La grúa señala dónde dejó su carga.','Hay un torno al este que vuelve al patio.'],
+   archive:['archiveKeep','Lee ambas copias antes de decidir qué queda en el acta.','La silla del Huerto espera el acta.'],
+   garden:['gardenFruit','Escucha los dos árboles. El fruto responde a sus voces.','Lleva el acta a la silla.'],
+   soundings:['soundingsChart','Equilibra el contrapeso para llegar a la carta.','El timbre puede devolver la voz de la silla.'],
+   sky:['skyLens','Alinea los espejos y reúne la carta de mareas.','El visor puede revelar la respuesta de Sondas.'],
+ }[area];
+ if(trail&&!player.won){
+   const done=discoveries.includes(trail[0])||(area==='archive'&&archiveChoice);
+   return done?trail[2]:trail[1];
+ }
+if(player.won)return 'MAZMORRA COMPLETADA';if(!player.key)return 'OBJETIVO: ENCUENTRA LA LLAVE DE HUESO';if(!player.gate)return 'OBJETIVO: ABRE LA PUERTA DEL SANTUARIO';if(!bossDefeated)return `OBJETIVO: DERROTA AL VIGÍA · SELLOS ${sealsBroken.length}/2 (OPCIONALES)`;return 'OBJETIVO: ALCANZA EL SELLO DEL AMANECER · ECOS '+echoesCollected.length+'/3';}
 function hud(){
   const nearest=enemies.filter(e=>e.alive&&dist(player,e)<5&&
     Math.abs(turnDelta(Math.atan2(e.y-player.y,e.x-player.x)-player.ang))<.62&&los(player.x,player.y,e.x,e.y))
     .sort((a,b)=>dist(player,a)-dist(player,b))[0];$('target').hidden=!nearest;if(nearest){$('targetname').textContent=creatureNames[nearest.type];$('targetbar').style.width=100*nearest.hp/nearest.maxhp+'%';}$('hpbar').style.width=100*player.hp/player.maxhp+'%';$('stbar').style.width=player.st+'%';$('mpbar').style.width=player.mp/60*100+'%';$('ashes').textContent=player.ashes;$('flasks').textContent=player.flasks;$('spellcount').textContent=Math.floor(player.mp/25);$('location').textContent=getZone();$('objective').textContent=objectiveText();let b=enemies.find(e=>e.type==='boss');$('bossbar').hidden=!(b.alive&&b.alert&&getZone()===zones[3]);$('bossfill').style.width=100*b.hp/b.maxhp+'%';let o=nearObject();$('interact').hidden=!o;$('interact').textContent=o?`${coarsePointer?.matches?'':'[ E ]  '}${o.label.toUpperCase()}`:'';if(toastUntil<tick)$('toast').style.opacity='0';if(warningUntil<tick)$('encounter-warning').hidden=true;if(mapOn)drawMap();}
 let stepBeat=0,nextDrip=6;
-function update(dt){tick+=dt;if(tick<hitFlashUntil)$('reticle').classList.add('hit');else $('reticle').classList.remove('hit');player.attackCd=Math.max(0,player.attackCd-dt);player.spellCd=Math.max(0,player.spellCd-dt);player.hurt=Math.max(0,player.hurt-dt);player.roll=Math.max(0,player.roll-dt);attackAnim=Math.max(0,attackAnim-dt);spellAnim=Math.max(0,spellAnim-dt);injury=Math.max(0,injury-dt*2);shake=Math.max(0,shake-dt*.7);let fx=Math.cos(player.ang),fy=Math.sin(player.ang),sx=-fy,sy=fx;let [forward,strafe]=moveInput(),mag=Math.hypot(forward,strafe);player.block=!!keys.MouseRight||padBlock||touchBlock;player.ang+=touchLook*dt*1.95;if(keys.ArrowLeft)player.ang-=dt*1.75;if(keys.ArrowRight)player.ang+=dt*1.75;player.ang=turnDelta(player.ang);let sprint=(keys.ShiftLeft||keys.ShiftRight||padSprint)&&player.st>3&&mag>0&&!player.block,spd=player.roll>0?5.7:sprint?3.8:player.block?1.05:2.4;if(player.roll>0){forward=player.rollDir?.[0]??forward;strafe=player.rollDir?.[1]??strafe;mag=Math.hypot(forward,strafe);}if(mag>0){let dx=(fx*forward+sx*strafe)/Math.max(1,mag)*spd*dt,dy=(fy*forward+sy*strafe)/Math.max(1,mag)*spd*dt;const ox=player.x,oy=player.y;
+function update(dt){tick+=dt;if(tick<hitFlashUntil)$('reticle').classList.add('hit');else $('reticle').classList.remove('hit');player.attackCd=Math.max(0,player.attackCd-dt);player.spellCd=Math.max(0,player.spellCd-dt);player.hurt=Math.max(0,player.hurt-dt);player.roll=Math.max(0,player.roll-dt);spellAnim=Math.max(0,spellAnim-dt);injury=Math.max(0,injury-dt*2);shake=Math.max(0,shake-dt*.7);let fx=Math.cos(player.ang),fy=Math.sin(player.ang),sx=-fy,sy=fx;let [forward,strafe]=moveInput(),mag=Math.hypot(forward,strafe);player.block=!!keys.MouseRight||padBlock||touchBlock;player.ang+=touchLook*dt*1.95;if(keys.ArrowLeft)player.ang-=dt*1.75;if(keys.ArrowRight)player.ang+=dt*1.75;player.ang=turnDelta(player.ang);let sprint=(keys.ShiftLeft||keys.ShiftRight||padSprint)&&player.st>3&&mag>0&&!player.block,spd=player.roll>0?5.7:sprint?3.8:player.block?1.05:2.4;if(player.roll>0){forward=player.rollDir?.[0]??forward;strafe=player.rollDir?.[1]??strafe;mag=Math.hypot(forward,strafe);}if(mag>0){let dx=(fx*forward+sx*strafe)/Math.max(1,mag)*spd*dt,dy=(fy*forward+sy*strafe)/Math.max(1,mag)*spd*dt;const ox=player.x,oy=player.y;
 move(player,dx,dy);
 stepBeat+=Math.hypot(player.x-ox,player.y-oy);
 if(stepBeat>(sprint?.94:.81)){
   VeilAudio.cue(['nave','soundings'].includes(regionAt(player.x,player.y))?'wetStep':'step');stepBeat=0;
 }
 walkTime+=dt*(sprint?1.7:1);player.step=Math.min(1,player.step+dt*6);}else player.step=Math.max(0,player.step-dt*6);if(sprint)player.st=Math.max(0,player.st-19*dt);else if(!player.block&&player.attackCd<.38)player.st=Math.min(100,player.st+24*dt);player.mp=Math.min(60,player.mp+(discoveries.includes('gardenFruit')?3.6:3)*dt);for(const p of bladeSparks){p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=Math.max(.1,1-dt*4);p.vy*=Math.max(.1,1-dt*4);}
+ advanceSwing(dt);
  bladeSparks=bladeSparks.filter(p=>p.life>0);
  updateTraps(dt);
  if(!paused)discoverZone();
@@ -994,6 +1098,7 @@ function lockPointer(){
   try{screen.requestPointerLock?.()?.catch(()=>{});}catch{}
 }
 function showDeath(){
+  cancelSwing();
   paused=true;
   $('death').classList.remove('hidden');
   document.exitPointerLock?.();
@@ -1012,6 +1117,9 @@ function showEnding(){
   $('ending-story').textContent=good
     ?'La campana devuelve sus nombres a los muertos. Los tres ecos cruzan el umbral y la luz regresa a las criptas.'
     :'El Vigía ha caído y el camino vuelve a abrirse. Bajo la piedra aún queda una voz que nadie ha llamado.';
+  if(archiveChoice==='archiveKeep')$('ending-story').textContent+=' Sobre el acta queda tu nombre, junto a los de quienes regresaron.';
+  if(archiveChoice==='archiveErase')$('ending-story').textContent+=' El acta deja un renglón en blanco. Por fin nadie puede llamarte desde abajo.';
+  if(discoveries.includes('skyWitness'))$('ending-story').textContent+=' La Jardinera oye la respuesta y se levanta de su silla.';
   if(discoveries.includes('skyLens'))$('ending-story').textContent+=' Al otro lado, la estrella sigue clavada.';
   $('ending').classList.remove('hidden');document.exitPointerLock?.();$('again').focus();
 }
@@ -1039,6 +1147,7 @@ function moveInput(){
 }
 function dodge(){
   if(!playing||paused||player.roll>0||player.st<27)return;
+  cancelSwing();
   player.st-=27;player.roll=.33;
   player.rollDir=moveInput();
   const magnitude=Math.hypot(...player.rollDir);
@@ -1151,5 +1260,5 @@ function safeSavePresent(){return saveReady;}
 if(saveWarning)$('save-status').textContent=saveWarning;
 if(saveReady)$('play').textContent=player.won?'VER EL DESENLACE':'CONTINUAR EL DESCENSO';
 // Read-only diagnostics for reproducible browser tests; no game-state mutation hooks.
-window.__ashenDiagnostics=()=>({version:'3.4.0',ownedWeapons:[...ownedWeapons],equippedWeapon,playing,paused,discoveries:[...discoveries],archiveChoice,mirrorPositions:{...mirrorPositions},awakening:enemies.filter(e=>e.alive&&e.waking>0).map(e=>e.id),objective:objectiveText(),bossDefeated,won:player.won,position:[+player.x.toFixed(2),+player.y.toFixed(2)],heading:player.ang,ending:player.won?(restoredEnding()?'restored':'first-light'):null, bellRung,shortcutOpen, hp:player.hp,stamina:+player.st.toFixed(1),mana:+player.mp.toFixed(1),zone:getZone(),enemiesAlive:enemies.filter(e=>e.alive).length,key:player.key,relic:player.relic,gate:player.gate,secret:player.secret,renderSize:[W,H],sceneryCount:scenery.length,echoes:echoesCollected.length,echoReward,sealsBroken:sealsBroken.length,sealsRemaining:objects.filter(o=>o.kind==='seal'&&o.active).length,zonesVisited:zonesVisited.length,echoLocations:objects.filter(o=>o.kind==='echo'&&o.active).length,textureCount:Object.values(textures).reduce((n,v)=>n+Object.keys(v).length,0)+Object.keys(awakeWall).length,region:regionAt(player.x,player.y),themedProps:scenery.filter(o=>['coffin','bonepile','fungus','roots','stainedglass','brazier'].includes(o.type)).length,animationFrames:[...Object.values(enemyFrames),watcherAwake].reduce((n,v)=>n+Object.values(v).reduce((m,a)=>m+a.length,0),0),enemyWindups:enemies.filter(e=>e.windup>0).length,enemyAttackPatterns:enemies.filter(e=>e.alive).map(e=>({id:e.id,kind:e.attackKind,attacks:e.attacksMade})),activeParticles:bladeSparks.filter(p=>p.life>0).length,trapCount:traps.length,activeTraps:traps.filter(t=>trapPhase(t)==='active').length,leverUsed,cacheOpened,tabletsRead:tabletsRead.length,artStyle:'retro-raycast-pixel',mapVisible:mapOn,savePresent:safeSavePresent()});
+window.__ashenDiagnostics=()=>({version:'3.5.0',ownedWeapons:[...ownedWeapons],equippedWeapon,playing,paused,discoveries:[...discoveries],archiveChoice,mirrorPositions:{...mirrorPositions},awakening:enemies.filter(e=>e.alive&&e.waking>0).map(e=>e.id),objective:objectiveText(),bossDefeated,won:player.won,position:[+player.x.toFixed(2),+player.y.toFixed(2)],heading:player.ang,ending:player.won?(restoredEnding()?'restored':'first-light'):null, bellRung,shortcutOpen, hp:player.hp,stamina:+player.st.toFixed(1),mana:+player.mp.toFixed(1),zone:getZone(),enemiesAlive:enemies.filter(e=>e.alive).length,key:player.key,relic:player.relic,gate:player.gate,secret:player.secret,renderSize:[W,H],sceneryCount:scenery.length,echoes:echoesCollected.length,echoReward,sealsBroken:sealsBroken.length,sealsRemaining:objects.filter(o=>o.kind==='seal'&&o.active).length,zonesVisited:zonesVisited.length,echoLocations:objects.filter(o=>o.kind==='echo'&&o.active).length,textureCount:Object.values(textures).reduce((n,v)=>n+Object.keys(v).length,0)+Object.keys(awakeWall).length,region:regionAt(player.x,player.y),themedProps:scenery.filter(o=>['coffin','bonepile','fungus','roots','stainedglass','brazier'].includes(o.type)).length,animationFrames:[...Object.values(enemyFrames),watcherAwake].reduce((n,v)=>n+Object.values(v).reduce((m,a)=>m+a.length,0),0),enemyWindups:enemies.filter(e=>e.windup>0).length,enemyAttackPatterns:enemies.filter(e=>e.alive).map(e=>({id:e.id,kind:e.attackKind,attacks:e.attacksMade})),activeParticles:bladeSparks.filter(p=>p.life>0).length,trapCount:traps.length,activeTraps:traps.filter(t=>trapPhase(t)==='active').length,leverUsed,cacheOpened,tabletsRead:tabletsRead.length,artStyle:'retro-raycast-pixel',mapVisible:mapOn,savePresent:safeSavePresent()});
 })();
