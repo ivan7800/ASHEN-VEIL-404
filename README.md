@@ -1,4 +1,4 @@
-# ASHEN VEIL 404 — Cosmic Horror Remaster v3.1.0
+# ASHEN VEIL 404 — Cosmic Horror Remaster v3.1.1
 
 Mazmorra de horror cósmico medieval en primera persona. Cinco zonas conectadas, nueve encuentros y dos finales. La campana sumergida, los Ecos del Velo y los sellos alteran el desenlace.
 
@@ -26,6 +26,10 @@ Pulsa **K** para guardar o usa el botón de pausa. El navegador asigna almacenes
 | Guardar y silenciar | K / U | Menú de pausa |
 
 En **Ajustes** puedes regular el volumen, reducir destellos y sacudidas, y activar un modo ligero con un límite de 30 imágenes por segundo.
+
+## Cambios de v3.1.1
+
+- El golpe de espada ya no se retrae por el mismo arco: el tajo avanza en una dirección y la recuperación completa un arco separado, con variantes para el ataque fuerte.
 
 ## Cambios de v3.1
 
