@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const W=480,H=270,PI=Math.PI,TAU=PI*2,FOV=.73,SAVE='ashen-veil-rebirth-v2';
-const VERSION='3.6.0';
+const VERSION='3.7.0';
 const $=id=>document.getElementById(id),screen=$('screen'),ctx=screen.getContext('2d',{alpha:false});ctx.imageSmoothingEnabled=false;
 let warningUntil=0,hitFlashUntil=0;
 let contactKind='hit';
@@ -481,7 +481,7 @@ return false;
 function spell(){if(!playing||paused||player.spellCd>0||player.mp<25||player.roll>0)return;player.mp-=25;player.spellCd=1.3;spellAnim=.65;sparkBurst(player.x+Math.cos(player.ang)*1.1,player.y+Math.sin(player.ang)*1.1,'#b78ffe',17);beep(490,.36,'sine',.06);let hitCount=0;for(let e of enemies){if(!e.alive||dist(player,e)>6.6)continue;let a=Math.atan2(e.y-player.y,e.x-player.x)-player.ang;if(Math.abs(Math.atan2(Math.sin(a),Math.cos(a)))<.22&&los(player.x,player.y,e.x,e.y)){hit(e,38+player.lv*5,false,true);hitCount++;}}if(!hitCount)note('EL ÉTER SE DISIPA');}
 function levelUp(){if(!objects.some(o=>o.kind==='altar'&&dist(player,o)<1.65&&los(player.x,player.y,o.x,o.y))){note('DEBES ESTAR JUNTO A UN ALTAR');return;}if(player.lv>=99)return;let cost=80*player.lv;if(player.ashes<cost){note(`NECESITAS ${cost} CENIZAS PARA ASCENDER`);return;}player.ashes-=cost;player.lv++;player.maxhp+=8;player.hp=player.maxhp;note(`EL ALMA SE FORTALECE — NIVEL ${player.lv}`,4);beep(680,.5,'sine',.04);save();}
 function heal(){if(!playing||paused||player.flasks<=0||player.hp>=player.maxhp)return;player.flasks--;player.hp=Math.min(player.maxhp,player.hp+55);note('LA SANGRE VUELVE A CALENTARSE');beep(600,.4,'sine',.025);save();}
-function nearObject(){let opts=objects.filter(o=>o.active&&dist(player,o)<1.55&&los(player.x,player.y,o.x,o.y)).map(o=>o);if(!player.gate&&player.y>=10.5&&Math.hypot(player.x-19.5,player.y-10.5)<1.75)opts.push({kind:'gate',label:'Puerta de hueso',d:Math.hypot(player.x-19.5,player.y-10.5)});if(!player.secret&&player.y>=13.5&&Math.hypot(player.x-6.5,player.y-13.5)<1.7)opts.push({kind:'secret',label:'Muro agrietado',d:Math.hypot(player.x-6.5,player.y-13.5)});if(dropped&&dist(player,dropped)<1.3&&los(player.x,player.y,dropped.x,dropped.y))opts.push({kind:'drop',label:`Recuperar ${dropped.amount} cenizas`,d:dist(player,dropped)});opts.sort((a,b)=>(a.d??dist(player,a))-(b.d??dist(player,b)));return opts[0]||null;}
+function nearObject(){let opts=objects.filter(o=>o.active&&o.kind!=='passage'&&dist(player,o)<1.55&&los(player.x,player.y,o.x,o.y)).map(o=>o);if(!player.gate&&player.y>=10.5&&Math.hypot(player.x-19.5,player.y-10.5)<1.75)opts.push({kind:'gate',label:'Puerta de hueso',d:Math.hypot(player.x-19.5,player.y-10.5)});if(!player.secret&&player.y>=13.5&&Math.hypot(player.x-6.5,player.y-13.5)<1.7)opts.push({kind:'secret',label:'Muro agrietado',d:Math.hypot(player.x-6.5,player.y-13.5)});if(dropped&&dist(player,dropped)<1.3&&los(player.x,player.y,dropped.x,dropped.y))opts.push({kind:'drop',label:`Recuperar ${dropped.amount} cenizas`,d:dist(player,dropped)});opts.sort((a,b)=>(a.d??dist(player,a))-(b.d??dist(player,b)));return opts[0]||null;}
 function interact(){let o=nearObject();if(!o)return;if(o.kind==='passage'){enterPassage(o);return;}if(o.kind==='discovery'){readDiscovery(o);return;}if(o.kind==='weapon'){ownedWeapons.push(o.id);equippedWeapon=o.id;o.active=false;updateWeaponHud();note('HAS ENCONTRADO: '+weapons[o.id].name+' — C CAMBIA DE ARMA',5);VeilAudio.cue('threshold');save();return;}if(o.kind==='altar'){player.hp=player.maxhp;player.st=100;player.mp=60;player.flasks=player.maxflasks;player.checkpoint=[o.x,o.y];note('ALTAR ENCENDIDO — PULSA L PARA SUBIR DE NIVEL',4);save();}else if(o.kind==='key'){player.key=true;o.active=false;note('HAS OBTENIDO: LLAVE DE HUESO',4);save();}else if(o.kind==='gate'){if(!player.key){note('SELLADA — NECESITAS LA LLAVE DE HUESO');beep(75,.12);return;}player.gate=true;grid[10][19]=0;note('LA PUERTA CEDE CON UN GEMIDO',4);save();}else if(o.kind==='secret'){player.secret=true;grid[13][6]=0;note('LA PIEDRA OCULTABA UN PASADIZO',4);save();}else if(o.kind==='relic'){player.relic=true;o.active=false;player.maxhp=maxHealth();player.hp=player.maxhp;note('CORAZÓN DEL VACÍO — VIDA MÁXIMA +30',4);beep(730,.6,'sine',.04);save();}else if(o.kind==='loot'){crimsonTaken=true;o.active=false;player.maxflasks=Math.min(9,player.maxflasks+1);player.flasks=Math.min(player.maxflasks,player.flasks+1);note('FRASCO CARMESÍ — CAPACIDAD +1',4);save();}else if(o.kind==='lever'){if(leverUsed)return;leverUsed=true;o.active=false;objects.find(p=>p.id==='cache').active=true;note('LA PIEDRA GIME: UN OSARIO SE HA ABIERTO',4);beep(210,.6,'sawtooth',.03);save();}else if(o.kind==='cache'){if(!leverUsed||cacheOpened)return;cacheOpened=true;o.active=false;player.ashes+=160;note('160 CENIZAS RECUPERADAS DEL OSARIO',4);beep(540,.4,'triangle',.04);save();}else if(o.kind==='echo'){if(echoesCollected.includes(o.id))return;echoesCollected.push(o.id);o.active=false;player.ashes+=90;sparkBurst(o.x,o.y,'#b6a0e9',22);beep(620,.5,'sine',.05);if(echoesCollected.length===3&&!echoReward){echoReward=true;player.maxflasks=Math.min(9,player.maxflasks+1);player.flasks=Math.min(player.maxflasks,player.flasks+1);note('TRES ECOS REUNIDOS — +1 FRASCO PERMANENTE',5);}else note(`ECO RECUPERADO (${echoesCollected.length}/3) — +90 CENIZAS`,4);save();}else if(o.kind==='seal'){if(sealsBroken.includes(o.id))return;sealsBroken.push(o.id);o.active=false;player.ashes+=60;sparkBurst(o.x,o.y,'#c9b3ec',24);beep(720,.65,'triangle',.042);note(`RITO DESHECHO (${sealsBroken.length}/2) — EL VIGÍA PIERDE FUERZA`,5);save();}else if(o.kind==='shortcut'){
   shortcutOpen=true;o.active=false;grid[13][10]=0;
   note('LA CADENA ABRE UN ATAJO HACIA LA CRIPTA',4);save();
@@ -494,15 +494,27 @@ function interact(){let o=nearObject();if(!o)return;if(o.kind==='passage'){enter
   VeilAudio.cue('drowned');
   beep(144,1.15,'sine',.09);beep(216,.83,'triangle',.018);save();
 }else if(o.kind==='tablet'){if(!tabletsRead.includes(o.id))tabletsRead.push(o.id);note(o.id==='tablet'?'LOS MUERTOS NO TEMEN A LA NOCHE. TEMEN A LA CAMPANA. LA PARED AGRIETADA QUEDA AL NORTE DEL ALTAR.':'EL VIGÍA SELLÓ LA PUERTA DESDE EL OTRO LADO.',5);save();}else if(o.kind==='drop'){player.ashes+=dropped.amount;dropped=null;note('HAS RECUPERADO TUS CENIZAS');save();}else if(o.kind==='exit'){let boss=enemies.find(e=>e.id==='boss');if(boss.alive){note('EL SELLO RESISTE — SU GUARDIÁN SIGUE VIVO');return;}player.won=true;save();showEnding();}}
+let autoPassageLock=null;
 function enterPassage(passage){
-  if(!canMove(...passage.to))return;
+  if(!canMove(...passage.to))return false;
   [player.x,player.y]=passage.to;
   player.ang=passage.angle;
   player.roll=0;
   cancelSwing();
+  autoPassageLock=VeilExpedition.doors.filter(door=>door.id!==passage.id).sort((a,b)=>dist(player,a)-dist(player,b))[0]?.id??null;
   VeilAudio.cue('threshold');
   discoverZone();
   save();
+  return true;
+}
+function autoTraversePassage(){
+  if(autoPassageLock){
+    const locked=VeilExpedition.doors.find(door=>door.id===autoPassageLock);
+    if(locked&&dist(player,locked)<1.15)return;
+    autoPassageLock=null;
+  }
+  const door=VeilExpedition.doors.filter(item=>item.active&&dist(player,item)<.48).sort((a,b)=>dist(player,a)-dist(player,b))[0];
+  if(door)enterPassage(door);
 }
 
 function readDiscovery(station){
@@ -1325,7 +1337,7 @@ function hud(){
     Math.abs(turnDelta(Math.atan2(e.y-player.y,e.x-player.x)-player.ang))<.62&&los(player.x,player.y,e.x,e.y))
     .sort((a,b)=>dist(player,a)-dist(player,b))[0];$('target').hidden=!nearest;if(nearest){$('targetname').textContent=creatureNames[nearest.type];$('targetbar').style.width=100*nearest.hp/nearest.maxhp+'%';}$('hpbar').style.width=100*player.hp/player.maxhp+'%';$('stbar').style.width=player.st+'%';$('mpbar').style.width=player.mp/60*100+'%';$('ashes').textContent=player.ashes;$('flasks').textContent=player.flasks;$('spellcount').textContent=Math.floor(player.mp/25);$('location').textContent=getZone();$('objective').textContent=objectiveText();let b=enemies.find(e=>e.type==='boss');$('bossbar').hidden=!(b.alive&&b.alert&&getZone()===zones[3]);$('bossfill').style.width=100*b.hp/b.maxhp+'%';let o=nearObject();$('interact').hidden=!o;$('interact').textContent=o?`${coarsePointer?.matches?'':'[ E ]  '}${o.label.toUpperCase()}`:'';if(toastUntil<tick)$('toast').style.opacity='0';if(warningUntil<tick)$('encounter-warning').hidden=true;if(mapOn)drawMap();}
 let stepBeat=0,nextDrip=6;
-function update(dt){tick+=dt;
+function update(dt){tick+=dt;autoTraversePassage();
 if(tick<hitFlashUntil){
   $('reticle').classList.add('hit');
   $('reticle').setAttribute('data-contact',contactKind);

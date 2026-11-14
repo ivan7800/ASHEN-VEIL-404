@@ -1,4 +1,4 @@
-# ASHEN VEIL 404 — La piedra y el umbral v3.6.0
+# ASHEN VEIL 404 — La piedra y el umbral v3.7.0
 
 Mazmorra de horror cósmico medieval en primera persona. [Jugar en el navegador](https://ivan7800.github.io/ASHEN-VEIL-404/). Cinco zonas originales, cinco ramales de exploración, nueve encuentros y dos finales. La campana sumergida, los Ecos del Velo y los sellos alteran el desenlace.
 
@@ -29,7 +29,7 @@ En **Ajustes** puedes regular el volumen, reducir destellos y sacudidas, y activ
 
 ## Cartografía de los Ausentes
 
-Busca los pasadizos en la cripta, las catacumbas, la capilla, la nave y el santuario. En cada ramal, el mapa muestra su propio plano. El diario conserva las pistas que ya has escuchado y los objetos que has investigado. Puedes regresar por el mismo umbral. En pantallas táctiles, usa las flechas para desplazarte y los botones curvos para girar.
+Explora los ramales cruzando sus umbrales al caminar; no hace falta pulsar una tecla para cambiar de zona. Busca los pasadizos en la cripta, las catacumbas, la capilla, la nave y el santuario. En cada ramal, el mapa muestra su propio plano. El diario conserva las pistas que ya has escuchado y los objetos que has investigado. Puedes regresar por el mismo umbral. En pantallas táctiles, usa las flechas para desplazarte y los botones curvos para girar.
 
 ## La piedra y el umbral · v3.6
 

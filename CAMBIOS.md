@@ -1,5 +1,12 @@
 # Cambios
 
+## 3.7.0 · Umbrales transitables
+
+- Los umbrales de los cinco ramales de expedición cambian de zona automáticamente al cruzarlos caminando.
+- La protección de salida evita reactivar de inmediato la puerta de llegada. Las interacciones de objetos, mecanismos y puertas selladas siguen usando sus controles habituales.
+- Versión web y HTML autónomo sincronizados.
+
+
 ## 3.6.0 · La piedra y el umbral
 
 - Suelos y muros con materiales propios de cada ramal. Pasarela de la Nave, grúa del Patio y cabecera de la Capilla más visibles.
