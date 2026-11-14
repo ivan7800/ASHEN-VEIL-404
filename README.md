@@ -29,7 +29,7 @@ En **Ajustes** puedes regular el volumen, reducir destellos y sacudidas, y activ
 
 ## Cartografía de los Ausentes
 
-Explora los ramales cruzando sus umbrales al caminar; no hace falta pulsar una tecla para cambiar de zona. Busca los pasadizos en la cripta, las catacumbas, la capilla, la nave y el santuario. En cada ramal, el mapa muestra su propio plano. El diario conserva las pistas que ya has escuchado y los objetos que has investigado. Puedes regresar por el mismo umbral. En pantallas táctiles, usa las flechas para desplazarte y los botones curvos para girar.
+Las puertas están integradas en huecos de las paredes; al cruzar cada umbral caminando, cambiarás de habitación sin pulsar una tecla. Busca los pasadizos en la cripta, las catacumbas, la capilla, la nave y el santuario. En cada ramal, el mapa muestra su propio plano. El diario conserva las pistas que ya has escuchado y los objetos que has investigado. Puedes regresar por el mismo umbral. En pantallas táctiles, usa las flechas para desplazarte y los botones curvos para girar.
 
 ## La piedra y el umbral · v3.6
 
