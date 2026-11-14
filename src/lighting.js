@@ -19,7 +19,7 @@ const VeilLighting = (() => {
       faces: [
         [4,13,'s','niches'],[5,13,'s','tomb'],[7,13,'s','niches'],[8,13,'s','niches'],
         [1,16,'e','niches'],[1,18,'e','niches'],[1,20,'e','niches'],
-        [4,23,'n','niches'],[6,23,'n','niches'],
+        [4,23,'n','niches'],[7,23,'n','niches'],
       ],
       strips: [[5,14,5,21,'aisle']],
       lights: [[5.5,14.5,4,.55]],
@@ -32,7 +32,7 @@ const VeilLighting = (() => {
     },
     chapel: {
       faces: [[12,6,'w','rooted'],[12,7,'w','rooted'],[12,8,'w','rooted'],[12,9,'w','rooted'],
-        [3,4,'s','rooted'],[4,4,'s','rooted'],[8,4,'s','rooted'],[9,4,'s','rooted']],
+        [5,4,'s','rooted'],[4,4,'s','rooted'],[8,4,'s','rooted'],[9,4,'s','rooted']],
       strips: [[7,7,9,8,'dais']],
       lights: [[8.5,7.5,3,.52]],
     },

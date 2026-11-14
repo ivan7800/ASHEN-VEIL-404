@@ -16,10 +16,10 @@ with sync_playwright() as p:
  page.locator('#play').click()
  page.wait_for_timeout(250)
  d=page.evaluate('window.__ashenDiagnostics()')
- assert d['version']=='3.6.0' and d['enemiesAlive']==9 and d['echoLocations']==3,d
+ assert d['version']=='3.7.1' and d['enemiesAlive']==9 and d['echoLocations']==3,d
  assert d['sceneryCount']==42,d
  page.keyboard.press('KeyM');assert page.locator('#map').is_visible();page.keyboard.press('KeyM')
- page.keyboard.press('Tab');assert page.locator('#inventory').is_visible();assert 'ECOS DEL VELO (0/3)' in page.locator('#items').inner_text();page.keyboard.press('Tab')
+ page.keyboard.press('Tab');assert page.locator('#inventory').is_visible();assert 'ECOS DEL VELO (0/3)' in page.locator('#items').text_content();page.keyboard.press('Tab')
  quest=page.evaluate('''() => {const t=window.__test26;const results=[];
   for(const id of ['echo1','echo2','echo3']){
    const o=t.objects.find(o=>o.id===id);t.player.x=o.x;t.player.y=o.y;t.interact();

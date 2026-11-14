@@ -1,5 +1,12 @@
 # Cambios
 
+## 3.7.1 · Cierre de campaña
+
+- Las entradas y salidas de los cinco ramales cruzan el plano del arco al caminar. Los arcos se dibujan en el plano del hueco y tienen un interior en sombra.
+- El Huerto vuelve a conectar con la Capilla y el Archivo abre desde la pared de las Catacumbas. Al llegar, el personaje queda dentro de la sala y orientado hacia ella.
+- Se conserva la partida v2. Las posiciones y las cenizas guardadas en el hueco antiguo del Archivo pasan a su lado transitable.
+- Pruebas de los diez umbrales, ambos finales y compatibilidad web. Menú, recursos y HTML autónomo sincronizados.
+
 ## 3.7.0 · Umbrales transitables
 
 - Las puertas de los ramales ocupan huecos abiertos en las paredes y cambian de habitación al atravesar el umbral caminando, sin pulsar una tecla.

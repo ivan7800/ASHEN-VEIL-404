@@ -2,7 +2,7 @@
 const VeilExpedition = (() => {
   const wings = [
     {
-      id:'salt', name:'PATIO DE LA SAL', material:'salt', x:32, y:2, entry:[6.5,23.5], interiorAngle:-Math.PI/2, exteriorAngle:-Math.PI/2, title:'Bajar al Patio de la Sal',
+      id:'salt', name:'PATIO DE LA SAL', material:'salt', x:32, y:2, entry:[6.5,23.5,0,1], title:'Bajar al Patio de la Sal',
       rooms:[[8,14,10,17],[2,10,7,15],[2,5,5,10],[2,1,7,5],[7,2,13,3],[13,2,17,7],[11,7,16,9],[11,9,17,14],[7,13,11,14]],
       barriers:[['saltLow',10,2],['saltLow',10,3],['saltCrane',13,7],['saltCrane',14,7],['saltCrane',15,7],['saltCrane',16,7],['saltCrane',17,7],['saltCrane',10,13],['saltCrane',10,14],['saltReturn',8,11],['saltReturn',9,11],['saltReturn',10,11]],
       props:[[9,15,'arch',1.5],[3,12,'coffin',1.15],[5,9,'brazier',.8],[4,2,'urn',.8],[16.9,13.4,'saltPillar',.72]],
@@ -16,7 +16,7 @@ const VeilExpedition = (() => {
       ],
     },
     {
-      id:'archive', name:'ARCHIVO DE LOS AUSENTES', material:'archive', x:52, y:2, entry:[26.5,12.5], interiorAngle:-Math.PI/2, exteriorAngle:Math.PI, title:'Entrar en el Archivo',
+      id:'archive', name:'ARCHIVO DE LOS AUSENTES', material:'archive', x:52, y:2, entry:[24.5,11.5,0,-1], title:'Entrar en el Archivo',
       rooms:[[8,14,10,17],[3,11,15,14],[3,6,5,11],[1,3,7,6],[7,4,13,5],[13,2,17,10],[8,9,13,10],[8,7,10,9],[6,7,8,7],[10,7,12,7]],
       barriers:[['archiveKeep',7,7],['archiveErase',11,7]],
       props:[[9,15,'arch',1.4],[4,10,'chains',1],[3.1,4.1,'ledger',1.3],[15,4,'banner',1.5],[11,10,'brazier',.8]],
@@ -31,7 +31,7 @@ const VeilExpedition = (() => {
       ],
     },
     {
-      id:'garden', name:'HUERTO DE LAS VOCES', material:'garden', x:32, y:24, entry:[35.5,30.5], interiorAngle:-Math.PI/2, exteriorAngle:-Math.PI/2, title:'Cruzar al Huerto de las Voces',
+      id:'garden', name:'HUERTO DE LAS VOCES', material:'garden', x:32, y:24, entry:[3.5,4.5,0,-1], title:'Cruzar al Huerto de las Voces',
       rooms:[[8,14,10,17],[2,12,16,14],[2,5,5,12],[2,2,9,5],[9,4,15,6],[14,5,17,11],[9,10,17,11],[8,8,10,11]],
       props:[[9,15,'roots',1.65],[3,9,'fungus',1.25],[7.7,3.25,'tree',1.75],[16,7,'roots',1.45],[9,9,'stainedglass',1.4]],
       stations:[
@@ -44,7 +44,7 @@ const VeilExpedition = (() => {
       ],
     },
     {
-      id:'soundings', name:'ESTACIÓN DE SONDAS', material:'soundings', x:52, y:24, entry:[28.5,22.5], interiorAngle:-Math.PI/2, exteriorAngle:-Math.PI/2, title:'Descender a la Estación de Sondas',
+      id:'soundings', name:'ESTACIÓN DE SONDAS', material:'soundings', x:52, y:24, entry:[28.5,22.5,0,1], title:'Descender a la Estación de Sondas',
       rooms:[[8,14,10,17],[2,11,16,14],[2,4,5,11],[2,2,9,4],[8,4,10,9],[10,7,16,9],[14,2,17,7]],
       barriers:[['soundingsIntake',8,5],['soundingsIntake',9,5],['soundingsIntake',10,5],['soundingsWeight',14,6],['soundingsWeight',15,6],['soundingsWeight',16,6],['soundingsWeight',17,6]],
       props:[[9,15,'chains',1.65],[3,10,'urn',.85],[4,3,'brazier',1],[9,6,'arch',1.4],[17.5,3.55,'gauge',.82]],
@@ -58,7 +58,7 @@ const VeilExpedition = (() => {
       ],
     },
     {
-      id:'sky', name:'CÁMARA DEL CIELO INMÓVIL', material:'sky', x:32, y:46, entry:[27.5,8.5], interiorAngle:-Math.PI/2, exteriorAngle:Math.PI, title:'Entrar en la Cámara del Cielo',
+      id:'sky', name:'CÁMARA DEL CIELO INMÓVIL', material:'sky', x:32, y:46, entry:[27.5,8.5,1,0], title:'Entrar en la Cámara del Cielo',
       rooms:[[8,14,10,17],[2,10,16,14],[2,3,5,10],[2,2,15,4],[14,4,17,10],[7,6,11,9],[8,9,10,10]],
       props:[[9,15,'arch',1.5],[3,8,'brazier',.8],[8,3,'stainedglass',1.65],[16,8,'chains',1.5],[10.75,6.85,'orrery',1.05]],
       stations:[
@@ -77,11 +77,14 @@ const VeilExpedition = (() => {
     id,x:wing.x+x,y:wing.y+y,label,text,requires,reward,choice,kind:'discovery',active:true,
   })));
   const doors = wings.flatMap(wing=>{
-    const inside=[wing.x+9.5,wing.y+18.5];
-    return [
-      {id:wing.id+'In',kind:'passage',x:wing.entry[0],y:wing.entry[1],label:wing.title,to:inside,angle:wing.interiorAngle,active:true},
-      {id:wing.id+'Out',kind:'passage',x:inside[0],y:inside[1],label:'Regresar por el pasadizo',to:wing.entry,angle:wing.exteriorAngle,active:true},
-    ];
+    const makeDoor=(suffix,[x,y,dx,dy],label)=>({
+      id:wing.id+suffix, kind:'passage', x,y,dx,dy,label,active:true,
+    });
+    const entry=makeDoor('In',wing.entry,wing.title);
+    const exit=makeDoor('Out',[wing.x+9.5,wing.y+18.5,0,1],'Regresar por el pasadizo');
+    entry.destination=exit;
+    exit.destination=entry;
+    return [entry,exit];
   });
   function at(x,y){
     return wings.find(wing=>x>=wing.x-1&&x<wing.x+19&&y>=wing.y-1&&y<wing.y+19);
