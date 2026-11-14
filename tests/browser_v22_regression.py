@@ -12,7 +12,7 @@ with sync_playwright() as pw:
     page.locator('#play').click()
     page.wait_for_timeout(400)
     s=page.evaluate('window.__ashenDiagnostics()')
-    assert s['version']=='3.6.0' and s['animationFrames']==151 and s['sceneryCount']==42,s
+    assert s['version']=='3.7.1' and s['animationFrames']==151 and s['sceneryCount']==42,s
     # Mouse look simulation is blocked by sandbox pointer-lock; keyboard arrows provide a deterministic alternative.
     before=page.evaluate('window.__ashenDiagnostics().position')
     page.keyboard.down('KeyW');page.wait_for_timeout(400);page.keyboard.up('KeyW')

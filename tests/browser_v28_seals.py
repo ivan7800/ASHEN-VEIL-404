@@ -31,7 +31,8 @@ with sync_playwright() as p:
  state=page.evaluate('window.__ashenDiagnostics()')
  assert state['sealsBroken']==2 and state['sealsRemaining']==0,state
  page.keyboard.press('Tab')
- assert 'RITOS DEL VIGÍA (2/2)' in page.locator('#items').inner_text()
+ page.locator('#inventory').wait_for(state='visible')
+ assert 'RITOS DEL VIGÍA (2/2)' in page.locator('#items').text_content()
  assert not errors,errors
  print('PASS v2.8: 2 optional rituals, one-time 120 ashes, 30% boss damage reduction, journal, no JS errors')
  browser.close()

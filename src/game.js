@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const W=480,H=270,PI=Math.PI,TAU=PI*2,FOV=.73,SAVE='ashen-veil-rebirth-v2';
-const VERSION='3.7.0';
+const VERSION='3.7.1';
 const $=id=>document.getElementById(id),screen=$('screen'),ctx=screen.getContext('2d',{alpha:false});ctx.imageSmoothingEnabled=false;
 let warningUntil=0,hitFlashUntil=0;
 let contactKind='hit';
@@ -20,9 +20,8 @@ grid[10][19]=3;grid[13][6]=4;
 for(const [x,y] of [[15,3],[24,3],[15,7],[24,7],[17,14],[23,14],[17,20],[23,20],[4,7],[10,7]])grid[y][x]=2;
 for(const wing of VeilExpedition.wings){
   for(const [x1,y1,x2,y2] of wing.rooms)carve(wing.x+x1,wing.y+y1,wing.x+x2,wing.y+y2);
-  grid[Math.floor(wing.entry[1])][Math.floor(wing.entry[0])]=0;
-  grid[Math.floor(wing.y+18.5)][Math.floor(wing.x+9.5)]=0;
 }
+for(const door of VeilExpedition.doors)grid[Math.floor(door.y)][Math.floor(door.x)]=0;
 let discoveries=[], archiveChoice=null;
 const mirrorDirections=['borde','arriba','fondo'];
 const mirrorTargets={skyDark:2,skyLight:1};
@@ -360,6 +359,8 @@ function load(){
   discoveries=discoveries.filter(id=>id!==(archiveChoice==='archiveKeep'?'archiveErase':'archiveKeep'));
   updateAnnexBarriers();
   if(pairsAreValid(d.checkpoint))player.checkpoint=d.checkpoint;
+  // 3.7.0 briefly allowed saving inside the old Archive wall opening.
+  if(Math.floor(d.x)===26&&Math.floor(d.y)===12)d.x=25.5;
   if(canMove(d.x,d.y)){
     player.x=d.x;player.y=d.y;
   }else{
@@ -378,6 +379,7 @@ function load(){
   player.flasks=clamp(Math.floor(player.flasks),0,player.maxflasks);
   player.mp=clamp(player.mp,0,60);
   const drop=d.dropped;
+  if(drop&&Math.floor(drop.x)===26&&Math.floor(drop.y)===12)drop.x=25.5;
   if(drop&&pairsAreValid([drop.x,drop.y])&&Number.isFinite(drop.amount)&&drop.amount>0){
     dropped={x:drop.x,y:drop.y,amount:clamp(Math.floor(drop.amount),1,1e7)};
   }
@@ -484,7 +486,7 @@ function spell(){if(!playing||paused||player.spellCd>0||player.mp<25||player.rol
 function levelUp(){if(!objects.some(o=>o.kind==='altar'&&dist(player,o)<1.65&&los(player.x,player.y,o.x,o.y))){note('DEBES ESTAR JUNTO A UN ALTAR');return;}if(player.lv>=99)return;let cost=80*player.lv;if(player.ashes<cost){note(`NECESITAS ${cost} CENIZAS PARA ASCENDER`);return;}player.ashes-=cost;player.lv++;player.maxhp+=8;player.hp=player.maxhp;note(`EL ALMA SE FORTALECE — NIVEL ${player.lv}`,4);beep(680,.5,'sine',.04);save();}
 function heal(){if(!playing||paused||player.flasks<=0||player.hp>=player.maxhp)return;player.flasks--;player.hp=Math.min(player.maxhp,player.hp+55);note('LA SANGRE VUELVE A CALENTARSE');beep(600,.4,'sine',.025);save();}
 function nearObject(){let opts=objects.filter(o=>o.active&&o.kind!=='passage'&&dist(player,o)<1.55&&los(player.x,player.y,o.x,o.y)).map(o=>o);if(!player.gate&&player.y>=10.5&&Math.hypot(player.x-19.5,player.y-10.5)<1.75)opts.push({kind:'gate',label:'Puerta de hueso',d:Math.hypot(player.x-19.5,player.y-10.5)});if(!player.secret&&player.y>=13.5&&Math.hypot(player.x-6.5,player.y-13.5)<1.7)opts.push({kind:'secret',label:'Muro agrietado',d:Math.hypot(player.x-6.5,player.y-13.5)});if(dropped&&dist(player,dropped)<1.3&&los(player.x,player.y,dropped.x,dropped.y))opts.push({kind:'drop',label:`Recuperar ${dropped.amount} cenizas`,d:dist(player,dropped)});opts.sort((a,b)=>(a.d??dist(player,a))-(b.d??dist(player,b)));return opts[0]||null;}
-function interact(){let o=nearObject();if(!o)return;if(o.kind==='passage'){enterPassage(o);return;}if(o.kind==='discovery'){readDiscovery(o);return;}if(o.kind==='weapon'){ownedWeapons.push(o.id);equippedWeapon=o.id;o.active=false;updateWeaponHud();note('HAS ENCONTRADO: '+weapons[o.id].name+' — C CAMBIA DE ARMA',5);VeilAudio.cue('threshold');save();return;}if(o.kind==='altar'){player.hp=player.maxhp;player.st=100;player.mp=60;player.flasks=player.maxflasks;player.checkpoint=[o.x,o.y];note('ALTAR ENCENDIDO — PULSA L PARA SUBIR DE NIVEL',4);save();}else if(o.kind==='key'){player.key=true;o.active=false;note('HAS OBTENIDO: LLAVE DE HUESO',4);save();}else if(o.kind==='gate'){if(!player.key){note('SELLADA — NECESITAS LA LLAVE DE HUESO');beep(75,.12);return;}player.gate=true;grid[10][19]=0;note('LA PUERTA CEDE CON UN GEMIDO',4);save();}else if(o.kind==='secret'){player.secret=true;grid[13][6]=0;note('LA PIEDRA OCULTABA UN PASADIZO',4);save();}else if(o.kind==='relic'){player.relic=true;o.active=false;player.maxhp=maxHealth();player.hp=player.maxhp;note('CORAZÓN DEL VACÍO — VIDA MÁXIMA +30',4);beep(730,.6,'sine',.04);save();}else if(o.kind==='loot'){crimsonTaken=true;o.active=false;player.maxflasks=Math.min(9,player.maxflasks+1);player.flasks=Math.min(player.maxflasks,player.flasks+1);note('FRASCO CARMESÍ — CAPACIDAD +1',4);save();}else if(o.kind==='lever'){if(leverUsed)return;leverUsed=true;o.active=false;objects.find(p=>p.id==='cache').active=true;note('LA PIEDRA GIME: UN OSARIO SE HA ABIERTO',4);beep(210,.6,'sawtooth',.03);save();}else if(o.kind==='cache'){if(!leverUsed||cacheOpened)return;cacheOpened=true;o.active=false;player.ashes+=160;note('160 CENIZAS RECUPERADAS DEL OSARIO',4);beep(540,.4,'triangle',.04);save();}else if(o.kind==='echo'){if(echoesCollected.includes(o.id))return;echoesCollected.push(o.id);o.active=false;player.ashes+=90;sparkBurst(o.x,o.y,'#b6a0e9',22);beep(620,.5,'sine',.05);if(echoesCollected.length===3&&!echoReward){echoReward=true;player.maxflasks=Math.min(9,player.maxflasks+1);player.flasks=Math.min(player.maxflasks,player.flasks+1);note('TRES ECOS REUNIDOS — +1 FRASCO PERMANENTE',5);}else note(`ECO RECUPERADO (${echoesCollected.length}/3) — +90 CENIZAS`,4);save();}else if(o.kind==='seal'){if(sealsBroken.includes(o.id))return;sealsBroken.push(o.id);o.active=false;player.ashes+=60;sparkBurst(o.x,o.y,'#c9b3ec',24);beep(720,.65,'triangle',.042);note(`RITO DESHECHO (${sealsBroken.length}/2) — EL VIGÍA PIERDE FUERZA`,5);save();}else if(o.kind==='shortcut'){
+function interact(){let o=nearObject();if(!o)return;if(o.kind==='discovery'){readDiscovery(o);return;}if(o.kind==='weapon'){ownedWeapons.push(o.id);equippedWeapon=o.id;o.active=false;updateWeaponHud();note('HAS ENCONTRADO: '+weapons[o.id].name+' — C CAMBIA DE ARMA',5);VeilAudio.cue('threshold');save();return;}if(o.kind==='altar'){player.hp=player.maxhp;player.st=100;player.mp=60;player.flasks=player.maxflasks;player.checkpoint=[o.x,o.y];note('ALTAR ENCENDIDO — PULSA L PARA SUBIR DE NIVEL',4);save();}else if(o.kind==='key'){player.key=true;o.active=false;note('HAS OBTENIDO: LLAVE DE HUESO',4);save();}else if(o.kind==='gate'){if(!player.key){note('SELLADA — NECESITAS LA LLAVE DE HUESO');beep(75,.12);return;}player.gate=true;grid[10][19]=0;note('LA PUERTA CEDE CON UN GEMIDO',4);save();}else if(o.kind==='secret'){player.secret=true;grid[13][6]=0;note('LA PIEDRA OCULTABA UN PASADIZO',4);save();}else if(o.kind==='relic'){player.relic=true;o.active=false;player.maxhp=maxHealth();player.hp=player.maxhp;note('CORAZÓN DEL VACÍO — VIDA MÁXIMA +30',4);beep(730,.6,'sine',.04);save();}else if(o.kind==='loot'){crimsonTaken=true;o.active=false;player.maxflasks=Math.min(9,player.maxflasks+1);player.flasks=Math.min(player.maxflasks,player.flasks+1);note('FRASCO CARMESÍ — CAPACIDAD +1',4);save();}else if(o.kind==='lever'){if(leverUsed)return;leverUsed=true;o.active=false;objects.find(p=>p.id==='cache').active=true;note('LA PIEDRA GIME: UN OSARIO SE HA ABIERTO',4);beep(210,.6,'sawtooth',.03);save();}else if(o.kind==='cache'){if(!leverUsed||cacheOpened)return;cacheOpened=true;o.active=false;player.ashes+=160;note('160 CENIZAS RECUPERADAS DEL OSARIO',4);beep(540,.4,'triangle',.04);save();}else if(o.kind==='echo'){if(echoesCollected.includes(o.id))return;echoesCollected.push(o.id);o.active=false;player.ashes+=90;sparkBurst(o.x,o.y,'#b6a0e9',22);beep(620,.5,'sine',.05);if(echoesCollected.length===3&&!echoReward){echoReward=true;player.maxflasks=Math.min(9,player.maxflasks+1);player.flasks=Math.min(player.maxflasks,player.flasks+1);note('TRES ECOS REUNIDOS — +1 FRASCO PERMANENTE',5);}else note(`ECO RECUPERADO (${echoesCollected.length}/3) — +90 CENIZAS`,4);save();}else if(o.kind==='seal'){if(sealsBroken.includes(o.id))return;sealsBroken.push(o.id);o.active=false;player.ashes+=60;sparkBurst(o.x,o.y,'#c9b3ec',24);beep(720,.65,'triangle',.042);note(`RITO DESHECHO (${sealsBroken.length}/2) — EL VIGÍA PIERDE FUERZA`,5);save();}else if(o.kind==='shortcut'){
   shortcutOpen=true;o.active=false;grid[13][10]=0;
   note('LA CADENA ABRE UN ATAJO HACIA LA CRIPTA',4);save();
 }else if(o.kind==='bell'){
@@ -496,27 +498,32 @@ function interact(){let o=nearObject();if(!o)return;if(o.kind==='passage'){enter
   VeilAudio.cue('drowned');
   beep(144,1.15,'sine',.09);beep(216,.83,'triangle',.018);save();
 }else if(o.kind==='tablet'){if(!tabletsRead.includes(o.id))tabletsRead.push(o.id);note(o.id==='tablet'?'LOS MUERTOS NO TEMEN A LA NOCHE. TEMEN A LA CAMPANA. LA PARED AGRIETADA QUEDA AL NORTE DEL ALTAR.':'EL VIGÍA SELLÓ LA PUERTA DESDE EL OTRO LADO.',5);save();}else if(o.kind==='drop'){player.ashes+=dropped.amount;dropped=null;note('HAS RECUPERADO TUS CENIZAS');save();}else if(o.kind==='exit'){let boss=enemies.find(e=>e.id==='boss');if(boss.alive){note('EL SELLO RESISTE — SU GUARDIÁN SIGUE VIVO');return;}player.won=true;save();showEnding();}}
-let autoPassageLock=null;
-function enterPassage(passage){
-  if(!canMove(...passage.to))return false;
-  [player.x,player.y]=passage.to;
-  player.ang=passage.angle;
-  player.roll=0;
-  cancelSwing();
-  autoPassageLock=VeilExpedition.doors.filter(door=>door.id!==passage.id).sort((a,b)=>dist(player,a)-dist(player,b))[0]?.id??null;
-  VeilAudio.cue('threshold');
-  discoverZone();
-  save();
-  return true;
-}
-function autoTraversePassage(){
-  if(autoPassageLock){
-    const locked=VeilExpedition.doors.find(door=>door.id===autoPassageLock);
-    if(locked&&dist(player,locked)<1.15)return;
-    autoPassageLock=null;
+// The doorway plane and the rendered arch share the same world coordinates.
+function traversePassage(oldX,oldY){
+  for(const door of VeilExpedition.doors){
+    const {x,y,dx,dy,destination}=door;
+    const before=(oldX-x)*dx+(oldY-y)*dy;
+    const after=(player.x-x)*dx+(player.y-y)*dy;
+    if(before>0||after<=0)continue;
+    const fraction=-before/(after-before);
+    const crossX=oldX+(player.x-oldX)*fraction;
+    const crossY=oldY+(player.y-oldY)*fraction;
+    if(Math.abs((crossX-x)*dy-(crossY-y)*dx)>.5-.23)continue;
+    // Arrive on the room side of the paired plane, facing into the room.
+    const arrivalX=destination.x-destination.dx*.85;
+    const arrivalY=destination.y-destination.dy*.85;
+    if(!canMove(arrivalX,arrivalY))continue;
+    player.x=arrivalX;
+    player.y=arrivalY;
+    player.ang=Math.atan2(-destination.dy,-destination.dx);
+    player.roll=0;
+    cancelSwing();
+    stepBeat=0;
+    VeilAudio.cue('threshold');
+    discoverZone();
+    save();
+    return;
   }
-  const door=VeilExpedition.doors.filter(item=>item.active&&dist(player,item)<.32).sort((a,b)=>dist(player,a)-dist(player,b))[0];
-  if(door)enterPassage(door);
 }
 
 function readDiscovery(station){
@@ -750,7 +757,7 @@ const areaLights = [
   ...VeilExpedition.wings.flatMap(wing=>wing.props
     .filter(([, ,kind])=>kind==='brazier'||kind==='stainedglass'||kind==='fungus')
     .map(([x,y])=>[wing.x+x,wing.y+y,4.8,1.08])),
-  [6.5,22.45,3,.66],[24.6,12.55,3,.85],[3.5,5.5,3,.85],[28.45,21.45,3,.72],[25.5,8.45,3,.72],
+  ...VeilExpedition.doors.map(({x,y,dx,dy})=>[x-dx,y-dy,3,.75]),
   [4.8,17.2,5.8,1.2],[5.0,15.1,5,1],[8.8,18,4,.85],[15.8,17.5,4,.8],
   [21.5,19.8,5,1.1],[20,13.5,4,.8],[27.5,16.5,4,1.3],[27.8,20.2,4,.85],
   [8.7,7,6,1.2],[5.4,9.5,4,.85],[17.1,4.5,5,1],[22.9,4.5,5,1],[19.5,3.2,4,.95],
@@ -865,7 +872,6 @@ function markerSprite(kind){const c=document.createElement('canvas');c.width=72;
  return c;}
 for(const k of ['lever','cache','tablet','seal'])sprite[k]=markerSprite(k);
 sprite.discovery=markerSprite('discovery');
-sprite.passage=sprite.arch;
 sprite.workmark=document.createElement('canvas');
 sprite.workmark.width=72;sprite.workmark.height=100;
 {
@@ -936,7 +942,7 @@ function objectArt(object){
   if(isMirror(object.id))return mirrorArt[object.id][mirrorPositions[object.id]];
   return stationArt[object.id]??{
     type:object.kind==='weapon'?'relic':object.kind,
-    scale:object.kind==='passage'?1.42:object.kind==='exit'?1.35:.7,
+    scale:object.kind==='exit'?1.35:.7,
     shadow:object.kind==='altar'||object.kind==='discovery'||object.kind==='tablet',
   };
 }
@@ -1010,6 +1016,47 @@ const scenerySprites=[...scenery,...routeLandmarks,...annexScenery,...architectu
 const groundedProps=new Set(['altar','coffin','idol','arch','urn','bell','ledger','tree','gauge']);
 const rungBell={x:28.35,y:14.4,type:'bell',scale:.7};
 
+const doorwayArt=document.createElement('canvas');
+doorwayArt.width=72;doorwayArt.height=100;
+{
+  const paint=doorwayArt.getContext('2d');
+  const recess=paint.createLinearGradient(0,24,0,100);
+  recess.addColorStop(0,'#161325');
+  recess.addColorStop(.75,'#090911');
+  recess.addColorStop(1,'#25202a');
+  paint.fillStyle=recess;
+  paint.beginPath();
+  paint.moveTo(16,100);paint.lineTo(16,29);
+  paint.quadraticCurveTo(24,15,36,12);
+  paint.quadraticCurveTo(48,15,56,29);
+  paint.lineTo(56,100);paint.closePath();paint.fill();
+  paint.drawImage(sprite.arch,0,0);
+}
+function drawDoorways({cs,sn}){
+  const arch=doorwayArt;
+  for(const {x,y,dx,dy} of VeilExpedition.doors){
+    const relX=x-player.x,relY=y-player.y;
+    const plane=relX*dx+relY*dy;
+    const forward=relX*cs+relY*sn;
+    if(plane<=0||forward<-.5||forward>24)continue;
+    const side=-relX*sn+relY*cs;
+    if(Math.abs(side)>FOV*forward+1)continue;
+    for(let column=0;column<W;column++){
+      const slope=(2*column/W-1)*FOV;
+      const rayX=cs-sn*slope,rayY=sn+cs*slope;
+      const toward=rayX*dx+rayY*dy;
+      if(toward<=0)continue;
+      const depth=plane/toward;
+      if(depth<.05||depth>=zBuffer[column])continue;
+      const across=(depth*rayX-relX)*dy-(depth*rayY-relY)*dx+.5;
+      if(across<0||across>=1)continue;
+      const height=H/depth;
+      ctx.drawImage(arch,Math.floor(across*arch.width),0,1,arch.height,
+        column,(H-height)/2,1,height);
+    }
+  }
+}
+
 function drawSprites(camera){
   const visible=[];
   function add(source,type,scale,frameImage=undefined,opacity=1,shadow=false){
@@ -1032,7 +1079,7 @@ function drawSprites(camera){
     add(enemy,enemy.type,enemy.type==='boss'?1.83:1.12,image,opacity,enemy.type!=='wraith');
   }
   for(const object of objects){
-    if(!object.active)continue;
+    if(!object.active||object.kind==='passage')continue;
     if(object.kind==='key'&&player.key||object.kind==='relic'&&player.relic||object.kind==='loot'&&crimsonTaken)continue;
     const art=objectArt(object);
     add(object,art.type,art.scale,undefined,1,art.shadow);
@@ -1247,6 +1294,7 @@ function drawAtmosphere(camera){
 function render(){
   const camera={sn:Math.sin(player.ang),cs:Math.cos(player.ang)};
   drawBase(camera);
+  drawDoorways(camera);
   drawWarningRings(camera);
   drawSprites(camera);
   drawAtmosphere(camera);
@@ -1339,7 +1387,7 @@ function hud(){
     Math.abs(turnDelta(Math.atan2(e.y-player.y,e.x-player.x)-player.ang))<.62&&los(player.x,player.y,e.x,e.y))
     .sort((a,b)=>dist(player,a)-dist(player,b))[0];$('target').hidden=!nearest;if(nearest){$('targetname').textContent=creatureNames[nearest.type];$('targetbar').style.width=100*nearest.hp/nearest.maxhp+'%';}$('hpbar').style.width=100*player.hp/player.maxhp+'%';$('stbar').style.width=player.st+'%';$('mpbar').style.width=player.mp/60*100+'%';$('ashes').textContent=player.ashes;$('flasks').textContent=player.flasks;$('spellcount').textContent=Math.floor(player.mp/25);$('location').textContent=getZone();$('objective').textContent=objectiveText();let b=enemies.find(e=>e.type==='boss');$('bossbar').hidden=!(b.alive&&b.alert&&getZone()===zones[3]);$('bossfill').style.width=100*b.hp/b.maxhp+'%';let o=nearObject();$('interact').hidden=!o;$('interact').textContent=o?`${coarsePointer?.matches?'':'[ E ]  '}${o.label.toUpperCase()}`:'';if(toastUntil<tick)$('toast').style.opacity='0';if(warningUntil<tick)$('encounter-warning').hidden=true;if(mapOn)drawMap();}
 let stepBeat=0,nextDrip=6;
-function update(dt){tick+=dt;autoTraversePassage();
+function update(dt){tick+=dt;
 if(tick<hitFlashUntil){
   $('reticle').classList.add('hit');
   $('reticle').setAttribute('data-contact',contactKind);
@@ -1350,6 +1398,7 @@ stepBeat+=Math.hypot(player.x-ox,player.y-oy);
 if(stepBeat>(sprint?.94:.81)){
   VeilAudio.cue(['nave','soundings'].includes(regionAt(player.x,player.y))?'wetStep':'step');stepBeat=0;
 }
+traversePassage(ox,oy);
 walkTime+=dt*(sprint?1.7:1);player.step=Math.min(1,player.step+dt*6);}else player.step=Math.max(0,player.step-dt*6);if(sprint)player.st=Math.max(0,player.st-19*dt);else if(!player.block&&player.attackCd<.38)player.st=Math.min(100,player.st+24*dt);player.mp=Math.min(60,player.mp+(discoveries.includes('gardenFruit')?3.6:3)*dt);for(const p of bladeSparks){p.life-=dt;
   if(!settings.quiet){
     const drag=Math.max(.1,1-dt*4);

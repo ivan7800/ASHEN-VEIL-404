@@ -113,6 +113,23 @@ function game(storage = new Map(), canvasFactory = mockCanvas, isolated = false)
   const use=id=>{
     const object=context.observe().objects.find(object=>object.id===id);
     assert(object,'Falta el objeto '+id);
+    if(object.kind==='passage'){
+      const {x,y,dx,dy,destination}=object;
+      const [nearX,nearY]=[x-dx*.85,y-dy*.85];
+      navigate(nearX,nearY);
+      aim(x,y);
+      key('KeyW',true);
+      for(let i=0;i<35;i++){
+        step();
+        const [px,py]=state().position;
+        if(Math.hypot(px-destination.x,py-destination.y)<1){
+          key('KeyW',false);
+          return;
+        }
+      }
+      key('KeyW',false);
+      assert.fail('No se cruza el umbral '+id);
+    }
     navigate(object.x,object.y);
     tap('KeyE');
   };
@@ -194,10 +211,12 @@ function route(restored, capture=()=>{}, makeGame=game, expanded=false) {
     if(expanded){
       annex(g,'archive',['archiveClerk','archiveName','archiveBody','archiveKeep','archiveSeal'],capture);
       assert.equal(g.state().archiveChoice,'archiveKeep');
+      g.navigate(10.5,12.5);
       g.use('gardenIn');
       g.use('gardenTestimony');
       assert(g.state().discoveries.includes('gardenTestimony'));
       g.use('gardenOut');
+      g.navigate(10.5,14.5);
       g.navigate(22.6,21);
     }
     assert.equal(g.state().echoes,3);
@@ -347,7 +366,7 @@ console.log('Aviso previo, periodo de despertar y descanso sin reaparición: OK'
 
 const archive=game(new Map(),mockCanvas,true);
 archive.start();
-Object.assign(archive.probe.player,{x:24.6,y:12.55});archive.tap('KeyE');
+Object.assign(archive.probe.player,{x:24.5,y:12.5});archive.use('archiveIn');
 archive.use('archiveErase');
 assert.equal(archive.state().archiveChoice,null);
 archive.use('archiveName');archive.use('archiveBody');archive.use('archiveErase');
@@ -573,6 +592,54 @@ for (const {x,y,type} of architectureScenery) {
 }
 assert(canMove(5.4,19) && canMove(4.8,17.2), 'Losas y pórtico conservan el paso de la Cripta');
 console.log('Arquitectura: caras visibles, hitos en suelo y acceso al altar: OK');
+}
+
+{
+const doorChecks=game(new Map(),mockCanvas,true);
+const expected={
+  salt:['crypt','salt'], archive:['catacomb','archive'], garden:['chapel','garden'],
+  soundings:['nave','soundings'], sky:['sanctuary','sky'],
+};
+for(const door of doorChecks.probe.objects.filter(o=>o.kind==='passage')){
+  const {x,y,dx,dy,destination,id}=door;
+  const [,wing,side]=id.match(/^(.*)(In|Out)$/);
+  const [source,target]=side==='In'?expected[wing]:expected[wing].slice().reverse();
+  const [ix,iy]=[Math.floor(x),Math.floor(y)];
+  assert.equal(doorChecks.probe.grid[iy][ix],0,id);
+  assert.equal(doorChecks.probe.grid[iy+dy][ix+dx],1,id+' cubierto por detrás');
+  for(const sign of [-1,1])assert.equal(doorChecks.probe.grid[iy+sign*dx][ix-sign*dy],1,id+' jamba');
+  const start=(distance,offset=0)=>new Map([[saveKey,JSON.stringify({
+    version:2,x:x-dx*distance+dy*offset,y:y-dy*distance-dx*offset,ang:Math.atan2(dy,dx),
+  })]]);
+  const standing=game(start(.16));
+  standing.start();standing.tap('KeyE');standing.step(.24);
+  assert.equal(standing.state().region,source,id+' quieto o al pulsar E');
+  standing.key('KeyD',true);standing.step(.30);standing.key('KeyD',false);
+  assert.equal(standing.state().region,source,id+' desplazamiento paralelo');
+  const approach=game(start(.85,.2));
+  approach.start();
+  approach.key('KeyW',true);approach.step(.26);approach.key('KeyW',false);
+  assert.equal(approach.state().region,source,id+' antes del plano');
+  approach.key('KeyW',true);approach.step(.14);approach.key('KeyW',false);
+  assert.equal(approach.state().region,target,id+' después del plano');
+  const arrived=approach.state();
+  assert(Math.abs(arrived.heading-Math.atan2(-destination.dy,-destination.dx))<.001,id+' orientación');
+  approach.step(.3);
+  assert.deepEqual(approach.state().position,arrived.position,id+' sin rebote');
+  approach.tap('KeyM');assert(approach.state().mapVisible);
+  const reload=game(approach.storage);
+  reload.start();
+  assert.equal(reload.state().region,target);
+  reload.use(destination.id);
+  assert.equal(reload.state().region,source,id+' regreso');
+}
+const oldArchive=game(new Map([[saveKey,JSON.stringify({
+  version:2,x:26.5,y:12.5,key:true,dropped:{x:26.5,y:12.5,amount:42},
+})]]),mockCanvas,true);
+assert.deepEqual(Array.from(oldArchive.state().position),[25.5,12.5]);
+assert.equal(oldArchive.probe.stats().dropped.amount,42);
+assert(oldArchive.state().key);
+console.log('Diez umbrales: geometría, paso, aproximación, orientación, ida y vuelta, mapa y guardado: OK');
 }
 
 const passageSave={version:2,x:41.5,y:13.5,discoveries:['saltReturn','saltPrint','saltCrane','saltLow'],

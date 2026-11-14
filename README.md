@@ -1,4 +1,4 @@
-# ASHEN VEIL 404 — La piedra y el umbral v3.7.0
+# ASHEN VEIL 404 — La piedra y el umbral v3.7.1
 
 Mazmorra de horror cósmico medieval en primera persona. [Jugar en el navegador](https://ivan7800.github.io/ASHEN-VEIL-404/). Cinco zonas originales, cinco ramales de exploración, nueve encuentros y dos finales. La campana sumergida, los Ecos del Velo y los sellos alteran el desenlace.
 
@@ -29,7 +29,7 @@ En **Ajustes** puedes regular el volumen, reducir destellos y sacudidas, y activ
 
 ## Cartografía de los Ausentes
 
-Las puertas están integradas en huecos de las paredes; al cruzar cada umbral caminando, cambiarás de habitación sin pulsar una tecla. Busca los pasadizos en la cripta, las catacumbas, la capilla, la nave y el santuario. En cada ramal, el mapa muestra su propio plano. El diario conserva las pistas que ya has escuchado y los objetos que has investigado. Puedes regresar por el mismo umbral. En pantallas táctiles, usa las flechas para desplazarte y los botones curvos para girar.
+Las puertas están integradas en huecos de las paredes; al cruzar cada umbral caminando, cambiarás de habitación sin pulsar una tecla. Busca los pasadizos en la cripta, las catacumbas, la capilla, la nave y el santuario. En cada ramal, el mapa muestra su propio plano. El diario conserva las pistas que ya has escuchado y los objetos que has investigado. Puedes regresar por el mismo umbral. En pantallas táctiles, usa las flechas para desplazarte y los botones curvos para girar. La tecla E sigue sirviendo para recoger objetos, accionar mecanismos y abrir los pasos sellados.
 
 ## La piedra y el umbral · v3.6
 
@@ -37,7 +37,7 @@ La pasarela y la línea de marea distinguen la Nave. El Patio de la Sal deja ver
 
 La postura del enemigo distingue el despertar, la preparación y el ataque. Las marcas en el suelo avisan de las ondas. Las cuatro armas muestran su propio golpe, y la retícula distingue el contacto normal, la guardia y la resonancia de la Aguja de Marea. En móvil, las barras quedan por encima de los botones en vertical y entre los dos grupos de controles en horizontal.
 
-Consulta [CAMBIOS.md](CAMBIOS.md) y [QA-v3.6.md](QA-v3.6.md). Quedan por medir la duración y el ritmo de una primera partida humana.
+Consulta [CAMBIOS.md](CAMBIOS.md) y [la auditoría de v3.7.1](QA-v3.7.md). Quedan por medir la duración y el ritmo de una primera partida humana.
 
 ## Cambios de v3.1.1
 
@@ -54,7 +54,7 @@ Consulta [CAMBIOS.md](CAMBIOS.md) y [QA-v3.6.md](QA-v3.6.md). Quedan por medir l
 
 `src/game.js` contiene la campaña, guardados, controles y raycasting. `src/art.js` dibuja relieves y criaturas originales. `src/lighting.js` prepara paletas, iluminación y superficies. `src/audio.js` sintetiza el audio. Todo el arte y el audio añadidos se generan localmente.
 
-GitHub Pages sirve `index.html` con rutas relativas. Ejecuta `python3 tools/build_singlefile.py` para regenerar el HTML autónomo. Consulta [QA-v3.6.md](QA-v3.6.md) para reproducir las comprobaciones y capturas actuales. Ejecuta `node tests/campaign.mjs` para recorrer ambos finales en el arnés.
+GitHub Pages sirve `index.html` con rutas relativas. Ejecuta `python3 tools/build_singlefile.py` para regenerar el HTML autónomo. Consulta [QA-v3.7.md](QA-v3.7.md) para reproducir las comprobaciones y capturas actuales. Ejecuta `node tests/campaign.mjs` para recorrer ambos finales en el arnés.
 
 ## Historial de v2.2 a v2.8
 
@@ -73,7 +73,7 @@ GitHub Pages sirve `index.html` con rutas relativas. Ejecuta `python3 tools/buil
 - Tests automatizados, si tienes Python + Playwright + Chromium: `python tests/browser_smoke.py`; `python tests/browser_visual_regression.py`; `python tests/browser_v22_regression.py`.
 - Captura: `tests/captura_rebirth_v22.png`.
 
-## Limitaciones verificadas
+## Limitaciones históricas de v2.2
 - El motor es raycasting **2.5D**, no 3D geométrico completo; los personajes son sprites 2D.
 - No hay animaciones esqueléticas. Los fotogramas son transformaciones y detalles procedurales, no una librería de animación dibujada artesanalmente.
 - La prueba de persistencia del guardado está **bloqueada por el entorno Chromium** (navegación a `file://` y origen HTTPS simulado denegados). No se afirma que se haya verificado la restauración tras recargar.
