@@ -2,7 +2,7 @@
 
 ## 3.7.0 · Umbrales transitables
 
-- Los umbrales de los cinco ramales de expedición cambian de zona automáticamente al cruzarlos caminando.
+- Las puertas de los ramales ocupan huecos abiertos en las paredes y cambian de habitación al atravesar el umbral caminando, sin pulsar una tecla.
 - La protección de salida evita reactivar de inmediato la puerta de llegada. Las interacciones de objetos, mecanismos y puertas selladas siguen usando sus controles habituales.
 - Versión web y HTML autónomo sincronizados.
 
