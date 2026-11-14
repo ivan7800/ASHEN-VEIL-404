@@ -1,5 +1,12 @@
 # Cambios
 
+## 3.8.0 · Menú y mando
+
+- Navegación por cruceta, A para confirmar y B para volver en el menú, la pausa, el diario y las pantallas de muerte y final. El foco tiene un marco visible del mismo estilo que la interfaz.
+- Ajustes persistentes de sensibilidad de cámara y zona muerta, además del volumen, efectos reducidos y modo ligero. La cruceta ajusta los deslizadores sin ratón.
+- El menú indica la conexión del mando estándar y responde a su desconexión y reconexión sin recargar. Teclado y ratón siguen disponibles.
+- Prueba automatizada del mando mediante emulación de la API Gamepad; queda pendiente una prueba con mando físico.
+
 ## 3.7.1 · Cierre de campaña
 
 - Las entradas y salidas de los cinco ramales cruzan el plano del arco al caminar. Los arcos se dibujan en el plano del hueco y tienen un interior en sombra.
