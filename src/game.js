@@ -20,6 +20,8 @@ grid[10][19]=3;grid[13][6]=4;
 for(const [x,y] of [[15,3],[24,3],[15,7],[24,7],[17,14],[23,14],[17,20],[23,20],[4,7],[10,7]])grid[y][x]=2;
 for(const wing of VeilExpedition.wings){
   for(const [x1,y1,x2,y2] of wing.rooms)carve(wing.x+x1,wing.y+y1,wing.x+x2,wing.y+y2);
+  grid[Math.floor(wing.entry[1])][Math.floor(wing.entry[0])]=0;
+  grid[Math.floor(wing.y+18.5)][Math.floor(wing.x+9.5)]=0;
 }
 let discoveries=[], archiveChoice=null;
 const mirrorDirections=['borde','arriba','fondo'];
@@ -513,7 +515,7 @@ function autoTraversePassage(){
     if(locked&&dist(player,locked)<1.15)return;
     autoPassageLock=null;
   }
-  const door=VeilExpedition.doors.filter(item=>item.active&&dist(player,item)<.48).sort((a,b)=>dist(player,a)-dist(player,b))[0];
+  const door=VeilExpedition.doors.filter(item=>item.active&&dist(player,item)<.32).sort((a,b)=>dist(player,a)-dist(player,b))[0];
   if(door)enterPassage(door);
 }
 
