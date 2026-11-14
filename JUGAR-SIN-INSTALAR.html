@@ -233,16 +233,31 @@ summary { cursor:pointer; font:600 .8rem system-ui,sans-serif; }
   #menu .crest { height:30px; }
   #inventory .panel { padding:.85rem; }
 }
+
+/* Controller focus and settings use the game's iron and parchment palette. */
+#pad-status{margin:.65rem auto 0;color:#c8af8b;font: .76rem system-ui,sans-serif;letter-spacing:.04em}
+.settings-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));text-align:left;gap:.6rem 1rem}
+.settings-fields label{justify-content:space-between;flex-wrap:wrap;border:1px solid #594957;background:#16131d;padding:.55rem .75rem}
+.settings-fields label input[type=range]{width:100%;min-height:28px}
+.settings-fields output{color:#e4c694;min-width:3.2em;text-align:right}
+#menu button.pad-focus,#menu input.pad-focus,#menu summary.pad-focus,
+#inventory button.pad-focus,#death button.pad-focus,#ending button.pad-focus{
+ outline:2px solid #efd0a0;outline-offset:3px;background-color:#503846;
+ box-shadow:0 0 0 6px #1a111acc,0 0 18px #b97e6799;
+}
+@media(max-width:600px){.settings-fields{grid-template-columns:1fr}#pad-status{font-size:.68rem}}
 </style></head><body><main id="game"><canvas id="screen" width="480" height="270" aria-label="Mazmorra 2.5D en primera persona"></canvas><div id="vignette"></div><div id="scanlines"></div><section id="hud"><div class="hud-top"><div class="brand">ASHEN <span>VEIL</span> <small>404</small></div><div id="location">CRIPTA DEL DESPERTAR</div><div class="souls">✦ <span id="ashes">0</span> CENIZAS</div></div><div id="readouts"><div id="objective" role="status">OBJETIVO: ENCUENTRA LA LLAVE DE HUESO</div><div id="target" hidden><strong id="targetname"></strong><div class="meter enemy"><i id="targetbar"></i></div></div><div id="notices"><div id="encounter-warning" role="status" hidden></div><div id="toast" aria-live="polite"></div></div></div><div class="hud-bottom"><div class="vitals"><div class="meter hp"><i id="hpbar"></i></div><div class="meter sta"><i id="stbar"></i></div><div class="meter mana"><i id="mpbar"></i></div><small>VIDA · AGUANTE · ÉTER</small></div><div class="equip"><div class="slot slot-weapon"><span id="weapon-icon" data-weapon="sword" aria-hidden="true"></span><small id="weapon-slot">ESPADA</small></div><div class="slot"><strong>✧</strong><small id="spellcount">3</small></div><div class="slot"><strong>✚</strong><small id="flasks">3</small></div></div></div><div id="interact" hidden></div><div id="reticle">✦</div><div id="map" hidden><div class="map-legend"><span class="legend-altar">Altar</span><span class="legend-seal">Sello</span><span>Objeto</span><span class="legend-passage">Paso</span></div></div><div id="bossbar" hidden><div id="bossname">EL VIGÍA DE LAS PROFUNDIDADES</div><div class="meter enemy"><i id="bossfill"></i></div></div></section><section id="menu" class="overlay" aria-label="Menú del juego"><div class="menu-content"><svg class="crest" viewBox="0 0 100 84" aria-hidden="true">
 <path d="M16 77V38Q20 22 50 5Q80 22 84 38V77M29 77V44Q32 32 50 21Q68 32 71 44V77M8 77H92M50 14V32M50 57V76M37 68H63" />
-<path d="M19 46Q50 24 81 46Q50 67 19 46Z" /><path d="M50 34L57 46L50 57L43 46Z" class="crest-eye" /></svg><h2 class="pause-heading">Pausa</h2><h1>ASHEN <em>VEIL</em><sup>404</sup></h1><div class="edition">LA PIEDRA Y EL UMBRAL · V3.7.1</div><p>La campana sonó bajo el agua. Desde entonces, la piedra recuerda tu nombre.</p><button id="play">DESPERTAR EN LA CRIPTA</button><div class="menu-actions"><button id="save-game" hidden>Guardar partida</button><button id="mute" aria-pressed="false">Silenciar</button></div><details class="settings">
+<path d="M19 46Q50 24 81 46Q50 67 19 46Z" /><path d="M50 34L57 46L50 57L43 46Z" class="crest-eye" /></svg><h2 class="pause-heading">Pausa</h2><h1>ASHEN <em>VEIL</em><sup>404</sup></h1><div class="edition">LA PIEDRA Y EL UMBRAL · V3.8.0</div><p>La campana sonó bajo el agua. Desde entonces, la piedra recuerda tu nombre.</p><button id="play">DESPERTAR EN LA CRIPTA</button><div id="pad-status" role="status" aria-live="polite">Mando desconectado</div><div class="menu-actions"><button id="save-game" hidden>Guardar partida</button><button id="mute" aria-pressed="false">Silenciar</button></div><details class="settings">
 <summary>Ajustes</summary>
 <div class="settings-fields">
 <label for="volume">Volumen<input id="volume" type="range" min="0" max="100" step="5" value="70"></label>
 <label><input id="quiet-effects" type="checkbox"> Reducir destellos y sacudidas</label>
 <label><input id="economy" type="checkbox"> Modo ligero (hasta 30 FPS)</label>
+<label for="pad-sensitivity">Sensibilidad de cámara <output id="pad-sensitivity-value">100 %</output><input id="pad-sensitivity" type="range" min="60" max="180" step="10" value="100"></label>
+<label for="pad-deadzone">Zona muerta del mando <output id="pad-deadzone-value">18 %</output><input id="pad-deadzone" type="range" min="10" max="35" step="1" value="18"></label>
 </div></details>
-<p id="save-status" role="status"></p><details class="help"><summary>Controles</summary><div class="controls">WASD MOVER · RATÓN MIRAR · CLIC / H ATACAR · J GOLPE FUERTE · C CAMBIAR ARMA · DERECHO BLOQUEAR<br>SHIFT CORRER · ESPACIO ESQUIVAR · E INTERACTUAR · F CURAR · Q MAGIA<br>TAB INVENTARIO · M MAPA · L SUBIR NIVEL EN ALTAR · ESC PAUSA · K GUARDAR<br>MANDO: STICKS MOVER Y MIRAR · A USAR · B ESQUIVAR · X GOLPE FUERTE · Y CURAR<br>RT ATACAR · LT BLOQUEAR · RB MAGIA · START PAUSA · SELECT INVENTARIO · CRUCETA DERECHA ARMA</div></details></div></section><section id="inventory" class="overlay hidden"><div class="panel"><div class="eyebrow">EL PESO DE LO QUE LLEVAS</div><h2>Inventario y diario</h2><div id="items" role="region" aria-label="Contenido del inventario y diario" tabindex="0"></div><button id="inventory-close">Cerrar inventario</button></div></section><section id="ending" class="overlay hidden"><div class="menu-content"><div class="sigil">✧</div><div class="eyebrow">EL SILENCIO HA SIDO ROTO</div><h1 id="ending-title"></h1><p id="ending-story"></p><button id="again">VOLVER A DESPERTAR</button></div></section><section id="death" class="overlay hidden" aria-labelledby="death-title"><div class="menu-content">
+<p id="save-status" role="status"></p><details class="help"><summary>Controles</summary><div class="controls">WASD MOVER · RATÓN MIRAR · CLIC / H ATACAR · J GOLPE FUERTE · C CAMBIAR ARMA · DERECHO BLOQUEAR<br>SHIFT CORRER · ESPACIO ESQUIVAR · E INTERACTUAR · F CURAR · Q MAGIA<br>TAB INVENTARIO · M MAPA · L SUBIR NIVEL EN ALTAR · ESC PAUSA · K GUARDAR<br>MANDO: CRUCETA MENÚ · A CONFIRMAR · B VOLVER · STICKS MOVER Y MIRAR · A USAR · B ESQUIVAR · X GOLPE FUERTE · Y CURAR<br>RT ATACAR · LT BLOQUEAR · RB MAGIA · START PAUSA · SELECT INVENTARIO · CRUCETA DERECHA ARMA</div></details></div></section><section id="inventory" class="overlay hidden"><div class="panel"><div class="eyebrow">EL PESO DE LO QUE LLEVAS</div><h2>Inventario y diario</h2><div id="items" role="region" aria-label="Contenido del inventario y diario" tabindex="0"></div><button id="inventory-close">Cerrar inventario</button></div></section><section id="ending" class="overlay hidden"><div class="menu-content"><div class="sigil">✧</div><div class="eyebrow">EL SILENCIO HA SIDO ROTO</div><h1 id="ending-title"></h1><p id="ending-story"></p><button id="again">VOLVER A DESPERTAR</button></div></section><section id="death" class="overlay hidden" aria-labelledby="death-title"><div class="menu-content">
 <h2 id="death-title">La cripta te reclama</h2>
 <p>Despiertas en el último altar. Las cenizas que llevabas esperan donde caíste.</p>
 <button id="respawn">Volver al altar</button>
@@ -1231,7 +1246,7 @@ const VeilExpedition = (() => {
 })();
 </script><script>(()=>{'use strict';
 const W=480,H=270,PI=Math.PI,TAU=PI*2,FOV=.73,SAVE='ashen-veil-rebirth-v2';
-const VERSION='3.7.1';
+const VERSION='3.8.0';
 const $=id=>document.getElementById(id),screen=$('screen'),ctx=screen.getContext('2d',{alpha:false});ctx.imageSmoothingEnabled=false;
 let warningUntil=0,hitFlashUntil=0;
 let contactKind='hit';
@@ -1309,13 +1324,15 @@ let trapCooldown=0,leverUsed=false,cacheOpened=false,tabletsRead=[],echoesCollec
 let sealsBroken=[],zonesVisited=[],lastZone='';
 let shortcutOpen=false, bellRung=false, crimsonTaken=false, saveReady=false;
 const PREFS='ashen-veil-remaster-options';
-const defaults={volume:70,muted:false,quiet:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches??false,low:false};
+const defaults={volume:70,muted:false,quiet:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches??false,low:false,padSensitivity:100,padDeadzone:18};
 let settings={...defaults};
 try{
   const saved=JSON.parse(localStorage.getItem(PREFS));
   if(saved){
     for(const key of ['muted','quiet','low'])if(typeof saved[key]==='boolean')settings[key]=saved[key];
     if(Number.isFinite(saved.volume))settings.volume=clamp(saved.volume,0,100);
+    if(Number.isFinite(saved.padSensitivity))settings.padSensitivity=clamp(saved.padSensitivity,60,180);
+    if(Number.isFinite(saved.padDeadzone))settings.padDeadzone=clamp(saved.padDeadzone,10,35);
   }
 }catch{}
 const creatureNames={hollow:'PENITENTE HUECO',knight:'CARCELERO DEL OSARIO',wraith:'TESTIGO CIEGO',drowned:'CAMPANERO AHOGADO',boss:'EL VIGÍA'};
@@ -2715,7 +2732,7 @@ function toggleInventory(){if(!playing||player.won||!$('death').classList.contai
   tabletsRead.includes('tablet2')?'El Vigía selló la puerta desde el otro lado.':'',
 ].filter(Boolean).join(' · ')||'Aún no has descifrado ninguna.'}</small></div>`,`<div class="item"><b>CAMPANA SUMERGIDA</b><small>${bellRung?'La campana ha vuelto a sonar.':'Busca una nave inundada al este de las catacumbas.'}</small></div>`,...additionalJournal()].join('');$('items').focus();}else{inv.classList.add('hidden');paused=false;lockPointer();}}
 $('play').addEventListener('click',begin);$('again').addEventListener('click',restart);screen.addEventListener('click',()=>{VeilAudio.begin();if(!playing||paused)return;if(document.pointerLockElement!==screen)lockPointer();attack();});screen.addEventListener('contextmenu',e=>e.preventDefault());screen.addEventListener('mousedown',e=>{if(e.button===2)keys.MouseRight=true;});window.addEventListener('mouseup',e=>{if(e.button===2)keys.MouseRight=false;});document.addEventListener('mousemove',e=>{if(document.pointerLockElement===screen&&playing&&!paused)player.ang+=e.movementX*.0029;});
-window.addEventListener('keydown',e=>{if(playing&&!player.won&&['Space','Tab','ArrowLeft','ArrowRight'].includes(e.code)&&(!paused||!$('inventory').classList.contains('hidden')))e.preventDefault();if(e.repeat)return;keys[e.code]=true;if(!playing&&e.code!=='Enter')return;if(e.code==='Escape'){if(!$('inventory').classList.contains('hidden'))toggleInventory();else togglePause();return;}if(e.code==='Tab'&&playing&&$('menu').classList.contains('hidden')&&!player.won){toggleInventory();return;}if(!playing||paused){if(e.code==='Enter'&&!playing&&!['BUTTON','INPUT','SUMMARY'].includes(e.target.tagName))begin();return;}if(e.code==='Space')dodge();if(e.code==='KeyE')interact();if(e.code==='KeyF')heal();if(e.code==='KeyL')levelUp();if(e.code==='KeyQ')spell();if(e.code==='KeyJ')attack(true);if(e.code==='KeyH')attack();if(e.code==='KeyM')toggleMap();if(e.code==='KeyC')equipNext();if(e.code==='KeyR'&&nearObject()?.kind==='altar')interact();if(e.code==='KeyK')manualSave();if(e.code==='KeyU')toggleMute();});window.addEventListener('keyup',e=>{keys[e.code]=false;});window.addEventListener('blur',()=>{for(let k of Object.keys(keys))keys[k]=false;});document.addEventListener('pointerlockchange',()=>{
+window.addEventListener('keydown',e=>{if(playing&&!player.won&&['Space','Tab','ArrowLeft','ArrowRight'].includes(e.code)&&(!paused||!$('inventory').classList.contains('hidden')))e.preventDefault();if(e.repeat)return;padActive=false;keys[e.code]=true;if(!playing&&e.code!=='Enter')return;if(e.code==='Escape'){if(!$('inventory').classList.contains('hidden'))toggleInventory();else togglePause();return;}if(e.code==='Tab'&&playing&&$('menu').classList.contains('hidden')&&!player.won){toggleInventory();return;}if(!playing||paused){if(e.code==='Enter'&&!playing&&!['BUTTON','INPUT','SUMMARY'].includes(e.target.tagName))begin();return;}if(e.code==='Space')dodge();if(e.code==='KeyE')interact();if(e.code==='KeyF')heal();if(e.code==='KeyL')levelUp();if(e.code==='KeyQ')spell();if(e.code==='KeyJ')attack(true);if(e.code==='KeyH')attack();if(e.code==='KeyM')toggleMap();if(e.code==='KeyC')equipNext();if(e.code==='KeyR'&&nearObject()?.kind==='altar')interact();if(e.code==='KeyK')manualSave();if(e.code==='KeyU')toggleMute();});window.addEventListener('keyup',e=>{keys[e.code]=false;});window.addEventListener('blur',()=>{for(let k of Object.keys(keys))keys[k]=false;});document.addEventListener('pointerlockchange',()=>{
   if(!document.pointerLockElement)keys.MouseRight=false;
 });
 function additionalJournal(){
@@ -2747,6 +2764,10 @@ function applySettings(persist=false){
   $('volume').value=settings.volume;
   $('quiet-effects').checked=settings.quiet;
   $('economy').checked=settings.low;
+  $('pad-sensitivity').value=settings.padSensitivity;
+  $('pad-sensitivity-value').textContent=settings.padSensitivity+' %';
+  $('pad-deadzone').value=settings.padDeadzone;
+  $('pad-deadzone-value').textContent=settings.padDeadzone+' %';
   $('game').setAttribute('data-effects',settings.quiet?'reduced':'normal');
   needsDraw=true;
   if(persist)try{localStorage.setItem(PREFS,JSON.stringify(settings));}catch{}
@@ -2766,6 +2787,9 @@ $('respawn').addEventListener('click',respawn);
 $('volume').addEventListener('input',e=>{settings.volume=Number(e.target.value);applySettings(true);});
 $('quiet-effects').addEventListener('change',e=>{settings.quiet=e.target.checked;applySettings(true);});
 $('economy').addEventListener('change',e=>{settings.low=e.target.checked;applySettings(true);});
+for(const [id,key] of [['pad-sensitivity','padSensitivity'],['pad-deadzone','padDeadzone']]){
+  $(id).addEventListener('input',e=>{settings[key]=Number(e.target.value);applySettings(true);});
+}
 applySettings();
 $('save-game').addEventListener('click',()=>{
   save();$('save-status').textContent=saveMessage();
@@ -2815,28 +2839,81 @@ function setUpTouch(){
 setUpTouch();
 
 let padActive=false,padX=0,padY=0,padBlock=false,padSprint=false,padButtons=[];
+let connectedPad=null,padFocus=null;
+function updatePadStatus(pad){
+  const id=pad?.index??null;
+  if(id===connectedPad)return;
+  connectedPad=id;
+  $('pad-status').textContent=pad?'Mando conectado · cruceta para navegar · A confirmar · B volver':'Mando desconectado';
+  if(!pad){
+    padActive=false;padX=0;padY=0;padBlock=false;padSprint=false;padButtons=[];
+    padFocus?.classList.remove('pad-focus');padFocus=null;
+  }
+}
+function activePadOverlay(){
+  for(const id of ['death','ending','inventory','menu'])if(!$(id).classList.contains('hidden'))return $(id);
+  return null;
+}
+function padItems(overlay){
+  if(!overlay.querySelectorAll)return [];
+  return [...overlay.querySelectorAll('button,summary,input')].filter(item=>
+    !item.hidden&&!item.disabled&&item.getClientRects().length&&
+    (item.tagName==='SUMMARY'||!item.closest('details:not([open])')));
+}
+function movePadFocus(overlay,direction){
+  const items=padItems(overlay);
+  if(!items.length)return;
+  const index=items.indexOf(document.activeElement);
+  const next=items[(index+direction+items.length)%items.length];
+  padFocus?.classList.remove('pad-focus');
+  padFocus=next;next.classList.add('pad-focus');next.focus();
+}
+function menuPadAction(overlay,edge){
+  if(edge(12))movePadFocus(overlay,-1);
+  if(edge(13))movePadFocus(overlay,1);
+  const focused=padItems(overlay).includes(document.activeElement)?document.activeElement:null;
+  if(focused?.type==='range'&&(edge(14)||edge(15))){
+    focused.stepUp(edge(15)?1:-1);
+    focused.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+  if(edge(0)){
+    if(focused)focused.click();
+    else if(overlay===$('menu'))begin();
+    else if(overlay===$('death'))respawn();
+    else if(overlay===$('ending'))restart();
+    else if(overlay===$('inventory'))toggleInventory();
+  }
+  if(edge(1)){
+    if(overlay===$('inventory'))toggleInventory();
+    else if(overlay===$('menu')){
+      const open=focused?.closest('details[open]');
+      if(open)open.open=false;
+      else if(playing)togglePause();
+    }
+  }
+}
 function pollPad(dt){
-  const pad=Array.from(navigator.getGamepads?.()||[]).find(device=>device?.mapping==='standard');
-  if(!pad){padActive=false;padX=0;padY=0;padBlock=false;padSprint=false;padButtons=[];return;}
-  const deadzone=value=>Math.abs(value||0)<.18?0:value;
+  const pad=Array.from(navigator.getGamepads?.()||[]).find(device=>device?.connected!==false&&device?.mapping==='standard');
+  updatePadStatus(pad);
+  if(!pad)return;
+  const threshold=settings.padDeadzone/100;
+  const deadzone=value=>Math.abs(value||0)<threshold?0:value;
   padX=deadzone(pad.axes[0]);padY=deadzone(pad.axes[1]);
   const look=deadzone(pad.axes[2]);
-  const pressed=pad.buttons.map(button=>button.pressed);
+  const pressed=pad.buttons.map(button=>!!button?.pressed);
   const edge=index=>pressed[index]&&!padButtons[index];
   if(padX||padY||look||pressed.some(Boolean))padActive=true;
+  const overlay=activePadOverlay();
   if(edge(9)&&playing&&!player.won)togglePause();
-  else if(edge(0)&&!$('menu').classList.contains('hidden'))begin();
-  else if(edge(0)&&!$('death').classList.contains('hidden'))respawn();
-  else if(edge(0)&&player.won&&!$('ending').classList.contains('hidden'))restart();
-  else if(edge(8)&&playing)toggleInventory();
-  else if(edge(1)&&!$('inventory').classList.contains('hidden'))toggleInventory();
+  else if(overlay)menuPadAction(overlay,edge);
   else if(playing&&!paused){
-    player.ang+=look*dt*2.55;
+    player.ang+=look*dt*2.55*settings.padSensitivity/100;
     padBlock=pressed[6];padSprint=pressed[10];
     for(const [button,action] of [[0,interact],[1,dodge],[2,()=>attack(true)],[3,heal],
       [5,spell],[7,attack],[12,toggleMap],[13,levelUp],[15,equipNext]]){
       if(edge(button))action();
     }
+    if(edge(8))toggleInventory();
   }
   padButtons=pressed;
 }

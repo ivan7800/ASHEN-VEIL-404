@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const W=480,H=270,PI=Math.PI,TAU=PI*2,FOV=.73,SAVE='ashen-veil-rebirth-v2';
-const VERSION='3.7.1';
+const VERSION='3.8.0';
 const $=id=>document.getElementById(id),screen=$('screen'),ctx=screen.getContext('2d',{alpha:false});ctx.imageSmoothingEnabled=false;
 let warningUntil=0,hitFlashUntil=0;
 let contactKind='hit';
@@ -78,13 +78,15 @@ let trapCooldown=0,leverUsed=false,cacheOpened=false,tabletsRead=[],echoesCollec
 let sealsBroken=[],zonesVisited=[],lastZone='';
 let shortcutOpen=false, bellRung=false, crimsonTaken=false, saveReady=false;
 const PREFS='ashen-veil-remaster-options';
-const defaults={volume:70,muted:false,quiet:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches??false,low:false};
+const defaults={volume:70,muted:false,quiet:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches??false,low:false,padSensitivity:100,padDeadzone:18};
 let settings={...defaults};
 try{
   const saved=JSON.parse(localStorage.getItem(PREFS));
   if(saved){
     for(const key of ['muted','quiet','low'])if(typeof saved[key]==='boolean')settings[key]=saved[key];
     if(Number.isFinite(saved.volume))settings.volume=clamp(saved.volume,0,100);
+    if(Number.isFinite(saved.padSensitivity))settings.padSensitivity=clamp(saved.padSensitivity,60,180);
+    if(Number.isFinite(saved.padDeadzone))settings.padDeadzone=clamp(saved.padDeadzone,10,35);
   }
 }catch{}
 const creatureNames={hollow:'PENITENTE HUECO',knight:'CARCELERO DEL OSARIO',wraith:'TESTIGO CIEGO',drowned:'CAMPANERO AHOGADO',boss:'EL VIGÍA'};
@@ -1484,7 +1486,7 @@ function toggleInventory(){if(!playing||player.won||!$('death').classList.contai
   tabletsRead.includes('tablet2')?'El Vigía selló la puerta desde el otro lado.':'',
 ].filter(Boolean).join(' · ')||'Aún no has descifrado ninguna.'}</small></div>`,`<div class="item"><b>CAMPANA SUMERGIDA</b><small>${bellRung?'La campana ha vuelto a sonar.':'Busca una nave inundada al este de las catacumbas.'}</small></div>`,...additionalJournal()].join('');$('items').focus();}else{inv.classList.add('hidden');paused=false;lockPointer();}}
 $('play').addEventListener('click',begin);$('again').addEventListener('click',restart);screen.addEventListener('click',()=>{VeilAudio.begin();if(!playing||paused)return;if(document.pointerLockElement!==screen)lockPointer();attack();});screen.addEventListener('contextmenu',e=>e.preventDefault());screen.addEventListener('mousedown',e=>{if(e.button===2)keys.MouseRight=true;});window.addEventListener('mouseup',e=>{if(e.button===2)keys.MouseRight=false;});document.addEventListener('mousemove',e=>{if(document.pointerLockElement===screen&&playing&&!paused)player.ang+=e.movementX*.0029;});
-window.addEventListener('keydown',e=>{if(playing&&!player.won&&['Space','Tab','ArrowLeft','ArrowRight'].includes(e.code)&&(!paused||!$('inventory').classList.contains('hidden')))e.preventDefault();if(e.repeat)return;keys[e.code]=true;if(!playing&&e.code!=='Enter')return;if(e.code==='Escape'){if(!$('inventory').classList.contains('hidden'))toggleInventory();else togglePause();return;}if(e.code==='Tab'&&playing&&$('menu').classList.contains('hidden')&&!player.won){toggleInventory();return;}if(!playing||paused){if(e.code==='Enter'&&!playing&&!['BUTTON','INPUT','SUMMARY'].includes(e.target.tagName))begin();return;}if(e.code==='Space')dodge();if(e.code==='KeyE')interact();if(e.code==='KeyF')heal();if(e.code==='KeyL')levelUp();if(e.code==='KeyQ')spell();if(e.code==='KeyJ')attack(true);if(e.code==='KeyH')attack();if(e.code==='KeyM')toggleMap();if(e.code==='KeyC')equipNext();if(e.code==='KeyR'&&nearObject()?.kind==='altar')interact();if(e.code==='KeyK')manualSave();if(e.code==='KeyU')toggleMute();});window.addEventListener('keyup',e=>{keys[e.code]=false;});window.addEventListener('blur',()=>{for(let k of Object.keys(keys))keys[k]=false;});document.addEventListener('pointerlockchange',()=>{
+window.addEventListener('keydown',e=>{if(playing&&!player.won&&['Space','Tab','ArrowLeft','ArrowRight'].includes(e.code)&&(!paused||!$('inventory').classList.contains('hidden')))e.preventDefault();if(e.repeat)return;padActive=false;keys[e.code]=true;if(!playing&&e.code!=='Enter')return;if(e.code==='Escape'){if(!$('inventory').classList.contains('hidden'))toggleInventory();else togglePause();return;}if(e.code==='Tab'&&playing&&$('menu').classList.contains('hidden')&&!player.won){toggleInventory();return;}if(!playing||paused){if(e.code==='Enter'&&!playing&&!['BUTTON','INPUT','SUMMARY'].includes(e.target.tagName))begin();return;}if(e.code==='Space')dodge();if(e.code==='KeyE')interact();if(e.code==='KeyF')heal();if(e.code==='KeyL')levelUp();if(e.code==='KeyQ')spell();if(e.code==='KeyJ')attack(true);if(e.code==='KeyH')attack();if(e.code==='KeyM')toggleMap();if(e.code==='KeyC')equipNext();if(e.code==='KeyR'&&nearObject()?.kind==='altar')interact();if(e.code==='KeyK')manualSave();if(e.code==='KeyU')toggleMute();});window.addEventListener('keyup',e=>{keys[e.code]=false;});window.addEventListener('blur',()=>{for(let k of Object.keys(keys))keys[k]=false;});document.addEventListener('pointerlockchange',()=>{
   if(!document.pointerLockElement)keys.MouseRight=false;
 });
 function additionalJournal(){
@@ -1516,6 +1518,10 @@ function applySettings(persist=false){
   $('volume').value=settings.volume;
   $('quiet-effects').checked=settings.quiet;
   $('economy').checked=settings.low;
+  $('pad-sensitivity').value=settings.padSensitivity;
+  $('pad-sensitivity-value').textContent=settings.padSensitivity+' %';
+  $('pad-deadzone').value=settings.padDeadzone;
+  $('pad-deadzone-value').textContent=settings.padDeadzone+' %';
   $('game').setAttribute('data-effects',settings.quiet?'reduced':'normal');
   needsDraw=true;
   if(persist)try{localStorage.setItem(PREFS,JSON.stringify(settings));}catch{}
@@ -1535,6 +1541,9 @@ $('respawn').addEventListener('click',respawn);
 $('volume').addEventListener('input',e=>{settings.volume=Number(e.target.value);applySettings(true);});
 $('quiet-effects').addEventListener('change',e=>{settings.quiet=e.target.checked;applySettings(true);});
 $('economy').addEventListener('change',e=>{settings.low=e.target.checked;applySettings(true);});
+for(const [id,key] of [['pad-sensitivity','padSensitivity'],['pad-deadzone','padDeadzone']]){
+  $(id).addEventListener('input',e=>{settings[key]=Number(e.target.value);applySettings(true);});
+}
 applySettings();
 $('save-game').addEventListener('click',()=>{
   save();$('save-status').textContent=saveMessage();
@@ -1584,28 +1593,81 @@ function setUpTouch(){
 setUpTouch();
 
 let padActive=false,padX=0,padY=0,padBlock=false,padSprint=false,padButtons=[];
+let connectedPad=null,padFocus=null;
+function updatePadStatus(pad){
+  const id=pad?.index??null;
+  if(id===connectedPad)return;
+  connectedPad=id;
+  $('pad-status').textContent=pad?'Mando conectado · cruceta para navegar · A confirmar · B volver':'Mando desconectado';
+  if(!pad){
+    padActive=false;padX=0;padY=0;padBlock=false;padSprint=false;padButtons=[];
+    padFocus?.classList.remove('pad-focus');padFocus=null;
+  }
+}
+function activePadOverlay(){
+  for(const id of ['death','ending','inventory','menu'])if(!$(id).classList.contains('hidden'))return $(id);
+  return null;
+}
+function padItems(overlay){
+  if(!overlay.querySelectorAll)return [];
+  return [...overlay.querySelectorAll('button,summary,input')].filter(item=>
+    !item.hidden&&!item.disabled&&item.getClientRects().length&&
+    (item.tagName==='SUMMARY'||!item.closest('details:not([open])')));
+}
+function movePadFocus(overlay,direction){
+  const items=padItems(overlay);
+  if(!items.length)return;
+  const index=items.indexOf(document.activeElement);
+  const next=items[(index+direction+items.length)%items.length];
+  padFocus?.classList.remove('pad-focus');
+  padFocus=next;next.classList.add('pad-focus');next.focus();
+}
+function menuPadAction(overlay,edge){
+  if(edge(12))movePadFocus(overlay,-1);
+  if(edge(13))movePadFocus(overlay,1);
+  const focused=padItems(overlay).includes(document.activeElement)?document.activeElement:null;
+  if(focused?.type==='range'&&(edge(14)||edge(15))){
+    focused.stepUp(edge(15)?1:-1);
+    focused.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+  if(edge(0)){
+    if(focused)focused.click();
+    else if(overlay===$('menu'))begin();
+    else if(overlay===$('death'))respawn();
+    else if(overlay===$('ending'))restart();
+    else if(overlay===$('inventory'))toggleInventory();
+  }
+  if(edge(1)){
+    if(overlay===$('inventory'))toggleInventory();
+    else if(overlay===$('menu')){
+      const open=focused?.closest('details[open]');
+      if(open)open.open=false;
+      else if(playing)togglePause();
+    }
+  }
+}
 function pollPad(dt){
-  const pad=Array.from(navigator.getGamepads?.()||[]).find(device=>device?.mapping==='standard');
-  if(!pad){padActive=false;padX=0;padY=0;padBlock=false;padSprint=false;padButtons=[];return;}
-  const deadzone=value=>Math.abs(value||0)<.18?0:value;
+  const pad=Array.from(navigator.getGamepads?.()||[]).find(device=>device?.connected!==false&&device?.mapping==='standard');
+  updatePadStatus(pad);
+  if(!pad)return;
+  const threshold=settings.padDeadzone/100;
+  const deadzone=value=>Math.abs(value||0)<threshold?0:value;
   padX=deadzone(pad.axes[0]);padY=deadzone(pad.axes[1]);
   const look=deadzone(pad.axes[2]);
-  const pressed=pad.buttons.map(button=>button.pressed);
+  const pressed=pad.buttons.map(button=>!!button?.pressed);
   const edge=index=>pressed[index]&&!padButtons[index];
   if(padX||padY||look||pressed.some(Boolean))padActive=true;
+  const overlay=activePadOverlay();
   if(edge(9)&&playing&&!player.won)togglePause();
-  else if(edge(0)&&!$('menu').classList.contains('hidden'))begin();
-  else if(edge(0)&&!$('death').classList.contains('hidden'))respawn();
-  else if(edge(0)&&player.won&&!$('ending').classList.contains('hidden'))restart();
-  else if(edge(8)&&playing)toggleInventory();
-  else if(edge(1)&&!$('inventory').classList.contains('hidden'))toggleInventory();
+  else if(overlay)menuPadAction(overlay,edge);
   else if(playing&&!paused){
-    player.ang+=look*dt*2.55;
+    player.ang+=look*dt*2.55*settings.padSensitivity/100;
     padBlock=pressed[6];padSprint=pressed[10];
     for(const [button,action] of [[0,interact],[1,dodge],[2,()=>attack(true)],[3,heal],
       [5,spell],[7,attack],[12,toggleMap],[13,levelUp],[15,equipNext]]){
       if(edge(button))action();
     }
+    if(edge(8))toggleInventory();
   }
   padButtons=pressed;
 }
